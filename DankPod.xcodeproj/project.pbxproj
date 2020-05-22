@@ -1,0 +1,595 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		8D7A50202477D6D600B821DC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D7A501F2477D6D600B821DC /* AppDelegate.swift */; };
+		8D7A50222477D6D600B821DC /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D7A50212477D6D600B821DC /* SceneDelegate.swift */; };
+		8D7A50242477D6D600B821DC /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D7A50232477D6D600B821DC /* ViewController.swift */; };
+		8D7A50272477D6D600B821DC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8D7A50252477D6D600B821DC /* Main.storyboard */; };
+		8D7A50292477D6D700B821DC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8D7A50282477D6D700B821DC /* Assets.xcassets */; };
+		8D7A502C2477D6D700B821DC /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8D7A502A2477D6D700B821DC /* LaunchScreen.storyboard */; };
+		8D7A50372477D6D700B821DC /* DankPodTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D7A50362477D6D700B821DC /* DankPodTests.swift */; };
+		8D7A50422477D6D700B821DC /* DankPodUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D7A50412477D6D700B821DC /* DankPodUITests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		8D7A50332477D6D700B821DC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8D7A50142477D6D600B821DC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8D7A501B2477D6D600B821DC;
+			remoteInfo = DankPod;
+		};
+		8D7A503E2477D6D700B821DC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8D7A50142477D6D600B821DC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8D7A501B2477D6D600B821DC;
+			remoteInfo = DankPod;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		8D7A501C2477D6D600B821DC /* DankPod.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DankPod.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8D7A501F2477D6D600B821DC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		8D7A50212477D6D600B821DC /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		8D7A50232477D6D600B821DC /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		8D7A50262477D6D600B821DC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		8D7A50282477D6D700B821DC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		8D7A502B2477D6D700B821DC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		8D7A502D2477D6D700B821DC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8D7A50322477D6D700B821DC /* DankPodTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DankPodTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		8D7A50362477D6D700B821DC /* DankPodTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DankPodTests.swift; sourceTree = "<group>"; };
+		8D7A50382477D6D700B821DC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8D7A503D2477D6D700B821DC /* DankPodUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DankPodUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		8D7A50412477D6D700B821DC /* DankPodUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DankPodUITests.swift; sourceTree = "<group>"; };
+		8D7A50432477D6D700B821DC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		8D7A50192477D6D600B821DC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8D7A502F2477D6D700B821DC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8D7A503A2477D6D700B821DC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		8D7A50132477D6D600B821DC = {
+			isa = PBXGroup;
+			children = (
+				8D7A501E2477D6D600B821DC /* DankPod */,
+				8D7A50352477D6D700B821DC /* DankPodTests */,
+				8D7A50402477D6D700B821DC /* DankPodUITests */,
+				8D7A501D2477D6D600B821DC /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		8D7A501D2477D6D600B821DC /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8D7A501C2477D6D600B821DC /* DankPod.app */,
+				8D7A50322477D6D700B821DC /* DankPodTests.xctest */,
+				8D7A503D2477D6D700B821DC /* DankPodUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		8D7A501E2477D6D600B821DC /* DankPod */ = {
+			isa = PBXGroup;
+			children = (
+				8D7A501F2477D6D600B821DC /* AppDelegate.swift */,
+				8D7A50212477D6D600B821DC /* SceneDelegate.swift */,
+				8D7A50232477D6D600B821DC /* ViewController.swift */,
+				8D7A50252477D6D600B821DC /* Main.storyboard */,
+				8D7A50282477D6D700B821DC /* Assets.xcassets */,
+				8D7A502A2477D6D700B821DC /* LaunchScreen.storyboard */,
+				8D7A502D2477D6D700B821DC /* Info.plist */,
+			);
+			path = DankPod;
+			sourceTree = "<group>";
+		};
+		8D7A50352477D6D700B821DC /* DankPodTests */ = {
+			isa = PBXGroup;
+			children = (
+				8D7A50362477D6D700B821DC /* DankPodTests.swift */,
+				8D7A50382477D6D700B821DC /* Info.plist */,
+			);
+			path = DankPodTests;
+			sourceTree = "<group>";
+		};
+		8D7A50402477D6D700B821DC /* DankPodUITests */ = {
+			isa = PBXGroup;
+			children = (
+				8D7A50412477D6D700B821DC /* DankPodUITests.swift */,
+				8D7A50432477D6D700B821DC /* Info.plist */,
+			);
+			path = DankPodUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		8D7A501B2477D6D600B821DC /* DankPod */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8D7A50462477D6D700B821DC /* Build configuration list for PBXNativeTarget "DankPod" */;
+			buildPhases = (
+				8D7A50182477D6D600B821DC /* Sources */,
+				8D7A50192477D6D600B821DC /* Frameworks */,
+				8D7A501A2477D6D600B821DC /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DankPod;
+			productName = DankPod;
+			productReference = 8D7A501C2477D6D600B821DC /* DankPod.app */;
+			productType = "com.apple.product-type.application";
+		};
+		8D7A50312477D6D700B821DC /* DankPodTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8D7A50492477D6D700B821DC /* Build configuration list for PBXNativeTarget "DankPodTests" */;
+			buildPhases = (
+				8D7A502E2477D6D700B821DC /* Sources */,
+				8D7A502F2477D6D700B821DC /* Frameworks */,
+				8D7A50302477D6D700B821DC /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				8D7A50342477D6D700B821DC /* PBXTargetDependency */,
+			);
+			name = DankPodTests;
+			productName = DankPodTests;
+			productReference = 8D7A50322477D6D700B821DC /* DankPodTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		8D7A503C2477D6D700B821DC /* DankPodUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8D7A504C2477D6D700B821DC /* Build configuration list for PBXNativeTarget "DankPodUITests" */;
+			buildPhases = (
+				8D7A50392477D6D700B821DC /* Sources */,
+				8D7A503A2477D6D700B821DC /* Frameworks */,
+				8D7A503B2477D6D700B821DC /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				8D7A503F2477D6D700B821DC /* PBXTargetDependency */,
+			);
+			name = DankPodUITests;
+			productName = DankPodUITests;
+			productReference = 8D7A503D2477D6D700B821DC /* DankPodUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		8D7A50142477D6D600B821DC /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1150;
+				LastUpgradeCheck = 1150;
+				ORGANIZATIONNAME = "Apullen Developments Ltd.";
+				TargetAttributes = {
+					8D7A501B2477D6D600B821DC = {
+						CreatedOnToolsVersion = 11.5;
+					};
+					8D7A50312477D6D700B821DC = {
+						CreatedOnToolsVersion = 11.5;
+						TestTargetID = 8D7A501B2477D6D600B821DC;
+					};
+					8D7A503C2477D6D700B821DC = {
+						CreatedOnToolsVersion = 11.5;
+						TestTargetID = 8D7A501B2477D6D600B821DC;
+					};
+				};
+			};
+			buildConfigurationList = 8D7A50172477D6D600B821DC /* Build configuration list for PBXProject "DankPod" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 8D7A50132477D6D600B821DC;
+			productRefGroup = 8D7A501D2477D6D600B821DC /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				8D7A501B2477D6D600B821DC /* DankPod */,
+				8D7A50312477D6D700B821DC /* DankPodTests */,
+				8D7A503C2477D6D700B821DC /* DankPodUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		8D7A501A2477D6D600B821DC /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8D7A502C2477D6D700B821DC /* LaunchScreen.storyboard in Resources */,
+				8D7A50292477D6D700B821DC /* Assets.xcassets in Resources */,
+				8D7A50272477D6D600B821DC /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8D7A50302477D6D700B821DC /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8D7A503B2477D6D700B821DC /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		8D7A50182477D6D600B821DC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8D7A50242477D6D600B821DC /* ViewController.swift in Sources */,
+				8D7A50202477D6D600B821DC /* AppDelegate.swift in Sources */,
+				8D7A50222477D6D600B821DC /* SceneDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8D7A502E2477D6D700B821DC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8D7A50372477D6D700B821DC /* DankPodTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8D7A50392477D6D700B821DC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8D7A50422477D6D700B821DC /* DankPodUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		8D7A50342477D6D700B821DC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8D7A501B2477D6D600B821DC /* DankPod */;
+			targetProxy = 8D7A50332477D6D700B821DC /* PBXContainerItemProxy */;
+		};
+		8D7A503F2477D6D700B821DC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8D7A501B2477D6D600B821DC /* DankPod */;
+			targetProxy = 8D7A503E2477D6D700B821DC /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		8D7A50252477D6D600B821DC /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				8D7A50262477D6D600B821DC /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		8D7A502A2477D6D700B821DC /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				8D7A502B2477D6D700B821DC /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		8D7A50442477D6D700B821DC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.5;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		8D7A50452477D6D700B821DC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.5;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		8D7A50472477D6D700B821DC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = WPY678LZM4;
+				INFOPLIST_FILE = DankPod/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.apullen.DankPod;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		8D7A50482477D6D700B821DC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = WPY678LZM4;
+				INFOPLIST_FILE = DankPod/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.apullen.DankPod;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		8D7A504A2477D6D700B821DC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = WPY678LZM4;
+				INFOPLIST_FILE = DankPodTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.apullen.DankPodTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DankPod.app/DankPod";
+			};
+			name = Debug;
+		};
+		8D7A504B2477D6D700B821DC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = WPY678LZM4;
+				INFOPLIST_FILE = DankPodTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.apullen.DankPodTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DankPod.app/DankPod";
+			};
+			name = Release;
+		};
+		8D7A504D2477D6D700B821DC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = WPY678LZM4;
+				INFOPLIST_FILE = DankPodUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.apullen.DankPodUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = DankPod;
+			};
+			name = Debug;
+		};
+		8D7A504E2477D6D700B821DC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = WPY678LZM4;
+				INFOPLIST_FILE = DankPodUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.apullen.DankPodUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = DankPod;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		8D7A50172477D6D600B821DC /* Build configuration list for PBXProject "DankPod" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8D7A50442477D6D700B821DC /* Debug */,
+				8D7A50452477D6D700B821DC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8D7A50462477D6D700B821DC /* Build configuration list for PBXNativeTarget "DankPod" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8D7A50472477D6D700B821DC /* Debug */,
+				8D7A50482477D6D700B821DC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8D7A50492477D6D700B821DC /* Build configuration list for PBXNativeTarget "DankPodTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8D7A504A2477D6D700B821DC /* Debug */,
+				8D7A504B2477D6D700B821DC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8D7A504C2477D6D700B821DC /* Build configuration list for PBXNativeTarget "DankPodUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8D7A504D2477D6D700B821DC /* Debug */,
+				8D7A504E2477D6D700B821DC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 8D7A50142477D6D600B821DC /* Project object */;
+}
