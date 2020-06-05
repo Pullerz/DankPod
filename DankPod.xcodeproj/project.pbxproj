@@ -9,12 +9,27 @@
 /* Begin PBXBuildFile section */
 		8D7A50202477D6D600B821DC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D7A501F2477D6D600B821DC /* AppDelegate.swift */; };
 		8D7A50222477D6D600B821DC /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D7A50212477D6D600B821DC /* SceneDelegate.swift */; };
-		8D7A50242477D6D600B821DC /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D7A50232477D6D600B821DC /* ViewController.swift */; };
-		8D7A50272477D6D600B821DC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8D7A50252477D6D600B821DC /* Main.storyboard */; };
+		8D7A50242477D6D600B821DC /* BasePodView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D7A50232477D6D600B821DC /* BasePodView.swift */; };
 		8D7A50292477D6D700B821DC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8D7A50282477D6D700B821DC /* Assets.xcassets */; };
 		8D7A502C2477D6D700B821DC /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8D7A502A2477D6D700B821DC /* LaunchScreen.storyboard */; };
 		8D7A50372477D6D700B821DC /* DankPodTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D7A50362477D6D700B821DC /* DankPodTests.swift */; };
 		8D7A50422477D6D700B821DC /* DankPodUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D7A50412477D6D700B821DC /* DankPodUITests.swift */; };
+		8D7A50502477D99200B821DC /* Globals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D7A504F2477D99200B821DC /* Globals.swift */; };
+		8D7A50522477DF0400B821DC /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D7A50512477DF0400B821DC /* MainViewController.swift */; };
+		8D7A50542477EA3500B821DC /* ClickWheelProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D7A50532477EA3500B821DC /* ClickWheelProtocol.swift */; };
+		8D7A50562477FB3800B821DC /* CircularGestureRecogniser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D7A50552477FB3800B821DC /* CircularGestureRecogniser.swift */; };
+		8D7A5059247823FF00B821DC /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D7A5058247823FF00B821DC /* HomeViewController.swift */; };
+		8D7A505D24782BA200B821DC /* CustomTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D7A505C24782BA200B821DC /* CustomTableViewCell.swift */; };
+		8D7A505F24783C2A00B821DC /* Music.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D7A505E24783C2A00B821DC /* Music.swift */; };
+		8D7A506124783E1B00B821DC /* MusicViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D7A506024783E1B00B821DC /* MusicViewController.swift */; };
+		8D7A50632478424C00B821DC /* SongsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D7A50622478424C00B821DC /* SongsViewController.swift */; };
+		8D7A50652478444E00B821DC /* PlaybackViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D7A50642478444E00B821DC /* PlaybackViewController.swift */; };
+		8D99A9922478578700B624F6 /* SplashScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99A9912478578700B624F6 /* SplashScreenViewController.swift */; };
+		8D99A9982478780C00B624F6 /* ForceTouchGestureRecogniser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99A9972478780C00B624F6 /* ForceTouchGestureRecogniser.swift */; };
+		8D99A99A2478811A00B624F6 /* ArtistsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99A9992478811A00B624F6 /* ArtistsViewController.swift */; };
+		8D99A99C2478862800B624F6 /* AlbumsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99A99B2478862800B624F6 /* AlbumsViewController.swift */; };
+		8D99A9A0247973D900B624F6 /* PlaylistsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99A99F247973D900B624F6 /* PlaylistsViewController.swift */; };
+		8D99A9A22479785900B624F6 /* GenresViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99A9A12479785900B624F6 /* GenresViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,8 +53,7 @@
 		8D7A501C2477D6D600B821DC /* DankPod.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DankPod.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D7A501F2477D6D600B821DC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		8D7A50212477D6D600B821DC /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		8D7A50232477D6D600B821DC /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		8D7A50262477D6D600B821DC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		8D7A50232477D6D600B821DC /* BasePodView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasePodView.swift; sourceTree = "<group>"; };
 		8D7A50282477D6D700B821DC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8D7A502B2477D6D700B821DC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8D7A502D2477D6D700B821DC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -49,6 +63,22 @@
 		8D7A503D2477D6D700B821DC /* DankPodUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DankPodUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D7A50412477D6D700B821DC /* DankPodUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DankPodUITests.swift; sourceTree = "<group>"; };
 		8D7A50432477D6D700B821DC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8D7A504F2477D99200B821DC /* Globals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Globals.swift; sourceTree = "<group>"; };
+		8D7A50512477DF0400B821DC /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
+		8D7A50532477EA3500B821DC /* ClickWheelProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClickWheelProtocol.swift; sourceTree = "<group>"; };
+		8D7A50552477FB3800B821DC /* CircularGestureRecogniser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularGestureRecogniser.swift; sourceTree = "<group>"; };
+		8D7A5058247823FF00B821DC /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
+		8D7A505C24782BA200B821DC /* CustomTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTableViewCell.swift; sourceTree = "<group>"; };
+		8D7A505E24783C2A00B821DC /* Music.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Music.swift; sourceTree = "<group>"; };
+		8D7A506024783E1B00B821DC /* MusicViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicViewController.swift; sourceTree = "<group>"; };
+		8D7A50622478424C00B821DC /* SongsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongsViewController.swift; sourceTree = "<group>"; };
+		8D7A50642478444E00B821DC /* PlaybackViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackViewController.swift; sourceTree = "<group>"; };
+		8D99A9912478578700B624F6 /* SplashScreenViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashScreenViewController.swift; sourceTree = "<group>"; };
+		8D99A9972478780C00B624F6 /* ForceTouchGestureRecogniser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForceTouchGestureRecogniser.swift; sourceTree = "<group>"; };
+		8D99A9992478811A00B624F6 /* ArtistsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtistsViewController.swift; sourceTree = "<group>"; };
+		8D99A99B2478862800B624F6 /* AlbumsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumsViewController.swift; sourceTree = "<group>"; };
+		8D99A99F247973D900B624F6 /* PlaylistsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistsViewController.swift; sourceTree = "<group>"; };
+		8D99A9A12479785900B624F6 /* GenresViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenresViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,7 +110,6 @@
 			isa = PBXGroup;
 			children = (
 				8D7A501E2477D6D600B821DC /* DankPod */,
-				8D7A50352477D6D700B821DC /* DankPodTests */,
 				8D7A50402477D6D700B821DC /* DankPodUITests */,
 				8D7A501D2477D6D600B821DC /* Products */,
 			);
@@ -99,13 +128,22 @@
 		8D7A501E2477D6D600B821DC /* DankPod */ = {
 			isa = PBXGroup;
 			children = (
+				8D7A5057247823EE00B821DC /* Screens */,
 				8D7A501F2477D6D600B821DC /* AppDelegate.swift */,
 				8D7A50212477D6D600B821DC /* SceneDelegate.swift */,
-				8D7A50232477D6D600B821DC /* ViewController.swift */,
-				8D7A50252477D6D600B821DC /* Main.storyboard */,
+				8D7A50232477D6D600B821DC /* BasePodView.swift */,
+				8D7A50512477DF0400B821DC /* MainViewController.swift */,
+				8D7A504F2477D99200B821DC /* Globals.swift */,
 				8D7A50282477D6D700B821DC /* Assets.xcassets */,
 				8D7A502A2477D6D700B821DC /* LaunchScreen.storyboard */,
 				8D7A502D2477D6D700B821DC /* Info.plist */,
+				8D7A50532477EA3500B821DC /* ClickWheelProtocol.swift */,
+				8D7A50552477FB3800B821DC /* CircularGestureRecogniser.swift */,
+				8D7A505C24782BA200B821DC /* CustomTableViewCell.swift */,
+				8D7A505E24783C2A00B821DC /* Music.swift */,
+				8D7A50352477D6D700B821DC /* DankPodTests */,
+				8D99A9912478578700B624F6 /* SplashScreenViewController.swift */,
+				8D99A9972478780C00B624F6 /* ForceTouchGestureRecogniser.swift */,
 			);
 			path = DankPod;
 			sourceTree = "<group>";
@@ -126,6 +164,21 @@
 				8D7A50432477D6D700B821DC /* Info.plist */,
 			);
 			path = DankPodUITests;
+			sourceTree = "<group>";
+		};
+		8D7A5057247823EE00B821DC /* Screens */ = {
+			isa = PBXGroup;
+			children = (
+				8D7A5058247823FF00B821DC /* HomeViewController.swift */,
+				8D7A506024783E1B00B821DC /* MusicViewController.swift */,
+				8D7A50622478424C00B821DC /* SongsViewController.swift */,
+				8D7A50642478444E00B821DC /* PlaybackViewController.swift */,
+				8D99A9992478811A00B624F6 /* ArtistsViewController.swift */,
+				8D99A99B2478862800B624F6 /* AlbumsViewController.swift */,
+				8D99A99F247973D900B624F6 /* PlaylistsViewController.swift */,
+				8D99A9A12479785900B624F6 /* GenresViewController.swift */,
+			);
+			path = Screens;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -234,7 +287,6 @@
 			files = (
 				8D7A502C2477D6D700B821DC /* LaunchScreen.storyboard in Resources */,
 				8D7A50292477D6D700B821DC /* Assets.xcassets in Resources */,
-				8D7A50272477D6D600B821DC /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -259,9 +311,25 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8D7A50242477D6D600B821DC /* ViewController.swift in Sources */,
+				8D7A505D24782BA200B821DC /* CustomTableViewCell.swift in Sources */,
+				8D7A50632478424C00B821DC /* SongsViewController.swift in Sources */,
+				8D99A9A22479785900B624F6 /* GenresViewController.swift in Sources */,
+				8D99A9922478578700B624F6 /* SplashScreenViewController.swift in Sources */,
+				8D7A50542477EA3500B821DC /* ClickWheelProtocol.swift in Sources */,
+				8D99A9A0247973D900B624F6 /* PlaylistsViewController.swift in Sources */,
+				8D7A50522477DF0400B821DC /* MainViewController.swift in Sources */,
+				8D7A50502477D99200B821DC /* Globals.swift in Sources */,
+				8D7A50652478444E00B821DC /* PlaybackViewController.swift in Sources */,
+				8D7A5059247823FF00B821DC /* HomeViewController.swift in Sources */,
+				8D7A506124783E1B00B821DC /* MusicViewController.swift in Sources */,
+				8D7A50242477D6D600B821DC /* BasePodView.swift in Sources */,
 				8D7A50202477D6D600B821DC /* AppDelegate.swift in Sources */,
+				8D99A99C2478862800B624F6 /* AlbumsViewController.swift in Sources */,
+				8D7A505F24783C2A00B821DC /* Music.swift in Sources */,
+				8D7A50562477FB3800B821DC /* CircularGestureRecogniser.swift in Sources */,
+				8D99A9982478780C00B624F6 /* ForceTouchGestureRecogniser.swift in Sources */,
 				8D7A50222477D6D600B821DC /* SceneDelegate.swift in Sources */,
+				8D99A99A2478811A00B624F6 /* ArtistsViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -297,14 +365,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		8D7A50252477D6D600B821DC /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				8D7A50262477D6D600B821DC /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		8D7A502A2477D6D700B821DC /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -437,6 +497,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = WPY678LZM4;
 				INFOPLIST_FILE = DankPod/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -455,6 +516,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = WPY678LZM4;
 				INFOPLIST_FILE = DankPod/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
