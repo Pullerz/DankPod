@@ -113,7 +113,12 @@ class BasePodView: UIViewController, UIGestureRecognizerDelegate {
         safetyBar.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
         safetyBar.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
         safetyBar.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
-        safetyBar.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
+        if #available(iOS 11.0, *) {
+            safetyBar.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
+        } else {
+            safetyBar.bottomAnchor.constraint(equalTo: view.topAnchor).isActive = true
+        }
+        
         safetyBar.backgroundColor = .green
         
         let navBarBottom = UIView()
