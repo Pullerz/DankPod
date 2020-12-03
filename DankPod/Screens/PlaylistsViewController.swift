@@ -111,7 +111,7 @@ extension PlaylistsViewController: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = CustomTableViewCell()
-        cell.textLabel?.text = menuItems[indexPath.row].value(forProperty: MPMediaPlaylistPropertyName) as! String
+        cell.label.text = menuItems[indexPath.row].value(forProperty: MPMediaPlaylistPropertyName) as! String
         cell.selectionStyle = .none
         return cell
     }

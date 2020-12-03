@@ -11,6 +11,10 @@ import UIKit
 class CustomTableViewCell: UITableViewCell {
 
     let background: UIView = UIView()
+    let label = UILabel()
+    var indicatorButton: UIButton?
+    var indicatorButtonShouldChange: Bool = false
+
     
     init() {
         super.init(style: .default, reuseIdentifier: nil)
@@ -18,6 +22,12 @@ class CustomTableViewCell: UITableViewCell {
         self.accessoryType = .disclosureIndicator
         self.tintColor = .black
         self.selectionStyle = .blue
+        self.accessoryView?.tintColor = .white
+        if let subviews = self.accessoryView?.subviews {
+            for subview in subviews {
+                subview.tintColor = .white
+            }
+        }
     
         background.translatesAutoresizingMaskIntoConstraints = false
         self.addSubview(background)
@@ -25,9 +35,18 @@ class CustomTableViewCell: UITableViewCell {
         background.leftAnchor.constraint(equalTo: self.leftAnchor).isActive = true
         background.rightAnchor.constraint(equalTo: self.rightAnchor).isActive = true
         background.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
-        self.sendSubviewToBack(background)
         background.isHidden = true
         background.backgroundColor = .red
+        
+        guard let textLabel = self.textLabel else { return }
+        
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont(name: "Helvetica-Bold", size: 15)
+        self.addSubview(label)
+        label.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
+        label.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 15).isActive = true
+        label.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -20).isActive = true
+        
     }
     
     required init?(coder: NSCoder) {
@@ -39,6 +58,18 @@ class CustomTableViewCell: UITableViewCell {
         // Initialization code
         
     }
+    
+    override func layoutSubviews() {
+        if let indicatorButton = allSubviews.compactMap({ $0 as? UIButton }).last {
+            self.indicatorButton = indicatorButton
+            if indicatorButtonShouldChange == true && self.isSelected {
+                self.setIndicatorButtonTint(color: .white)
+                indicatorButtonShouldChange = false
+            }
+         }
+    }
+    
+    
 
     override func layoutIfNeeded() {
         let gradient: CAGradientLayer = CAGradientLayer()
@@ -53,15 +84,36 @@ class CustomTableViewCell: UITableViewCell {
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
         if (selected) {
-            self.textLabel?.textColor = .white
+            self.label.textColor = .white
             self.tintColor = .white
             self.background.isHidden = false
+
+            self.setIndicatorButtonTint(color: .white)
+            
         } else {
-            self.textLabel?.textColor = .black
+            self.label.textColor = .black
             self.tintColor = .black
             self.background.isHidden = true
+            
+            self.setIndicatorButtonTint(color: UIColor.lightGray)
         }
         // Configure the view for the selected state
     }
+    
+    func setIndicatorButtonTint(color: UIColor) {
+        if let indicatorButton = self.indicatorButton {
+            let image = indicatorButton.backgroundImage(for: .normal)?.withRenderingMode(.alwaysTemplate)
+            indicatorButton.setBackgroundImage(image, for: .normal)
+            indicatorButton.tintColor = color
+        } else {
+            indicatorButtonShouldChange = true
+        }
+    }
 
+}
+
+extension UIView {
+   var allSubviews: [UIView] {
+      return subviews.flatMap { [$0] + $0.allSubviews }
+   }
 }

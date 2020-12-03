@@ -348,7 +348,6 @@ class BasePodView: UIViewController, UIGestureRecognizerDelegate {
         
         if magnitude > 800 {
             let newVal = map(n: magnitude, start1: 0, stop1: 2000, start2: 10, stop2: 3)
-//            print(Int(newVal), magnitude)
             clickwheelResolution = Int(newVal)
         } else {
             clickwheelResolution = 10

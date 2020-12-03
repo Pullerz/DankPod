@@ -133,7 +133,7 @@ extension SongsViewController: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = CustomTableViewCell()
-        cell.textLabel?.text = menuItems[indexPath.row].title
+        cell.label.text = menuItems[indexPath.row].title
         cell.selectionStyle = .none
         return cell
     }

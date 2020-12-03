@@ -126,7 +126,7 @@ extension AlbumsViewController: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = CustomTableViewCell()
-        cell.textLabel?.text = menuItems[indexPath.row].representativeItem?.albumTitle
+        cell.label.text = menuItems[indexPath.row].representativeItem?.albumTitle
         cell.selectionStyle = .none
         return cell
     }

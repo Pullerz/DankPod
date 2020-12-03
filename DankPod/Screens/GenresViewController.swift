@@ -113,7 +113,7 @@ extension GenresViewController: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = CustomTableViewCell()
-        cell.textLabel?.text = menuItems[indexPath.row]
+        cell.label.text = menuItems[indexPath.row]
         cell.selectionStyle = .none
         return cell
     }
