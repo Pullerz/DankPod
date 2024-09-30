@@ -13,6 +13,7 @@ class HomeViewController: UIViewController, ClickWheelProtocol {
     let tableView: UITableView = UITableView()
     var vcs: [UIViewController] = [MusicViewController(), MusicViewController(), MusicViewController(), MusicViewController(), MusicViewController(), MusicViewController(), PlaybackViewController()]
     
+    var lastRotationTime = Date()
     var counter: Int = 0
     var hasSetupUI = false
     
@@ -55,15 +56,24 @@ class HomeViewController: UIViewController, ClickWheelProtocol {
     
     
     func clickWheelDidRotate(rotationDirection: RotationDirection) {
+        let timeDiff = Date().timeIntervalSince(lastRotationTime)
+        let scrollSpeedThreshold = 0.1
+        lastRotationTime = Date()
         if (rotationDirection == .CLOCKWISE) {
             if (counter + 1 <= self.menuItems.count - 1) {
                 counter += 1
+                if (timeDiff < scrollSpeedThreshold && counter + 1 <= self.menuItems.count - 1) {
+                    counter += 1
+                }
                 let ip = IndexPath(row: counter, section: 0)
                 tableView.selectRow(at: ip, animated: false, scrollPosition: .top)
             }
         } else {
             if (counter > 0) {
                 counter -= 1
+                if (timeDiff < scrollSpeedThreshold && counter > 0) {
+                    counter -= 1
+                }
                 let ip = IndexPath(row: counter, section: 0)
                 tableView.selectRow(at: ip, animated: false, scrollPosition: .top)
             }
