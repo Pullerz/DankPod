@@ -30,22 +30,20 @@ class CustomTableViewCell: UITableViewCell {
         }
     
         background.translatesAutoresizingMaskIntoConstraints = false
-        self.addSubview(background)
-        background.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
-        background.leftAnchor.constraint(equalTo: self.leftAnchor).isActive = true
-        background.rightAnchor.constraint(equalTo: self.rightAnchor).isActive = true
-        background.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
+        contentView.addSubview(background)
+        background.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
+        background.leftAnchor.constraint(equalTo: contentView.leftAnchor).isActive = true
+        background.rightAnchor.constraint(equalTo: contentView.rightAnchor).isActive = true
+        background.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
         background.isHidden = true
         background.backgroundColor = .red
         
-        guard let textLabel = self.textLabel else { return }
-        
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont(name: "Helvetica-Bold", size: 15)
-        self.addSubview(label)
-        label.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
-        label.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 15).isActive = true
-        label.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -20).isActive = true
+        contentView.addSubview(label)
+        label.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
+        label.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 15).isActive = true
+        label.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -20).isActive = true
         
     }
     
@@ -60,6 +58,7 @@ class CustomTableViewCell: UITableViewCell {
     }
     
     override func layoutSubviews() {
+        super.layoutSubviews()
         if let indicatorButton = allSubviews.compactMap({ $0 as? UIButton }).last {
             self.indicatorButton = indicatorButton
             if indicatorButtonShouldChange == true && self.isSelected {
@@ -72,6 +71,7 @@ class CustomTableViewCell: UITableViewCell {
     
 
     override func layoutIfNeeded() {
+        super.layoutIfNeeded()
         let gradient: CAGradientLayer = CAGradientLayer()
         gradient.frame = self.bounds
         gradient.colors = [UIColor.gradientLightBlue, UIColor.gradientDarkBlue].map { $0.cgColor }
