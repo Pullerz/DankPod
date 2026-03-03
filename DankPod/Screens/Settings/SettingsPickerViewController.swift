@@ -29,7 +29,7 @@ class SettingsPickerViewController: UIViewController, ClickWheelProtocol {
         AppDelegate.baseVC.navBarTitle = pickerTitle
         counter = selectedIndex
         tableView.reloadData()
-        tableView.selectRow(at: IndexPath(row: counter, section: 0), animated: false, scrollPosition: .middle)
+        tableView.selectRow(at: IndexPath(row: counter, section: 0), animated: false, scrollPosition: .none)
     }
 
     func setupUI() {

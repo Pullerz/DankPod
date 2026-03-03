@@ -50,7 +50,7 @@ class SettingsMenuViewController: UIViewController, ClickWheelProtocol {
         AppDelegate.baseVC.clickWheelDelegate = self
         AppDelegate.baseVC.navBarTitle = "Settings"
         tableView.reloadData()
-        tableView.selectRow(at: IndexPath(row: counter, section: 0), animated: false, scrollPosition: .top)
+        tableView.selectRow(at: IndexPath(row: counter, section: 0), animated: false, scrollPosition: .none)
     }
 
     func setupUI() {
