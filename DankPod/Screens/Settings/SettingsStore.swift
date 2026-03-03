@@ -175,9 +175,23 @@ class SettingsStore {
         return SettingsStore.backlightOptions[idx]
     }
 
+    // Returns the backlight timeout in seconds, or nil for "Always On" / "Off"
+    var backlightTimerDuration: TimeInterval? {
+        switch backlightTimerIndex {
+        case 0:  return 0     // Off — backlight always off (screen stays dim)
+        case 1:  return 2
+        case 2:  return 5
+        case 3:  return 10
+        case 4:  return 20
+        case 5:  return 30
+        default: return nil   // Always On — never dims
+        }
+    }
+
     private func applyBacklightTimer(index: Int) {
         // "Always On" (index 6) disables the idle timer so the screen never sleeps
         UIApplication.shared.isIdleTimerDisabled = (index == 6)
+        AppDelegate.baseVC.resetBacklightTimer()
     }
 
     // MARK: - Brightness
@@ -238,6 +252,7 @@ class SettingsStore {
         MPMusicPlayerController.systemMusicPlayer.repeatMode = .none
         UIApplication.shared.isIdleTimerDisabled = true   // Always On is the default
         AppDelegate.baseVC.setScreenBrightness(1.0)
+        AppDelegate.baseVC.resetBacklightTimer()
         UserDefaults.standard.synchronize()
     }
 }

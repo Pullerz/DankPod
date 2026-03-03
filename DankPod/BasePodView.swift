@@ -23,6 +23,8 @@ class BasePodView: UIViewController, UIGestureRecognizerDelegate {
     }
     public var screen: UIView = UIView()
     public let dimmingOverlay = UIView()
+    private var backlightTimer: Timer?
+    private var backlightIsOff = false
     public var clickWheel: UIImageView!
     public var clickWheelDelegate: ClickWheelProtocol!
     
@@ -288,6 +290,51 @@ class BasePodView: UIViewController, UIGestureRecognizerDelegate {
         dimmingOverlay.alpha = CGFloat(1.0 - clamped) * maxDimAlpha
     }
 
+    func resetBacklightTimer() {
+        backlightTimer?.invalidate()
+        backlightTimer = nil
+
+        guard let duration = SettingsStore.shared.backlightTimerDuration else {
+            // "Always On" — restore brightness, no timer
+            if backlightIsOff {
+                backlightIsOff = false
+                UIView.animate(withDuration: 0.3) {
+                    self.setScreenBrightness(SettingsStore.shared.brightness)
+                }
+            }
+            return
+        }
+
+        if duration == 0 {
+            // "Off" — backlight is always off
+            if !backlightIsOff {
+                backlightIsOff = true
+                UIView.animate(withDuration: 0.3) {
+                    self.dimmingOverlay.alpha = 0.92
+                }
+            }
+            return
+        }
+
+        // Restore brightness on interaction
+        if backlightIsOff {
+            backlightIsOff = false
+            UIView.animate(withDuration: 0.3) {
+                self.setScreenBrightness(SettingsStore.shared.brightness)
+            }
+        }
+
+        // Schedule dimming after the timeout
+        backlightTimer = Timer.scheduledTimer(timeInterval: duration, target: self, selector: #selector(backlightTimerFired), userInfo: nil, repeats: false)
+    }
+
+    @objc private func backlightTimerFired() {
+        backlightIsOff = true
+        UIView.animate(withDuration: 0.5) {
+            self.dimmingOverlay.alpha = 0.92
+        }
+    }
+
     private func setupClickWheel() {
         bodyBackground.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(bodyBackground)
@@ -432,6 +479,7 @@ class BasePodView: UIViewController, UIGestureRecognizerDelegate {
     
     @objc
     func rotateGesture(recognizer:CircleGestureRecogniser){
+        resetBacklightTimer()
         let velocity = recognizer.velocity(in: recognizer.view)
         let magnitude = sqrtf(powf(Float(velocity.x), 2) + powf(Float(velocity.y), 2))
         
@@ -475,6 +523,7 @@ class BasePodView: UIViewController, UIGestureRecognizerDelegate {
     }
     
     @objc func wheelLongPress(sender: UILongPressGestureRecognizer) {
+        resetBacklightTimer()
         let touchLocation = sender.location(ofTouch: 0, in: beneathScreen)
         let forceGenerator = UIImpactFeedbackGenerator(style: .heavy)
         
@@ -510,6 +559,7 @@ class BasePodView: UIViewController, UIGestureRecognizerDelegate {
     
     
     @objc func wheelClicked(sender: ForceTouchTapGestureRecogniser) {
+        resetBacklightTimer()
         let generator = UIImpactFeedbackGenerator(style: .light)
         let forceGenerator = UIImpactFeedbackGenerator(style: .heavy)
         let hapticsOn = SettingsStore.shared.clickerEnabled
