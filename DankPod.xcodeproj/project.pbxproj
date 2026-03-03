@@ -194,6 +194,10 @@
 				AA0001012479000000B821DC /* ExtrasMenuViewController.swift */,
 				AA0001032479000000B821DC /* GamesMenuViewController.swift */,
 				AA0001052479000000B821DC /* BrickBreakerViewController.swift */,
+				BB0001002479000000B821DC /* PhotosMenuViewController.swift */,
+				BB0001022479000000B821DC /* PhotosGridViewController.swift */,
+				BB0001042479000000B821DC /* PhotoFullScreenViewController.swift */,
+				BB0001062479000000B821DC /* PhotoSettingsViewController.swift */,
 			);
 			path = Screens;
 			sourceTree = "<group>";
