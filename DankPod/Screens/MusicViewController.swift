@@ -9,9 +9,9 @@
 import UIKit
 
 class MusicViewController: UIViewController, ClickWheelProtocol {
-    let menuItems: [String] = ["Playlists", "Artists", "Albums", "Songs", "Genres"]
+    let menuItems: [String] = ["Recently Played", "Playlists", "Artists", "Albums", "Songs", "Genres"]
     let tableView: UITableView = UITableView()
-    let vcs: [UIViewController] = [PlaylistsViewController(), ArtistsViewController(), AlbumsViewController(), SongsViewController(), GenresViewController()]
+    let vcs: [UIViewController] = [RecentlyPlayedViewController(), PlaylistsViewController(), ArtistsViewController(), AlbumsViewController(), SongsViewController(), GenresViewController()]
     
     var counter: Int = 0
     var hasSetupUI = false
