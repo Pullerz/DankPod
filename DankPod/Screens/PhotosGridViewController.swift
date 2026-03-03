@@ -121,31 +121,32 @@ class PhotosGridViewController: UIViewController, ClickWheelProtocol {
     func clickWheelDidRotate(rotationDirection: RotationDirection) {
         if photoAssets.count == 0 { return }
         
+        // Advance by one full row per tick so the grid scrolls at the same
+        // perceived speed as a list VC advancing one item per tick.
+        let step = columns
+        
         if (rotationDirection == .CLOCKWISE) {
-            if (counter + 1 <= photoAssets.count - 1) {
-                counter += 1
-                let newPage = counter / photosPerPage
-                if newPage != currentPage {
-                    currentPage = newPage
-                    collectionView.reloadData()
-                    collectionView.layoutIfNeeded()
-                }
-                let indexInPage = counter - (currentPage * photosPerPage)
-                highlightCell(at: IndexPath(item: indexInPage, section: 0))
+            if (counter + step <= photoAssets.count - 1) {
+                counter += step
+            } else {
+                counter = photoAssets.count - 1
             }
         } else {
-            if (counter > 0) {
-                counter -= 1
-                let newPage = counter / photosPerPage
-                if newPage != currentPage {
-                    currentPage = newPage
-                    collectionView.reloadData()
-                    collectionView.layoutIfNeeded()
-                }
-                let indexInPage = counter - (currentPage * photosPerPage)
-                highlightCell(at: IndexPath(item: indexInPage, section: 0))
+            if (counter - step >= 0) {
+                counter -= step
+            } else {
+                counter = 0
             }
         }
+        
+        let newPage = counter / photosPerPage
+        if newPage != currentPage {
+            currentPage = newPage
+            collectionView.reloadData()
+            collectionView.layoutIfNeeded()
+        }
+        let indexInPage = counter - (currentPage * photosPerPage)
+        highlightCell(at: IndexPath(item: indexInPage, section: 0))
     }
     
     func playPausePressed(pressure: ClickWheelTouchPressure) {

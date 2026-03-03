@@ -171,13 +171,13 @@ class PhotosMenuViewController: UIViewController, ClickWheelProtocol {
             
             if menuItems[counter] == "All Photos" {
                 let fetchOptions = PHFetchOptions()
-                fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: true)]
+                fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
                 vc.photoAssets = PHAsset.fetchAssets(with: .image, options: fetchOptions)
                 vc.albumTitle = "All Photos"
             } else {
                 let collection = albumCollections[counter]
                 let fetchOptions = PHFetchOptions()
-                fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: true)]
+                fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
                 fetchOptions.predicate = NSPredicate(format: "mediaType = %d", PHAssetMediaType.image.rawValue)
                 vc.photoAssets = PHAsset.fetchAssets(in: collection, options: fetchOptions)
                 vc.albumTitle = menuItems[counter]
