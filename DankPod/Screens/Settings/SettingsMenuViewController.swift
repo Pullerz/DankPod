@@ -18,8 +18,6 @@ class SettingsMenuViewController: UIViewController, ClickWheelProtocol {
         "About",
         "Shuffle",
         "Repeat",
-        "Main Menu",
-        "Music Menu",
         "EQ",
         "Sound Check",
         "Volume Limit",
@@ -35,7 +33,7 @@ class SettingsMenuViewController: UIViewController, ClickWheelProtocol {
     ]
 
     // Items that are not yet implemented — rendered greyed-out with no action
-    private let stubItems: Set<String> = ["Main Menu", "Music Menu", "Date & Time", "Sort By", "Language"]
+    private let stubItems: Set<String> = ["Date & Time", "Sort By", "Language"]
 
     // Items that navigate to a sub-screen (show disclosure chevron)
     private let navigationItems: Set<String> = [

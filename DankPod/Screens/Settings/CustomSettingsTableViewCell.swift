@@ -11,12 +11,14 @@ import UIKit
 class CustomSettingsTableViewCell: CustomTableViewCell {
 
     let valueLabel = UILabel()
+    private var valueRightConstraint: NSLayoutConstraint!
 
     // When true the standard disclosure chevron is shown (default).
     // Set to false for toggle/inline rows and stub rows.
     var showChevron: Bool = true {
         didSet {
             accessoryType = showChevron ? .disclosureIndicator : .none
+            valueRightConstraint.constant = showChevron ? -5 : -38
         }
     }
 
@@ -29,7 +31,8 @@ class CustomSettingsTableViewCell: CustomTableViewCell {
         valueLabel.textAlignment = .right
         contentView.addSubview(valueLabel)
         valueLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
-        valueLabel.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -5).isActive = true
+        valueRightConstraint = valueLabel.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -5)
+        valueRightConstraint.isActive = true
     }
 
     required init?(coder: NSCoder) {
