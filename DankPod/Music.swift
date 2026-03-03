@@ -120,7 +120,8 @@ class Music {
     }
     
     func setVolume(_ volume: Float) {
-        MPVolumeView.setVolume(volume)
+        let clamped = min(volume, SettingsStore.shared.volumeLimit)
+        MPVolumeView.setVolume(clamped)
     }
     
     func getCurrentQueue() -> [MPMediaItem] {

@@ -23,6 +23,7 @@ class MainViewController: BasePodView {
         navController.isNavigationBarHidden = true
         self.clickWheelDelegate = selectedViewController as? ClickWheelProtocol
         setContainerViewController(viewController: navController)
+        SettingsStore.shared.applyAllSettings()
     }
     
    
@@ -57,6 +58,7 @@ class MainViewController: BasePodView {
         
         controller.didMove(toParent: self)
         self.selectedViewController = viewController
+        self.view.bringSubviewToFront(dimmingOverlay)
         self.view.layoutIfNeeded()
     }
 

@@ -22,6 +22,7 @@ class BasePodView: UIViewController, UIGestureRecognizerDelegate {
         }
     }
     public var screen: UIView = UIView()
+    public let dimmingOverlay = UIView()
     public var clickWheel: UIImageView!
     public var clickWheelDelegate: ClickWheelProtocol!
     
@@ -129,6 +130,7 @@ class BasePodView: UIViewController, UIGestureRecognizerDelegate {
         // Do any additional setup after loading the view.
         setupNavBar()
         setupScreen()
+        setupDimmingOverlay()
         setupClickWheel()
         NotificationCenter.default.addObserver(self, selector: #selector(self.setBatteryIcon), name: UIDevice.batteryLevelDidChangeNotification, object: nil)
     }
@@ -268,6 +270,24 @@ class BasePodView: UIViewController, UIGestureRecognizerDelegate {
         screen.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.4, constant: 0).isActive = true
     }
     
+    private func setupDimmingOverlay() {
+        dimmingOverlay.translatesAutoresizingMaskIntoConstraints = false
+        dimmingOverlay.backgroundColor = .black
+        dimmingOverlay.alpha = 0.0
+        dimmingOverlay.isUserInteractionEnabled = false
+        view.addSubview(dimmingOverlay)
+        dimmingOverlay.topAnchor.constraint(equalTo: navBar.topAnchor).isActive = true
+        dimmingOverlay.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
+        dimmingOverlay.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
+        dimmingOverlay.bottomAnchor.constraint(equalTo: screen.bottomAnchor).isActive = true
+    }
+
+    func setScreenBrightness(_ brightness: Float) {
+        let clamped = max(0.0, min(1.0, brightness))
+        let maxDimAlpha: CGFloat = 0.7
+        dimmingOverlay.alpha = CGFloat(1.0 - clamped) * maxDimAlpha
+    }
+
     private func setupClickWheel() {
         bodyBackground.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(bodyBackground)

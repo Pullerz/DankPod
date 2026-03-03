@@ -128,7 +128,6 @@ class SettingsStore {
         set {
             let clamped = max(0.0, min(1.0, newValue))
             UserDefaults.standard.set(clamped, forKey: Keys.volumeLimit)
-            MPVolumeView.setVolume(clamped)
         }
     }
 
@@ -188,7 +187,7 @@ class SettingsStore {
         set {
             let clamped = max(0.0, min(1.0, newValue))
             UserDefaults.standard.set(clamped, forKey: Keys.brightness)
-            UIScreen.main.brightness = CGFloat(clamped)
+            AppDelegate.baseVC.setScreenBrightness(clamped)
         }
     }
 
@@ -197,6 +196,30 @@ class SettingsStore {
     var clickerEnabled: Bool {
         get { return UserDefaults.standard.bool(forKey: Keys.clickerEnabled) }
         set { UserDefaults.standard.set(newValue, forKey: Keys.clickerEnabled) }
+    }
+
+    // MARK: - Apply All (called on app launch)
+
+    func applyAllSettings() {
+        // Shuffle
+        switch shuffle {
+        case "songs":  MPMusicPlayerController.systemMusicPlayer.shuffleMode = .songs
+        case "albums": MPMusicPlayerController.systemMusicPlayer.shuffleMode = .albums
+        default:       MPMusicPlayerController.systemMusicPlayer.shuffleMode = .off
+        }
+
+        // Repeat
+        switch repeatMode {
+        case "one": MPMusicPlayerController.systemMusicPlayer.repeatMode = .one
+        case "all": MPMusicPlayerController.systemMusicPlayer.repeatMode = .all
+        default:    MPMusicPlayerController.systemMusicPlayer.repeatMode = .none
+        }
+
+        // Backlight
+        applyBacklightTimer(index: backlightTimerIndex)
+
+        // Brightness overlay
+        AppDelegate.baseVC.setScreenBrightness(brightness)
     }
 
     // MARK: - Reset
@@ -214,6 +237,7 @@ class SettingsStore {
         MPMusicPlayerController.systemMusicPlayer.shuffleMode = .off
         MPMusicPlayerController.systemMusicPlayer.repeatMode = .none
         UIApplication.shared.isIdleTimerDisabled = true   // Always On is the default
+        AppDelegate.baseVC.setScreenBrightness(1.0)
         UserDefaults.standard.synchronize()
     }
 }

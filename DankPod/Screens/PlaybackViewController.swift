@@ -229,8 +229,10 @@ class PlaybackViewController: UIViewController, ClickWheelProtocol {
             self.lowVolume.alpha = 1
             self.highVolume.alpha = 1
         }
+        let limit = SettingsStore.shared.volumeLimit
         if (rotationDirection == .CLOCKWISE) {
-            volumeBar.setProgress(volumeBar.progress + 0.1, animated: true)
+            let newVolume = min(volumeBar.progress + 0.1, limit)
+            volumeBar.setProgress(newVolume, animated: true)
         } else {
             volumeBar.setProgress(volumeBar.progress - 0.1, animated: true)
         }

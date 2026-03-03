@@ -25,7 +25,6 @@ class SettingsMenuViewController: UIViewController, ClickWheelProtocol {
         "Backlight",
         "Brightness",
         "General",
-        "Date & Time",
         "Sort By",
         "Language",
         "Legal",
@@ -33,7 +32,7 @@ class SettingsMenuViewController: UIViewController, ClickWheelProtocol {
     ]
 
     // Items that are not yet implemented — rendered greyed-out with no action
-    private let stubItems: Set<String> = ["Date & Time", "Sort By", "Language"]
+    private let stubItems: Set<String> = ["Sort By", "Language"]
 
     // Items that navigate to a sub-screen (show disclosure chevron)
     private let navigationItems: Set<String> = [
