@@ -47,9 +47,9 @@ class BrickBreakerViewController: UIViewController, ClickWheelProtocol {
     let brickHeight: CGFloat = 10.0
     let brickSpacing: CGFloat = 2.0
     let brickTopOffset: CGFloat = 4.0
-    let paddleHeight: CGFloat = 5.0
+    let paddleHeight: CGFloat = 10.0
     let paddleBottomOffset: CGFloat = 12.0
-    let ballSize: CGFloat = 7.0
+    let ballSize: CGFloat = 9.0
 
     override func viewWillAppear(_ animated: Bool) {
         setupUI()
@@ -109,12 +109,16 @@ class BrickBreakerViewController: UIViewController, ClickWheelProtocol {
     }
 
     func applyBackgroundGradient() {
-        view.layer.sublayers?.removeAll(where: { $0 is CAGradientLayer })
+        // Remove only the named background gradient, not the brick/ball gradients
+        view.layer.sublayers?
+            .filter { $0.name == "bbBackground" }
+            .forEach { $0.removeFromSuperlayer() }
         let gradient = CAGradientLayer()
+        gradient.name = "bbBackground"
         gradient.frame = view.bounds
         gradient.colors = [
-            UIColor(red: 100/255.0, green: 160/255.0, blue: 210/255.0, alpha: 1.0).cgColor,
-            UIColor(red: 60/255.0, green: 110/255.0, blue: 170/255.0, alpha: 1.0).cgColor
+            UIColor(red: 140/255.0, green: 190/255.0, blue: 230/255.0, alpha: 1.0).cgColor,
+            UIColor(red: 100/255.0, green: 155/255.0, blue: 205/255.0, alpha: 1.0).cgColor
         ]
         gradient.startPoint = CGPoint(x: 0.5, y: 0.0)
         gradient.endPoint = CGPoint(x: 0.5, y: 1.0)
@@ -124,18 +128,29 @@ class BrickBreakerViewController: UIViewController, ClickWheelProtocol {
     func setupUI() {
         if !hasSetupUI {
             view.clipsToBounds = true
-            view.backgroundColor = UIColor(red: 80/255.0, green: 130/255.0, blue: 190/255.0, alpha: 1.0)
+            view.backgroundColor = UIColor(red: 120/255.0, green: 172/255.0, blue: 217/255.0, alpha: 1.0)
 
             // Create bricks
             createBricks()
 
-            // Create ball — small black square (no corner radius), like the original
+            // Create ball — circular with sphere gradient
             ball = UIView()
             ball.frame = CGRect(x: 0, y: 0, width: ballSize, height: ballSize)
-            ball.backgroundColor = .black
+            ball.layer.cornerRadius = ballSize / 2
+            ball.clipsToBounds = true
+            ball.backgroundColor = UIColor(red: 30/255.0, green: 30/255.0, blue: 30/255.0, alpha: 1.0)
+            let ballGradient = CAGradientLayer()
+            ballGradient.frame = CGRect(x: 0, y: 0, width: ballSize, height: ballSize)
+            ballGradient.colors = [
+                UIColor(white: 1.0, alpha: 0.9).cgColor,
+                UIColor(white: 0.15, alpha: 1.0).cgColor
+            ]
+            ballGradient.startPoint = CGPoint(x: 0.2, y: 0.05)
+            ballGradient.endPoint = CGPoint(x: 0.85, y: 0.95)
+            ball.layer.addSublayer(ballGradient)
             view.addSubview(ball)
 
-            // Create paddle — short black rounded rect
+            // Create paddle — block-sized solid black rectangle
             let paddleWidth = view.bounds.width * 0.22
             paddle = UIView()
             paddle.frame = CGRect(x: 0, y: 0, width: paddleWidth, height: paddleHeight)
@@ -184,17 +199,32 @@ class BrickBreakerViewController: UIViewController, ClickWheelProtocol {
         ]
 
         for row in 0..<brickRows {
+            let baseColor = rowColors[row]
+            // Lighter tint for top of gradient
+            var h: CGFloat = 0, s: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
+            baseColor.getHue(&h, saturation: &s, brightness: &b, alpha: &a)
+            let lightColor = UIColor(hue: h, saturation: max(s - 0.15, 0), brightness: min(b + 0.25, 1.0), alpha: a)
+            let darkColor  = UIColor(hue: h, saturation: min(s + 0.1, 1.0), brightness: max(b - 0.15, 0), alpha: a)
+
             for col in 0..<brickColumns {
                 let brick = UIView()
                 let x = CGFloat(col) * (brickWidth + brickSpacing)
                 let y = brickTopOffset + CGFloat(row) * (brickHeight + brickSpacing)
                 brick.frame = CGRect(x: x, y: y, width: brickWidth, height: brickHeight)
-                brick.backgroundColor = rowColors[row]
+                brick.backgroundColor = baseColor
 
-                // Blocky shadow to match original iPod look
+                // Subtle top-to-bottom gradient for depth
+                let brickGrad = CAGradientLayer()
+                brickGrad.frame = CGRect(x: 0, y: 0, width: brickWidth, height: brickHeight)
+                brickGrad.colors = [lightColor.cgColor, darkColor.cgColor]
+                brickGrad.startPoint = CGPoint(x: 0.5, y: 0.0)
+                brickGrad.endPoint = CGPoint(x: 0.5, y: 1.0)
+                brick.layer.addSublayer(brickGrad)
+
+                // Blocky drop shadow
                 brick.layer.shadowColor = UIColor.black.cgColor
                 brick.layer.shadowOffset = CGSize(width: 1, height: 2)
-                brick.layer.shadowOpacity = 0.6
+                brick.layer.shadowOpacity = 0.5
                 brick.layer.shadowRadius = 0
 
                 view.addSubview(brick)

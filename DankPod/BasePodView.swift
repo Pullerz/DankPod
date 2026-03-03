@@ -50,9 +50,9 @@ class BasePodView: UIViewController, UIGestureRecognizerDelegate {
     let batteryIcon: UIImageView = UIImageView()
     let queueIcon: UIImageView = UIImageView()
 
-    // Game HUD labels (hidden by default, shown by game screens)
+    // Game HUD (hidden by default, shown by game screens)
     private let navBarScoreLabel = UILabel()
-    private let navBarBallsLabel = UILabel()
+    private let navBarBallsContainer = UIView()
 
     public var navBarScore: Int? {
         didSet {
@@ -67,13 +67,38 @@ class BasePodView: UIViewController, UIGestureRecognizerDelegate {
 
     public var navBarBalls: Int? {
         didSet {
-            if let balls = navBarBalls {
-                navBarBallsLabel.text = "\(balls)"
-                navBarBallsLabel.isHidden = false
-            } else {
-                navBarBallsLabel.isHidden = true
+            navBarBallsContainer.isHidden = navBarBalls == nil
+            guard let count = navBarBalls else { return }
+            navBarBallsContainer.subviews.forEach { $0.removeFromSuperview() }
+            let ballDiameter: CGFloat = 7
+            let ballSpacing: CGFloat = 3
+            for i in 0..<max(count, 0) {
+                let b = makeNavBallView(diameter: ballDiameter)
+                b.frame = CGRect(x: CGFloat(i) * (ballDiameter + ballSpacing), y: 0, width: ballDiameter, height: ballDiameter)
+                navBarBallsContainer.addSubview(b)
             }
+            let totalWidth = CGFloat(max(count, 0)) * (ballDiameter + ballSpacing) - (count > 0 ? ballSpacing : 0)
+            navBarBallsContainer.frame.size.width = max(totalWidth, 0)
         }
+    }
+
+    private func makeNavBallView(diameter: CGFloat) -> UIView {
+        let container = UIView(frame: CGRect(x: 0, y: 0, width: diameter, height: diameter))
+        container.layer.cornerRadius = diameter / 2
+        container.clipsToBounds = true
+        // Base dark colour
+        container.backgroundColor = UIColor(red: 40/255, green: 40/255, blue: 40/255, alpha: 1)
+        // Diagonal highlight gradient to simulate a sphere
+        let grad = CAGradientLayer()
+        grad.frame = container.bounds
+        grad.colors = [
+            UIColor(white: 1.0, alpha: 0.85).cgColor,
+            UIColor(white: 0.3, alpha: 0.9).cgColor
+        ]
+        grad.startPoint = CGPoint(x: 0.2, y: 0.1)
+        grad.endPoint = CGPoint(x: 0.9, y: 0.9)
+        container.layer.addSublayer(grad)
+        return container
     }
     
     var currentValue:CGFloat = 0.0 {
@@ -223,14 +248,14 @@ class BasePodView: UIViewController, UIGestureRecognizerDelegate {
         navBarScoreLabel.textColor = .black
         navBarScoreLabel.isHidden = true
 
-        // Balls label — shown right of play/pause icon during game screens
-        navBarBallsLabel.translatesAutoresizingMaskIntoConstraints = false
-        navBar.addSubview(navBarBallsLabel)
-        navBarBallsLabel.leftAnchor.constraint(equalTo: playbackStatusIcon.rightAnchor, constant: 6).isActive = true
-        navBarBallsLabel.centerYAnchor.constraint(equalTo: navBarTitleLabel.centerYAnchor).isActive = true
-        navBarBallsLabel.font = UIFont(name: "Helvetica-Bold", size: 13)
-        navBarBallsLabel.textColor = .black
-        navBarBallsLabel.isHidden = true
+        // Ball icons container — shown right of play/pause icon during game screens
+        navBarBallsContainer.translatesAutoresizingMaskIntoConstraints = false
+        navBar.addSubview(navBarBallsContainer)
+        navBarBallsContainer.leftAnchor.constraint(equalTo: playbackStatusIcon.rightAnchor, constant: 5).isActive = true
+        navBarBallsContainer.centerYAnchor.constraint(equalTo: navBarTitleLabel.centerYAnchor).isActive = true
+        navBarBallsContainer.heightAnchor.constraint(equalToConstant: 7).isActive = true
+        navBarBallsContainer.widthAnchor.constraint(equalToConstant: 33).isActive = true
+        navBarBallsContainer.isHidden = true
     }
 
     
