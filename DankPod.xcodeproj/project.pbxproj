@@ -46,10 +46,6 @@
 		CC0001132479000000C821DC /* SettingsGeneralViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC0001122479000000C821DC /* SettingsGeneralViewController.swift */; };
 		CC0001152479000000C821DC /* SettingsLegalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC0001142479000000C821DC /* SettingsLegalViewController.swift */; };
 		CC0001172479000000C821DC /* SettingsResetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC0001162479000000C821DC /* SettingsResetViewController.swift */; };
-		DD0001012479000000D821DC /* MusicKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD0001002479000000D821DC /* MusicKitService.swift */; };
-		DD0001032479000000D821DC /* MadeForYouViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD0001022479000000D821DC /* MadeForYouViewController.swift */; };
-		DD0001052479000000D821DC /* MadeForYouSongsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD0001042479000000D821DC /* MadeForYouSongsViewController.swift */; };
-		EE0001012479000000E821DC /* RecentlyPlayedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0001002479000000E821DC /* RecentlyPlayedViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -115,7 +111,6 @@
 		CC0001122479000000C821DC /* SettingsGeneralViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsGeneralViewController.swift; sourceTree = "<group>"; };
 		CC0001142479000000C821DC /* SettingsLegalViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsLegalViewController.swift; sourceTree = "<group>"; };
 		CC0001162479000000C821DC /* SettingsResetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsResetViewController.swift; sourceTree = "<group>"; };
-		EE0001002479000000E821DC /* RecentlyPlayedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentlyPlayedViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -222,7 +217,6 @@
 				BB0001042479000000B821DC /* PhotoFullScreenViewController.swift */,
 				BB0001062479000000B821DC /* PhotoSettingsViewController.swift */,
 				CC0001182479000000C821DC /* Settings */,
-				EE0001002479000000E821DC /* RecentlyPlayedViewController.swift */,
 			);
 			path = Screens;
 			sourceTree = "<group>";
@@ -408,7 +402,6 @@
 				CC0001132479000000C821DC /* SettingsGeneralViewController.swift in Sources */,
 				CC0001152479000000C821DC /* SettingsLegalViewController.swift in Sources */,
 				CC0001172479000000C821DC /* SettingsResetViewController.swift in Sources */,
-				EE0001012479000000E821DC /* RecentlyPlayedViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
