@@ -9,15 +9,21 @@
 import UIKit
 
 class MusicViewController: UIViewController, ClickWheelProtocol {
-    let menuItems: [String] = ["Playlists", "Artists", "Albums", "Songs", "Genres"]
+    var menuItems: [String] = ["Cover Flow", "Recently Played", "Playlists", "Artists", "Albums", "Songs", "Genres", "Search"]
     let tableView: UITableView = UITableView()
-    let vcs: [UIViewController] = [PlaylistsViewController(), ArtistsViewController(), AlbumsViewController(), SongsViewController(), GenresViewController()]
+    var vcs: [UIViewController] = [CoverFlowViewController(), RecentlyPlayedViewController(), PlaylistsViewController(), ArtistsViewController(), AlbumsViewController(), SongsViewController(), GenresViewController(), SearchViewController()]
     
     var counter: Int = 0
     var hasSetupUI = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        // Conditionally add Made For You if iOS 15+ (requires MusicKit)
+        if #available(iOS 15.0, *) {
+            // Insert after "Recently Played" (index 2)
+            menuItems.insert("Made For You", at: 2)
+            vcs.insert(MadeForYouViewController(), at: 2)
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {

@@ -46,6 +46,17 @@
 		CC0001132479000000C821DC /* SettingsGeneralViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC0001122479000000C821DC /* SettingsGeneralViewController.swift */; };
 		CC0001152479000000C821DC /* SettingsLegalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC0001142479000000C821DC /* SettingsLegalViewController.swift */; };
 		CC0001172479000000C821DC /* SettingsResetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC0001162479000000C821DC /* SettingsResetViewController.swift */; };
+		DD0001012479000000D821DC /* MadeForYouViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD0001002479000000D821DC /* MadeForYouViewController.swift */; };
+		DD0001032479000000D821DC /* MadeForYouSongsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD0001022479000000D821DC /* MadeForYouSongsViewController.swift */; };
+		DD0001052479000000D821DC /* MusicKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD0001042479000000D821DC /* MusicKitService.swift */; };
+		EE0001012479000000E821DC /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0001002479000000E821DC /* SearchViewController.swift */; };
+		FF0001012479000000F821DC /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF0001002479000000F821DC /* Theme.swift */; };
+		FF0001032479000000F821DC /* SettingsColorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF0001022479000000F821DC /* SettingsColorViewController.swift */; };
+		FF0001052479000000F821DC /* CoverFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF0001042479000000F821DC /* CoverFlowLayout.swift */; };
+		FF0001072479000000F821DC /* CoverFlowCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF0001062479000000F821DC /* CoverFlowCell.swift */; };
+		FF0001092479000000F821DC /* CoverFlowViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF0001082479000000F821DC /* CoverFlowViewController.swift */; };
+		FF00010B2479000000F821DC /* CoverFlowAlbumViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF00010A2479000000F821DC /* CoverFlowAlbumViewController.swift */; };
+		FF00010D2479000000F821DC /* RecentlyPlayedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF00010C2479000000F821DC /* RecentlyPlayedViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -111,6 +122,17 @@
 		CC0001122479000000C821DC /* SettingsGeneralViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsGeneralViewController.swift; sourceTree = "<group>"; };
 		CC0001142479000000C821DC /* SettingsLegalViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsLegalViewController.swift; sourceTree = "<group>"; };
 		CC0001162479000000C821DC /* SettingsResetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsResetViewController.swift; sourceTree = "<group>"; };
+		DD0001002479000000D821DC /* MadeForYouViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MadeForYouViewController.swift; sourceTree = "<group>"; };
+		DD0001022479000000D821DC /* MadeForYouSongsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MadeForYouSongsViewController.swift; sourceTree = "<group>"; };
+		DD0001042479000000D821DC /* MusicKitService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicKitService.swift; sourceTree = "<group>"; };
+		EE0001002479000000E821DC /* SearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
+		FF0001002479000000F821DC /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		FF0001022479000000F821DC /* SettingsColorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsColorViewController.swift; sourceTree = "<group>"; };
+		FF0001042479000000F821DC /* CoverFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoverFlowLayout.swift; sourceTree = "<group>"; };
+		FF0001062479000000F821DC /* CoverFlowCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoverFlowCell.swift; sourceTree = "<group>"; };
+		FF0001082479000000F821DC /* CoverFlowViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoverFlowViewController.swift; sourceTree = "<group>"; };
+		FF00010A2479000000F821DC /* CoverFlowAlbumViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoverFlowAlbumViewController.swift; sourceTree = "<group>"; };
+		FF00010C2479000000F821DC /* RecentlyPlayedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentlyPlayedViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -176,6 +198,8 @@
 				8D7A50352477D6D700B821DC /* DankPodTests */,
 				8D99A9912478578700B624F6 /* SplashScreenViewController.swift */,
 				8D99A9972478780C00B624F6 /* ForceTouchGestureRecogniser.swift */,
+				DD0001042479000000D821DC /* MusicKitService.swift */,
+				FF0001002479000000F821DC /* Theme.swift */,
 			);
 			path = DankPod;
 			sourceTree = "<group>";
@@ -216,7 +240,12 @@
 				BB0001022479000000B821DC /* PhotosGridViewController.swift */,
 				BB0001042479000000B821DC /* PhotoFullScreenViewController.swift */,
 				BB0001062479000000B821DC /* PhotoSettingsViewController.swift */,
+				DD0001002479000000D821DC /* MadeForYouViewController.swift */,
+				DD0001022479000000D821DC /* MadeForYouSongsViewController.swift */,
+				EE0001002479000000E821DC /* SearchViewController.swift */,
 				CC0001182479000000C821DC /* Settings */,
+				FF00010E2479000000F821DC /* CoverFlow */,
+				FF00010C2479000000F821DC /* RecentlyPlayedViewController.swift */,
 			);
 			path = Screens;
 			sourceTree = "<group>";
@@ -233,8 +262,20 @@
 				CC0001122479000000C821DC /* SettingsGeneralViewController.swift */,
 				CC0001142479000000C821DC /* SettingsLegalViewController.swift */,
 				CC0001162479000000C821DC /* SettingsResetViewController.swift */,
+				FF0001022479000000F821DC /* SettingsColorViewController.swift */,
 			);
 			path = Settings;
+			sourceTree = "<group>";
+		};
+		FF00010E2479000000F821DC /* CoverFlow */ = {
+			isa = PBXGroup;
+			children = (
+				FF0001042479000000F821DC /* CoverFlowLayout.swift */,
+				FF0001062479000000F821DC /* CoverFlowCell.swift */,
+				FF0001082479000000F821DC /* CoverFlowViewController.swift */,
+				FF00010A2479000000F821DC /* CoverFlowAlbumViewController.swift */,
+			);
+			path = CoverFlow;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -402,6 +443,17 @@
 				CC0001132479000000C821DC /* SettingsGeneralViewController.swift in Sources */,
 				CC0001152479000000C821DC /* SettingsLegalViewController.swift in Sources */,
 				CC0001172479000000C821DC /* SettingsResetViewController.swift in Sources */,
+				DD0001012479000000D821DC /* MadeForYouViewController.swift in Sources */,
+				DD0001032479000000D821DC /* MadeForYouSongsViewController.swift in Sources */,
+				DD0001052479000000D821DC /* MusicKitService.swift in Sources */,
+				EE0001012479000000E821DC /* SearchViewController.swift in Sources */,
+				FF0001012479000000F821DC /* Theme.swift in Sources */,
+				FF0001032479000000F821DC /* SettingsColorViewController.swift in Sources */,
+				FF0001052479000000F821DC /* CoverFlowLayout.swift in Sources */,
+				FF0001072479000000F821DC /* CoverFlowCell.swift in Sources */,
+				FF0001092479000000F821DC /* CoverFlowViewController.swift in Sources */,
+				FF00010B2479000000F821DC /* CoverFlowAlbumViewController.swift in Sources */,
+				FF00010D2479000000F821DC /* RecentlyPlayedViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
