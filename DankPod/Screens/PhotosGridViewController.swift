@@ -39,7 +39,7 @@ class PhotosGridViewController: UIViewController, ClickWheelProtocol {
     
     func setupUI() {
         if !hasSetupUI {
-            self.view.backgroundColor = .black
+            self.view.backgroundColor = .white
             
             let cellWidth = (UIScreen.main.bounds.width - spacing * CGFloat(columns - 1)) / CGFloat(columns)
             thumbnailSize = CGSize(width: cellWidth * UIScreen.main.scale, height: cellWidth * UIScreen.main.scale)
@@ -52,7 +52,7 @@ class PhotosGridViewController: UIViewController, ClickWheelProtocol {
             
             collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
             collectionView.translatesAutoresizingMaskIntoConstraints = false
-            collectionView.backgroundColor = .black
+            collectionView.backgroundColor = .white
             collectionView.register(PhotoThumbnailCell.self, forCellWithReuseIdentifier: "PhotoCell")
             collectionView.delegate = self
             collectionView.dataSource = self
@@ -67,7 +67,7 @@ class PhotosGridViewController: UIViewController, ClickWheelProtocol {
             noPhotosLabel.translatesAutoresizingMaskIntoConstraints = false
             noPhotosLabel.text = "No Photos"
             noPhotosLabel.font = UIFont(name: "Helvetica-Bold", size: 17)
-            noPhotosLabel.textColor = .white
+            noPhotosLabel.textColor = .black
             noPhotosLabel.textAlignment = .center
             noPhotosLabel.isHidden = true
             view.addSubview(noPhotosLabel)
