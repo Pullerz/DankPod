@@ -30,6 +30,13 @@
 		8D99A99C2478862800B624F6 /* AlbumsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99A99B2478862800B624F6 /* AlbumsViewController.swift */; };
 		8D99A9A0247973D900B624F6 /* PlaylistsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99A99F247973D900B624F6 /* PlaylistsViewController.swift */; };
 		8D99A9A22479785900B624F6 /* GenresViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D99A9A12479785900B624F6 /* GenresViewController.swift */; };
+		AA0001022479000000B821DC /* ExtrasMenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0001012479000000B821DC /* ExtrasMenuViewController.swift */; };
+		AA0001042479000000B821DC /* GamesMenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0001032479000000B821DC /* GamesMenuViewController.swift */; };
+		AA0001062479000000B821DC /* BrickBreakerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0001052479000000B821DC /* BrickBreakerViewController.swift */; };
+		BB0001012479000000B821DC /* PhotosMenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0001002479000000B821DC /* PhotosMenuViewController.swift */; };
+		BB0001032479000000B821DC /* PhotosGridViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0001022479000000B821DC /* PhotosGridViewController.swift */; };
+		BB0001052479000000B821DC /* PhotoFullScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0001042479000000B821DC /* PhotoFullScreenViewController.swift */; };
+		BB0001072479000000B821DC /* PhotoSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0001062479000000B821DC /* PhotoSettingsViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -79,6 +86,13 @@
 		8D99A99B2478862800B624F6 /* AlbumsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumsViewController.swift; sourceTree = "<group>"; };
 		8D99A99F247973D900B624F6 /* PlaylistsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistsViewController.swift; sourceTree = "<group>"; };
 		8D99A9A12479785900B624F6 /* GenresViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenresViewController.swift; sourceTree = "<group>"; };
+		AA0001012479000000B821DC /* ExtrasMenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtrasMenuViewController.swift; sourceTree = "<group>"; };
+		AA0001032479000000B821DC /* GamesMenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GamesMenuViewController.swift; sourceTree = "<group>"; };
+		AA0001052479000000B821DC /* BrickBreakerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrickBreakerViewController.swift; sourceTree = "<group>"; };
+		BB0001002479000000B821DC /* PhotosMenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotosMenuViewController.swift; sourceTree = "<group>"; };
+		BB0001022479000000B821DC /* PhotosGridViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotosGridViewController.swift; sourceTree = "<group>"; };
+		BB0001042479000000B821DC /* PhotoFullScreenViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoFullScreenViewController.swift; sourceTree = "<group>"; };
+		BB0001062479000000B821DC /* PhotoSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoSettingsViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -177,6 +191,9 @@
 				8D99A99B2478862800B624F6 /* AlbumsViewController.swift */,
 				8D99A99F247973D900B624F6 /* PlaylistsViewController.swift */,
 				8D99A9A12479785900B624F6 /* GenresViewController.swift */,
+				AA0001012479000000B821DC /* ExtrasMenuViewController.swift */,
+				AA0001032479000000B821DC /* GamesMenuViewController.swift */,
+				AA0001052479000000B821DC /* BrickBreakerViewController.swift */,
 			);
 			path = Screens;
 			sourceTree = "<group>";
@@ -330,6 +347,9 @@
 				8D99A9982478780C00B624F6 /* ForceTouchGestureRecogniser.swift in Sources */,
 				8D7A50222477D6D600B821DC /* SceneDelegate.swift in Sources */,
 				8D99A99A2478811A00B624F6 /* ArtistsViewController.swift in Sources */,
+				AA0001022479000000B821DC /* ExtrasMenuViewController.swift in Sources */,
+				AA0001042479000000B821DC /* GamesMenuViewController.swift in Sources */,
+				AA0001062479000000B821DC /* BrickBreakerViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -496,7 +516,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 2;
-				DEVELOPMENT_TEAM = WPY678LZM4;
+				DEVELOPMENT_TEAM = 3V42NKR387;
 				INFOPLIST_FILE = DankPod/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -516,7 +536,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 2;
-				DEVELOPMENT_TEAM = WPY678LZM4;
+				DEVELOPMENT_TEAM = 3V42NKR387;
 				INFOPLIST_FILE = DankPod/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
