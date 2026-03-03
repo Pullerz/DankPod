@@ -11,7 +11,7 @@ import UIKit
 class HomeViewController: UIViewController, ClickWheelProtocol {
     var menuItems: [String] = ["Music", "Photos", "Videos", "Extras", "Settings", "Shuffle Songs"]
     let tableView: UITableView = UITableView()
-    var vcs: [UIViewController] = [MusicViewController(), MusicViewController(), MusicViewController(), ExtrasMenuViewController(), MusicViewController(), MusicViewController(), PlaybackViewController()]
+    var vcs: [UIViewController] = [MusicViewController(), PhotosMenuViewController(), MusicViewController(), ExtrasMenuViewController(), MusicViewController(), MusicViewController(), PlaybackViewController()]
     
     var counter: Int = 0
     var hasSetupUI = false

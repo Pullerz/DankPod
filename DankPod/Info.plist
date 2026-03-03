@@ -22,6 +22,8 @@
 	<true/>
 	<key>NSAppleMusicUsageDescription</key>
 	<string>To play ya choons eh</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>DankPod needs access to your photos to display them in the classic iPod photo browser.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

@@ -354,6 +354,10 @@
 				AA0001022479000000B821DC /* ExtrasMenuViewController.swift in Sources */,
 				AA0001042479000000B821DC /* GamesMenuViewController.swift in Sources */,
 				AA0001062479000000B821DC /* BrickBreakerViewController.swift in Sources */,
+				BB0001012479000000B821DC /* PhotosMenuViewController.swift in Sources */,
+				BB0001032479000000B821DC /* PhotosGridViewController.swift in Sources */,
+				BB0001052479000000B821DC /* PhotoFullScreenViewController.swift in Sources */,
+				BB0001072479000000B821DC /* PhotoSettingsViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
