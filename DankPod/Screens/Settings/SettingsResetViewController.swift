@@ -48,12 +48,12 @@ class SettingsResetViewController: UIViewController, ClickWheelProtocol {
         if rotationDirection == .CLOCKWISE {
             if counter + 1 <= menuItems.count - 1 {
                 counter += 1
-                tableView.selectRow(at: IndexPath(row: counter, section: 0), animated: false, scrollPosition: .none)
+                tableView.selectRow(at: IndexPath(row: counter, section: 0), animated: false, scrollPosition: .bottom)
             }
         } else {
             if counter > 0 {
                 counter -= 1
-                tableView.selectRow(at: IndexPath(row: counter, section: 0), animated: false, scrollPosition: .none)
+                tableView.selectRow(at: IndexPath(row: counter, section: 0), animated: false, scrollPosition: .bottom)
             }
         }
     }

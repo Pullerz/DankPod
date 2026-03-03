@@ -29,7 +29,7 @@ class CustomSettingsTableViewCell: CustomTableViewCell {
         valueLabel.textAlignment = .right
         contentView.addSubview(valueLabel)
         valueLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
-        valueLabel.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -36).isActive = true
+        valueLabel.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -5).isActive = true
     }
 
     required init?(coder: NSCoder) {
