@@ -10,7 +10,6 @@ import UIKit
 
 class SettingsLegalViewController: UIViewController, ClickWheelProtocol {
 
-    private let scrollView = UIScrollView()
     private let textView = UITextView()
     var hasSetupUI = false
 
@@ -102,28 +101,21 @@ Last updated: ages ago, probably.
 
     func setupUI() {
         if !hasSetupUI {
-            scrollView.translatesAutoresizingMaskIntoConstraints = false
-            view.addSubview(scrollView)
-            scrollView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
-            scrollView.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
-            scrollView.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
-            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
-
             textView.translatesAutoresizingMaskIntoConstraints = false
             textView.isEditable = false
             textView.isSelectable = false
+            textView.isScrollEnabled = true
             textView.font = UIFont.systemFont(ofSize: 12)
             textView.textColor = .black
             textView.backgroundColor = .white
             textView.text = SettingsLegalViewController.legalText
             textView.textContainerInset = UIEdgeInsets(top: 8, left: 10, bottom: 8, right: 10)
-            scrollView.addSubview(textView)
+            view.addSubview(textView)
 
-            textView.topAnchor.constraint(equalTo: scrollView.topAnchor).isActive = true
-            textView.leftAnchor.constraint(equalTo: scrollView.leftAnchor).isActive = true
-            textView.rightAnchor.constraint(equalTo: scrollView.rightAnchor).isActive = true
-            textView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor).isActive = true
-            textView.widthAnchor.constraint(equalTo: scrollView.widthAnchor).isActive = true
+            textView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+            textView.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
+            textView.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
+            textView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
 
             hasSetupUI = true
         }
@@ -133,10 +125,10 @@ Last updated: ages ago, probably.
 
     func clickWheelDidRotate(rotationDirection: RotationDirection) {
         let offset: CGFloat = rotationDirection == .CLOCKWISE ? 20 : -20
-        let currentY = scrollView.contentOffset.y
-        let maxY = scrollView.contentSize.height - scrollView.frame.height
+        let currentY = textView.contentOffset.y
+        let maxY = textView.contentSize.height - textView.frame.height
         let newY = max(0, min(maxY, currentY + offset))
-        scrollView.setContentOffset(CGPoint(x: 0, y: newY), animated: false)
+        textView.setContentOffset(CGPoint(x: 0, y: newY), animated: false)
     }
 
     func playPausePressed(pressure: ClickWheelTouchPressure) {
