@@ -98,8 +98,10 @@ class HomeViewController: UIViewController, ClickWheelProtocol {
         
         
         if menuItems[counter] == "Now Playing" {
+            let queue = AppDelegate.music.getCurrentQueue()
+            guard !queue.isEmpty else { return }
             let vc = vcs[counter] as! PlaybackViewController
-            vc.songs = AppDelegate.music.getCurrentQueue()
+            vc.songs = queue
             vc.startingIndex = AppDelegate.music.musicPlayer.indexOfNowPlayingItem
             vc.comingFromHome = true
             self.navigationController?.pushViewController(vc, animated: true)

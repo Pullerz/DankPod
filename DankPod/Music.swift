@@ -125,7 +125,8 @@ class Music {
     }
     
     func getCurrentQueue() -> [MPMediaItem] {
-        if let items = (musicPlayer.value(forKey: "queueAsQuery") as! MPMediaQuery).items {
+        if let query = musicPlayer.value(forKey: "queueAsQuery") as? MPMediaQuery,
+           let items = query.items {
             return items
         }
         return []
