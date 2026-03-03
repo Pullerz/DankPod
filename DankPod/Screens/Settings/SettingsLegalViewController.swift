@@ -17,25 +17,77 @@ class SettingsLegalViewController: UIViewController, ClickWheelProtocol {
     private static let legalText: String = """
 DankPod
 Copyright © 2020–2026 Apullen Developments Ltd.
+All rights reserved. Some rights imagined.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+TERMS AND CONDITIONS OF USE
 
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+By scrolling past this point you have entered into a binding spiritual agreement with Apullen Developments Ltd. ("we", "us", "the lads"). There is no way to undo this. We're sorry.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+1. DEFINITIONS
 
----
+"The Software" refers to this application, which is, for all intents and purposes, a small rectangle that pretends to be a larger rectangle from 2005.
+
+"The User" refers to you, the person who has voluntarily chosen to relive an era in which 1,000 songs was considered an almost unreasonable quantity of music.
+
+"The Click Wheel" refers to the circular input mechanism that you are now operating with a touchscreen, which rather defeats the point but here we are.
+
+2. GRANT OF LICENCE
+
+We grant you a non-exclusive, non-transferable, entirely sentimental licence to use this Software for the purpose of feeling a bit nostalgic. This licence does not entitle you to claim you "always preferred the iPod Classic, actually" at dinner parties, though we recognise we cannot stop you.
+
+3. INTELLECTUAL PROPERTY
+
+This application is not an iPod. It has never been an iPod. If you hold it up to the light at the right angle it still won't be an iPod. iPod, iPod classic, and the general concept of having a dedicated music player instead of just using your phone are trademarks of Apple Inc.
+
+We have no affiliation with Apple Inc. We once walked past an Apple Store, but felt that was insufficient grounds for a partnership.
+
+4. WARRANTY DISCLAIMER
+
+THE SOFTWARE IS PROVIDED "AS IS", WHICH IS TO SAY, IN ROUGHLY THE CONDITION YOU'D EXPECT FROM SOMETHING BUILT FOR A LAUGH.
+
+We make no warranty, express or implied, that this application will:
+
+(a) play music in a manner distinguishable from your normal Music app;
+(b) successfully recreate the experience of having your earphone cable caught on a door handle;
+(c) function at all on Tuesdays.
+
+5. LIMITATION OF LIABILITY
+
+Under no circumstances shall the developers be liable for any damages arising from:
+
+(a) the realisation that your music taste hasn't changed since 2007;
+(b) the faint sadness of navigating to "Extras" and finding nothing there;
+(c) explaining to a younger person what a click wheel was;
+(d) any existential crisis triggered by the phrase "1 of 1,247".
+
+Our total liability in all cases shall not exceed the amount you paid for this Software, which, if memory serves, was nothing.
+
+6. DATA COLLECTION
+
+We collect absolutely no data. We don't know who you are. We don't know what you're listening to. Frankly, we'd rather not.
+
+7. GOVERNING LAW
+
+This agreement shall be governed by the laws of England and Wales, primarily because it sounds more authoritative than saying "we haven't actually thought about this".
+
+Any disputes shall be resolved by means of a strongly worded letter, followed by an awkward silence, followed by everyone agreeing to just leave it.
+
+8. SEVERABILITY
+
+If any provision of this agreement is found to be unenforceable, it shall be replaced with something equally pointless.
+
+9. ENTIRE AGREEMENT
+
+This constitutes the entire agreement between you and us. There is no other agreement. If someone told you there was another agreement, they were mistaken, or possibly having you on.
+
+10. ACKNOWLEDGEMENTS
 
 This application uses the Apple MediaPlayer framework.
-
-MediaPlayer Framework
 Copyright © Apple Inc. All rights reserved.
 
-Use of the MediaPlayer framework is subject to the Apple Developer Program License Agreement and applicable Apple platform terms.
+Special thanks to the iPod Classic (2001–2014), which did nothing wrong and was taken from us too soon.
 
----
-
-iPod and iPod classic are trademarks of Apple Inc., registered in the U.S. and other countries. DankPod is an independent fan project and is not affiliated with, endorsed by, or connected to Apple Inc. in any way.
+Last updated: ages ago, probably.
 """
 
     override func viewDidLoad() {
