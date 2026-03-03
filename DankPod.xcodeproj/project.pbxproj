@@ -37,6 +37,15 @@
 		BB0001032479000000B821DC /* PhotosGridViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0001022479000000B821DC /* PhotosGridViewController.swift */; };
 		BB0001052479000000B821DC /* PhotoFullScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0001042479000000B821DC /* PhotoFullScreenViewController.swift */; };
 		BB0001072479000000B821DC /* PhotoSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0001062479000000B821DC /* PhotoSettingsViewController.swift */; };
+		CC0001012479000000C821DC /* SettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC0001002479000000C821DC /* SettingsStore.swift */; };
+		CC0001032479000000C821DC /* SettingsMenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC0001022479000000C821DC /* SettingsMenuViewController.swift */; };
+		CC0001052479000000C821DC /* CustomSettingsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC0001042479000000C821DC /* CustomSettingsTableViewCell.swift */; };
+		CC0001072479000000C821DC /* SettingsAboutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC0001062479000000C821DC /* SettingsAboutViewController.swift */; };
+		CC0001092479000000C821DC /* SettingsPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC0001082479000000C821DC /* SettingsPickerViewController.swift */; };
+		CC0001112479000000C821DC /* SettingsSliderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC0001102479000000C821DC /* SettingsSliderViewController.swift */; };
+		CC0001132479000000C821DC /* SettingsGeneralViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC0001122479000000C821DC /* SettingsGeneralViewController.swift */; };
+		CC0001152479000000C821DC /* SettingsLegalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC0001142479000000C821DC /* SettingsLegalViewController.swift */; };
+		CC0001172479000000C821DC /* SettingsResetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC0001162479000000C821DC /* SettingsResetViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -93,6 +102,15 @@
 		BB0001022479000000B821DC /* PhotosGridViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotosGridViewController.swift; sourceTree = "<group>"; };
 		BB0001042479000000B821DC /* PhotoFullScreenViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoFullScreenViewController.swift; sourceTree = "<group>"; };
 		BB0001062479000000B821DC /* PhotoSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoSettingsViewController.swift; sourceTree = "<group>"; };
+		CC0001002479000000C821DC /* SettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStore.swift; sourceTree = "<group>"; };
+		CC0001022479000000C821DC /* SettingsMenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsMenuViewController.swift; sourceTree = "<group>"; };
+		CC0001042479000000C821DC /* CustomSettingsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomSettingsTableViewCell.swift; sourceTree = "<group>"; };
+		CC0001062479000000C821DC /* SettingsAboutViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAboutViewController.swift; sourceTree = "<group>"; };
+		CC0001082479000000C821DC /* SettingsPickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPickerViewController.swift; sourceTree = "<group>"; };
+		CC0001102479000000C821DC /* SettingsSliderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSliderViewController.swift; sourceTree = "<group>"; };
+		CC0001122479000000C821DC /* SettingsGeneralViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsGeneralViewController.swift; sourceTree = "<group>"; };
+		CC0001142479000000C821DC /* SettingsLegalViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsLegalViewController.swift; sourceTree = "<group>"; };
+		CC0001162479000000C821DC /* SettingsResetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsResetViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -194,8 +212,29 @@
 				AA0001012479000000B821DC /* ExtrasMenuViewController.swift */,
 				AA0001032479000000B821DC /* GamesMenuViewController.swift */,
 				AA0001052479000000B821DC /* BrickBreakerViewController.swift */,
+				BB0001002479000000B821DC /* PhotosMenuViewController.swift */,
+				BB0001022479000000B821DC /* PhotosGridViewController.swift */,
+				BB0001042479000000B821DC /* PhotoFullScreenViewController.swift */,
+				BB0001062479000000B821DC /* PhotoSettingsViewController.swift */,
+				CC0001182479000000C821DC /* Settings */,
 			);
 			path = Screens;
+			sourceTree = "<group>";
+		};
+		CC0001182479000000C821DC /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				CC0001002479000000C821DC /* SettingsStore.swift */,
+				CC0001022479000000C821DC /* SettingsMenuViewController.swift */,
+				CC0001042479000000C821DC /* CustomSettingsTableViewCell.swift */,
+				CC0001062479000000C821DC /* SettingsAboutViewController.swift */,
+				CC0001082479000000C821DC /* SettingsPickerViewController.swift */,
+				CC0001102479000000C821DC /* SettingsSliderViewController.swift */,
+				CC0001122479000000C821DC /* SettingsGeneralViewController.swift */,
+				CC0001142479000000C821DC /* SettingsLegalViewController.swift */,
+				CC0001162479000000C821DC /* SettingsResetViewController.swift */,
+			);
+			path = Settings;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -350,6 +389,19 @@
 				AA0001022479000000B821DC /* ExtrasMenuViewController.swift in Sources */,
 				AA0001042479000000B821DC /* GamesMenuViewController.swift in Sources */,
 				AA0001062479000000B821DC /* BrickBreakerViewController.swift in Sources */,
+				BB0001012479000000B821DC /* PhotosMenuViewController.swift in Sources */,
+				BB0001032479000000B821DC /* PhotosGridViewController.swift in Sources */,
+				BB0001052479000000B821DC /* PhotoFullScreenViewController.swift in Sources */,
+				BB0001072479000000B821DC /* PhotoSettingsViewController.swift in Sources */,
+				CC0001012479000000C821DC /* SettingsStore.swift in Sources */,
+				CC0001032479000000C821DC /* SettingsMenuViewController.swift in Sources */,
+				CC0001052479000000C821DC /* CustomSettingsTableViewCell.swift in Sources */,
+				CC0001072479000000C821DC /* SettingsAboutViewController.swift in Sources */,
+				CC0001092479000000C821DC /* SettingsPickerViewController.swift in Sources */,
+				CC0001112479000000C821DC /* SettingsSliderViewController.swift in Sources */,
+				CC0001132479000000C821DC /* SettingsGeneralViewController.swift in Sources */,
+				CC0001152479000000C821DC /* SettingsLegalViewController.swift in Sources */,
+				CC0001172479000000C821DC /* SettingsResetViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

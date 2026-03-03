@@ -442,8 +442,10 @@ class BasePodView: UIViewController, UIGestureRecognizerDelegate {
             calls += 1
             if (calls >= clickwheelResolution && direction != nil) {
                 self.clickWheelDelegate.clickWheelDidRotate(rotationDirection: direction)
-                let generator = UISelectionFeedbackGenerator()
-                generator.selectionChanged()
+                if SettingsStore.shared.clickerEnabled {
+                    let generator = UISelectionFeedbackGenerator()
+                    generator.selectionChanged()
+                }
                 calls = 0
             }
         }
@@ -461,25 +463,25 @@ class BasePodView: UIViewController, UIGestureRecognizerDelegate {
                 if (touchLocation.x >= menuButton.frame.minX && touchLocation.x <= menuButton.frame.maxX
                     && touchLocation.y >= menuButton.frame.minY && touchLocation.y <= menuButton.frame.maxY) {
                     self.clickWheelDelegate.menuPressed(pressure: .FORCE_ENDED)
-                    forceGenerator.impactOccurred()
+                    if SettingsStore.shared.clickerEnabled { forceGenerator.impactOccurred() }
                 } else if (touchLocation.x >= nextSongButton.frame.minX && touchLocation.x <= nextSongButton.frame.maxX
                     && touchLocation.y >= nextSongButton.frame.minY && touchLocation.y <= nextSongButton.frame.maxY) {
                     self.clickWheelDelegate.nextSongPressed(pressure: .FORCE_ENDED)
                     nextSongHeld = false
-                    forceGenerator.impactOccurred()
+                    if SettingsStore.shared.clickerEnabled { forceGenerator.impactOccurred() }
                 } else if (touchLocation.x >= prevSongButton.frame.minX && touchLocation.x <= prevSongButton.frame.maxX
                    && touchLocation.y >= prevSongButton.frame.minY && touchLocation.y <= prevSongButton.frame.maxY) {
                     self.clickWheelDelegate.previousSongPressed(pressure: .FORCE_ENDED)
                     previousSongHeld = false
-                    forceGenerator.impactOccurred()
+                    if SettingsStore.shared.clickerEnabled { forceGenerator.impactOccurred() }
                 } else if (touchLocation.x >= playPauseButton.frame.minX && touchLocation.x <= playPauseButton.frame.maxX
                    && touchLocation.y >= playPauseButton.frame.minY && touchLocation.y <= playPauseButton.frame.maxY) {
                     self.clickWheelDelegate.playPausePressed(pressure: .FORCE_ENDED)
-                    forceGenerator.impactOccurred()
+                    if SettingsStore.shared.clickerEnabled { forceGenerator.impactOccurred() }
                 } else if (touchLocation.x >= centerButton.frame.minX && touchLocation.x <= centerButton.frame.maxX
                    && touchLocation.y >= centerButton.frame.minY && touchLocation.y <= centerButton.frame.maxY) {
                     self.clickWheelDelegate.centerPressed(pressure: .FORCE_ENDED)
-                    forceGenerator.impactOccurred()
+                    if SettingsStore.shared.clickerEnabled { forceGenerator.impactOccurred() }
                 }
                 forceTapGR.isForceTouch = false
             }
@@ -490,6 +492,7 @@ class BasePodView: UIViewController, UIGestureRecognizerDelegate {
     @objc func wheelClicked(sender: ForceTouchTapGestureRecogniser) {
         let generator = UIImpactFeedbackGenerator(style: .light)
         let forceGenerator = UIImpactFeedbackGenerator(style: .heavy)
+        let hapticsOn = SettingsStore.shared.clickerEnabled
         
         let touchLocation = sender.location(ofTouch: 0, in: beneathScreen)
         
@@ -497,48 +500,48 @@ class BasePodView: UIViewController, UIGestureRecognizerDelegate {
             && touchLocation.y >= menuButton.frame.minY && touchLocation.y <= menuButton.frame.maxY) {
             if sender.isForceTouch == true {
                 self.clickWheelDelegate.menuPressed(pressure: .FORCE)
-                forceGenerator.impactOccurred()
+                if hapticsOn { forceGenerator.impactOccurred() }
             } else {
                 self.clickWheelDelegate.menuPressed(pressure: .NORMAL)
-                generator.impactOccurred()
+                if hapticsOn { generator.impactOccurred() }
             }
         } else if (touchLocation.x >= nextSongButton.frame.minX && touchLocation.x <= nextSongButton.frame.maxX
             && touchLocation.y >= nextSongButton.frame.minY && touchLocation.y <= nextSongButton.frame.maxY) {
             if sender.isForceTouch == true {
                 self.clickWheelDelegate.nextSongPressed(pressure: .FORCE)
                 nextSongHeld = true
-                forceGenerator.impactOccurred()
+                if hapticsOn { forceGenerator.impactOccurred() }
             } else {
                 self.clickWheelDelegate.nextSongPressed(pressure: .NORMAL)
-                generator.impactOccurred()
+                if hapticsOn { generator.impactOccurred() }
             }
         } else if (touchLocation.x >= prevSongButton.frame.minX && touchLocation.x <= prevSongButton.frame.maxX
            && touchLocation.y >= prevSongButton.frame.minY && touchLocation.y <= prevSongButton.frame.maxY) {
             if sender.isForceTouch == true {
                 self.clickWheelDelegate.previousSongPressed(pressure: .FORCE)
                 previousSongHeld = true
-                forceGenerator.impactOccurred()
+                if hapticsOn { forceGenerator.impactOccurred() }
             } else {
                 self.clickWheelDelegate.previousSongPressed(pressure: .NORMAL)
-                generator.impactOccurred()
+                if hapticsOn { generator.impactOccurred() }
             }
         } else if (touchLocation.x >= playPauseButton.frame.minX && touchLocation.x <= playPauseButton.frame.maxX
            && touchLocation.y >= playPauseButton.frame.minY && touchLocation.y <= playPauseButton.frame.maxY) {
             if sender.isForceTouch == true {
                 self.clickWheelDelegate.playPausePressed(pressure: .FORCE)
-                forceGenerator.impactOccurred()
+                if hapticsOn { forceGenerator.impactOccurred() }
             } else {
                 self.clickWheelDelegate.playPausePressed(pressure: .NORMAL)
-                generator.impactOccurred()
+                if hapticsOn { generator.impactOccurred() }
             }
         } else if (touchLocation.x >= centerButton.frame.minX && touchLocation.x <= centerButton.frame.maxX
            && touchLocation.y >= centerButton.frame.minY && touchLocation.y <= centerButton.frame.maxY) {
             if sender.isForceTouch == true {
                 self.clickWheelDelegate.centerPressed(pressure: .FORCE)
-                forceGenerator.impactOccurred()
+                if hapticsOn { forceGenerator.impactOccurred() }
             } else {
                 self.clickWheelDelegate.centerPressed(pressure: .NORMAL)
-                generator.impactOccurred()
+                if hapticsOn { generator.impactOccurred() }
             }
         }
         
