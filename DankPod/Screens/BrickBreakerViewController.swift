@@ -222,6 +222,17 @@ class BrickBreakerViewController: UIViewController, ClickWheelProtocol {
                 bricks.append(brick)
             }
         }
+        
+        // Ensure ball and paddle render above bricks
+        if ball != nil {
+            view.bringSubviewToFront(ball)
+        }
+        if paddle != nil {
+            view.bringSubviewToFront(paddle)
+        }
+        if pausedLabel != nil {
+            view.bringSubviewToFront(pausedLabel)
+        }
     }
     
     @objc func gameLoop(_ link: CADisplayLink) {
@@ -233,9 +244,16 @@ class BrickBreakerViewController: UIViewController, ClickWheelProtocol {
         if lastTimestamp == 0 {
             lastTimestamp = link.timestamp
         }
-        let dt = link.timestamp - lastTimestamp
+        var dt = link.timestamp - lastTimestamp
         lastTimestamp = link.timestamp
+        // Cap delta time to prevent teleportation after app backgrounding
+        if dt > targetFrameTime * 3.0 {
+            dt = targetFrameTime
+        }
         let scale = CGFloat(dt / targetFrameTime)
+        
+        // Save previous ball position for swept collision detection
+        let previousBallMaxY = ball.frame.maxY
         
         // Move ball
         ball.center.x += ballDX * scale
@@ -254,14 +272,16 @@ class BrickBreakerViewController: UIViewController, ClickWheelProtocol {
             ballDY = abs(ballDY)
         }
         
-        // Paddle collision
-        if ball.frame.maxY >= paddle.frame.minY &&
-           ball.frame.maxY <= paddle.frame.maxY + 4 &&
+        // Paddle collision (swept check to prevent tunneling at high speeds)
+        if ballDY > 0 &&
+           previousBallMaxY <= paddle.frame.maxY &&
+           ball.frame.maxY >= paddle.frame.minY &&
            ball.frame.maxX >= paddle.frame.minX &&
-           ball.frame.minX <= paddle.frame.maxX &&
-           ballDY > 0 {
+           ball.frame.minX <= paddle.frame.maxX {
+            // Snap ball above paddle to prevent visual overlap
+            ball.frame.origin.y = paddle.frame.origin.y - ballSize
             ballDY = -abs(ballDY)
-            let hitPosition = (ball.center.x - paddle.frame.minX) / paddle.frame.width
+            let hitPosition = min(max((ball.center.x - paddle.frame.minX) / paddle.frame.width, 0.0), 1.0)
             ballDX = (hitPosition - 0.5) * 5.0
         }
         
