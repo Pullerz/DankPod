@@ -49,6 +49,32 @@ class BasePodView: UIViewController, UIGestureRecognizerDelegate {
     let shuffleIcon: UIImageView = UIImageView()
     let batteryIcon: UIImageView = UIImageView()
     let queueIcon: UIImageView = UIImageView()
+
+    // Game HUD labels (hidden by default, shown by game screens)
+    private let navBarScoreLabel = UILabel()
+    private let navBarBallsLabel = UILabel()
+
+    public var navBarScore: Int? {
+        didSet {
+            if let score = navBarScore {
+                navBarScoreLabel.text = "\(score)"
+                navBarScoreLabel.isHidden = false
+            } else {
+                navBarScoreLabel.isHidden = true
+            }
+        }
+    }
+
+    public var navBarBalls: Int? {
+        didSet {
+            if let balls = navBarBalls {
+                navBarBallsLabel.text = "\(balls)"
+                navBarBallsLabel.isHidden = false
+            } else {
+                navBarBallsLabel.isHidden = true
+            }
+        }
+    }
     
     var currentValue:CGFloat = 0.0 {
         didSet {
@@ -187,6 +213,24 @@ class BasePodView: UIViewController, UIGestureRecognizerDelegate {
         batteryIcon.heightAnchor.constraint(equalToConstant: 13).isActive = true
         
         setBatteryIcon()
+
+        // Score label — shown left of battery during game screens
+        navBarScoreLabel.translatesAutoresizingMaskIntoConstraints = false
+        navBar.addSubview(navBarScoreLabel)
+        navBarScoreLabel.rightAnchor.constraint(equalTo: batteryIcon.leftAnchor, constant: -6).isActive = true
+        navBarScoreLabel.centerYAnchor.constraint(equalTo: navBarTitleLabel.centerYAnchor).isActive = true
+        navBarScoreLabel.font = UIFont(name: "Helvetica-Bold", size: 13)
+        navBarScoreLabel.textColor = .black
+        navBarScoreLabel.isHidden = true
+
+        // Balls label — shown right of play/pause icon during game screens
+        navBarBallsLabel.translatesAutoresizingMaskIntoConstraints = false
+        navBar.addSubview(navBarBallsLabel)
+        navBarBallsLabel.leftAnchor.constraint(equalTo: playbackStatusIcon.rightAnchor, constant: 6).isActive = true
+        navBarBallsLabel.centerYAnchor.constraint(equalTo: navBarTitleLabel.centerYAnchor).isActive = true
+        navBarBallsLabel.font = UIFont(name: "Helvetica-Bold", size: 13)
+        navBarBallsLabel.textColor = .black
+        navBarBallsLabel.isHidden = true
     }
 
     
