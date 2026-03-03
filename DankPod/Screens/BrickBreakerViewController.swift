@@ -82,7 +82,7 @@ class BrickBreakerViewController: UIViewController, ClickWheelProtocol {
         lastLayoutWidth = w
         lastLayoutHeight = h
 
-        let paddleWidth = w * 0.22
+        let paddleWidth = w * 0.14
         paddle.frame.size.width = paddleWidth
         paddle.frame.size.height = paddleHeight
         paddle.center.x = min(max(paddle.center.x, paddleWidth / 2), w - paddleWidth / 2)
@@ -117,8 +117,8 @@ class BrickBreakerViewController: UIViewController, ClickWheelProtocol {
         gradient.name = "bbBackground"
         gradient.frame = view.bounds
         gradient.colors = [
-            UIColor(red: 140/255.0, green: 190/255.0, blue: 230/255.0, alpha: 1.0).cgColor,
-            UIColor(red: 100/255.0, green: 155/255.0, blue: 205/255.0, alpha: 1.0).cgColor
+            UIColor(red: 175/255.0, green: 215/255.0, blue: 245/255.0, alpha: 1.0).cgColor,
+            UIColor(red: 140/255.0, green: 185/255.0, blue: 230/255.0, alpha: 1.0).cgColor
         ]
         gradient.startPoint = CGPoint(x: 0.5, y: 0.0)
         gradient.endPoint = CGPoint(x: 0.5, y: 1.0)
@@ -128,7 +128,7 @@ class BrickBreakerViewController: UIViewController, ClickWheelProtocol {
     func setupUI() {
         if !hasSetupUI {
             view.clipsToBounds = true
-            view.backgroundColor = UIColor(red: 120/255.0, green: 172/255.0, blue: 217/255.0, alpha: 1.0)
+            view.backgroundColor = UIColor(red: 157/255.0, green: 200/255.0, blue: 237/255.0, alpha: 1.0)
 
             // Create bricks
             createBricks()
@@ -151,7 +151,7 @@ class BrickBreakerViewController: UIViewController, ClickWheelProtocol {
             view.addSubview(ball)
 
             // Create paddle — block-sized solid black rectangle
-            let paddleWidth = view.bounds.width * 0.22
+            let paddleWidth = view.bounds.width * 0.14
             paddle = UIView()
             paddle.frame = CGRect(x: 0, y: 0, width: paddleWidth, height: paddleHeight)
             paddle.backgroundColor = .black
@@ -376,7 +376,7 @@ class BrickBreakerViewController: UIViewController, ClickWheelProtocol {
     // MARK: - ClickWheelProtocol
 
     func clickWheelDidRotate(rotationDirection: RotationDirection) {
-        let moveAmount: CGFloat = 8.0
+        let moveAmount: CGFloat = 18.0
         if rotationDirection == .CLOCKWISE {
             paddle.center.x = min(paddle.center.x + moveAmount, view.bounds.width - paddle.frame.width / 2)
         } else {
