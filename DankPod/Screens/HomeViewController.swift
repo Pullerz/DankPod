@@ -99,7 +99,15 @@ class HomeViewController: UIViewController, ClickWheelProtocol {
         
         if menuItems[counter] == "Now Playing" {
             let queue = AppDelegate.music.getCurrentQueue()
-            guard !queue.isEmpty else { return }
+            guard !queue.isEmpty else {
+                let alert = UIAlertController(
+                    title: "Cannot Open Now Playing",
+                    message: "This song was started outside of DankPod. To use Now Playing, start a song from within the app.",
+                    preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "OK", style: .default))
+                self.present(alert, animated: true)
+                return
+            }
             let vc = vcs[counter] as! PlaybackViewController
             vc.songs = queue
             vc.startingIndex = AppDelegate.music.musicPlayer.indexOfNowPlayingItem
