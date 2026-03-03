@@ -121,21 +121,13 @@ class PhotosGridViewController: UIViewController, ClickWheelProtocol {
     func clickWheelDidRotate(rotationDirection: RotationDirection) {
         if photoAssets.count == 0 { return }
         
-        // Advance by one full row per tick so the grid scrolls at the same
-        // perceived speed as a list VC advancing one item per tick.
-        let step = columns
-        
         if (rotationDirection == .CLOCKWISE) {
-            if (counter + step <= photoAssets.count - 1) {
-                counter += step
-            } else {
-                counter = photoAssets.count - 1
+            if (counter + 1 <= photoAssets.count - 1) {
+                counter += 1
             }
         } else {
-            if (counter - step >= 0) {
-                counter -= step
-            } else {
-                counter = 0
+            if (counter > 0) {
+                counter -= 1
             }
         }
         
