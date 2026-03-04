@@ -6,7 +6,14 @@
 //  Copyright © 2020 Apullen Developments Ltd. All rights reserved.
 //
 
-import Foundation
+import UIKit
+
+struct ClickWheelRotationEvent {
+    let deltaRadians: CGFloat
+    let angularVelocity: CGFloat
+    let direction: RotationDirection
+    let state: UIGestureRecognizer.State
+}
 
 protocol ClickWheelProtocol {
     func clickWheelDidRotate(rotationDirection: RotationDirection)
@@ -16,6 +23,14 @@ protocol ClickWheelProtocol {
     func menuPressed(pressure: ClickWheelTouchPressure)
     func centerPressed(pressure: ClickWheelTouchPressure)
     
+    // Declared in protocol for dynamic dispatch; defaults provided below
+    var prefersContinuousWheelInput: Bool { get }
+    func clickWheelDidRotateContinuously(event: ClickWheelRotationEvent)
+}
+
+extension ClickWheelProtocol {
+    var prefersContinuousWheelInput: Bool { false }
+    func clickWheelDidRotateContinuously(event: ClickWheelRotationEvent) {}
 }
 
 enum ClickWheelTouchPressure {

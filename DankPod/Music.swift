@@ -20,18 +20,55 @@ class Music {
         
     }
     
+    // MARK: - Time Machine Filtering
+
+    private func applyTimeMachineFilter(_ items: [MPMediaItem]) -> [MPMediaItem] {
+        let year = SettingsStore.shared.timeMachineYear
+        guard year > 0 else { return items }
+
+        var components = DateComponents()
+        components.year = year + 1
+        components.month = 1
+        components.day = 1
+        guard let cutoff = Calendar.current.date(from: components) else { return items }
+
+        return items.filter { item in
+            if let releaseDate = item.releaseDate {
+                return releaseDate < cutoff
+            }
+            return false
+        }
+    }
+
+    private func applyTimeMachineFilter(_ collections: [MPMediaItemCollection]) -> [MPMediaItemCollection] {
+        let year = SettingsStore.shared.timeMachineYear
+        guard year > 0 else { return collections }
+
+        return collections.compactMap { collection in
+            let filtered = applyTimeMachineFilter(collection.items)
+            return filtered.isEmpty ? nil : MPMediaItemCollection(items: filtered)
+        }
+    }
+
+    // MARK: - Queries
+
     func getSongs() -> MPMediaItemCollection {
-        let mediaItems = MPMediaQuery.songs().items
-        let mediaCollection = MPMediaItemCollection(items: mediaItems ?? [])
-        return mediaCollection
+        let mediaItems = MPMediaQuery.songs().items ?? []
+        let filtered = applyTimeMachineFilter(mediaItems)
+        return MPMediaItemCollection(items: filtered)
     }
     
     func getArtists() -> [String] {
         
         
         var artists: [String] = []
+        let year = SettingsStore.shared.timeMachineYear
         
         for collection in MPMediaQuery.artists().collections! {
+            if year > 0 {
+                let filteredItems = applyTimeMachineFilter(collection.items)
+                guard !filteredItems.isEmpty else { continue }
+            }
             if let item = collection.representativeItem?.albumArtist {
                 if !artists.contains(item) {
                     artists.append(item)
@@ -55,7 +92,7 @@ class Music {
                                  comparisonType: .equalTo)
         
         if let collections = MPMediaQuery(filterPredicates: Set(arrayLiteral: albumTitleFilter)).collections {
-            return collections
+            return applyTimeMachineFilter(collections)
         } else {
             return []
         }
@@ -63,7 +100,7 @@ class Music {
     
     func getAllAlbums() -> [MPMediaItemCollection] {
         if let albums = MPMediaQuery.albums().collections {
-            return albums
+            return applyTimeMachineFilter(albums)
         }
         return []
     }
@@ -75,7 +112,7 @@ class Music {
                                  comparisonType: .equalTo)
         
         if let collections = MPMediaQuery(filterPredicates: Set(arrayLiteral: albumTitleFilter)).items {
-            return collections
+            return applyTimeMachineFilter(collections)
         } else {
             return []
         }
@@ -84,7 +121,7 @@ class Music {
     func getPlaylists() -> [MPMediaItemCollection] {
         
         if let playlists = MPMediaQuery.playlists().collections {
-            return playlists
+            return applyTimeMachineFilter(playlists)
         }
         return []
     }
@@ -95,7 +132,9 @@ class Music {
         let query = MPMediaQuery.genres()
         let genres = query.collections
         for genre in genres! {
-            for item in genre.items {
+            let items = applyTimeMachineFilter(genre.items)
+            guard !items.isEmpty else { continue }
+            for item in items {
                 let genreName = item.value(forProperty: MPMediaItemPropertyGenre) as! String
                 if !allGenres.contains(genreName) {
                     allGenres.append(genreName)
@@ -113,7 +152,7 @@ class Music {
                                  comparisonType: .equalTo)
         
         if let collections = MPMediaQuery(filterPredicates: Set(arrayLiteral: albumTitleFilter)).collections {
-            return collections
+            return applyTimeMachineFilter(collections)
         } else {
             return []
         }

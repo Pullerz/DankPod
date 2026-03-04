@@ -17,6 +17,7 @@ class PhotosMenuViewController: UIViewController, ClickWheelProtocol {
     var counter: Int = 0
     var hasSetupUI = false
     var hasRequestedAccess = false
+    private var lastAuthStatus: PHAuthorizationStatus = .notDetermined
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,16 +32,35 @@ class PhotosMenuViewController: UIViewController, ClickWheelProtocol {
             hasRequestedAccess = true
             PHPhotoLibrary.requestAuthorization { [weak self] status in
                 DispatchQueue.main.async {
+                    self?.lastAuthStatus = status
                     self?.loadAlbums(status: status)
                 }
             }
         } else {
-            tableView.reloadData()
-            if menuItems.count > 0 {
-                counter = min(counter, menuItems.count - 1)
-                tableView.selectRow(at: IndexPath(row: counter, section: 0), animated: false, scrollPosition: .top)
-            }
+            // Re-load albums each time we appear so Time Machine filter changes take effect
+            loadAlbums(status: lastAuthStatus)
         }
+    }
+    
+    private func timeMachinePhotoFetchOptions() -> PHFetchOptions {
+        let fetchOptions = PHFetchOptions()
+        fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
+        
+        let year = SettingsStore.shared.timeMachineYear
+        if year > 0 {
+            var components = DateComponents()
+            components.year = year + 1
+            components.month = 1
+            components.day = 1
+            if let cutoff = Calendar.current.date(from: components) {
+                fetchOptions.predicate = NSPredicate(format: "mediaType = %d AND creationDate < %@", PHAssetMediaType.image.rawValue, cutoff as NSDate)
+            } else {
+                fetchOptions.predicate = NSPredicate(format: "mediaType = %d", PHAssetMediaType.image.rawValue)
+            }
+        } else {
+            fetchOptions.predicate = NSPredicate(format: "mediaType = %d", PHAssetMediaType.image.rawValue)
+        }
+        return fetchOptions
     }
     
     func loadAlbums(status: PHAuthorizationStatus) {
@@ -58,9 +78,10 @@ class PhotosMenuViewController: UIViewController, ClickWheelProtocol {
             albumCollections.append(PHAssetCollection()) // placeholder for "All Photos"
             
             // Camera Roll (smart album)
+            let filterOptions = self.timeMachinePhotoFetchOptions()
             let cameraRoll = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .smartAlbumUserLibrary, options: nil)
             cameraRoll.enumerateObjects { (collection, _, _) in
-                let assets = PHAsset.fetchAssets(in: collection, options: nil)
+                let assets = PHAsset.fetchAssets(in: collection, options: filterOptions)
                 if assets.count > 0 {
                     self.menuItems.append(collection.localizedTitle ?? "Camera Roll")
                     self.albumCollections.append(collection)
@@ -70,7 +91,7 @@ class PhotosMenuViewController: UIViewController, ClickWheelProtocol {
             // Favorites
             let favorites = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .smartAlbumFavorites, options: nil)
             favorites.enumerateObjects { (collection, _, _) in
-                let assets = PHAsset.fetchAssets(in: collection, options: nil)
+                let assets = PHAsset.fetchAssets(in: collection, options: filterOptions)
                 if assets.count > 0 {
                     self.menuItems.append(collection.localizedTitle ?? "Favorites")
                     self.albumCollections.append(collection)
@@ -80,7 +101,7 @@ class PhotosMenuViewController: UIViewController, ClickWheelProtocol {
             // User albums
             let userAlbums = PHAssetCollection.fetchAssetCollections(with: .album, subtype: .any, options: nil)
             userAlbums.enumerateObjects { (collection, _, _) in
-                let assets = PHAsset.fetchAssets(in: collection, options: nil)
+                let assets = PHAsset.fetchAssets(in: collection, options: filterOptions)
                 if assets.count > 0 {
                     self.menuItems.append(collection.localizedTitle ?? "Untitled Album")
                     self.albumCollections.append(collection)
@@ -168,17 +189,13 @@ class PhotosMenuViewController: UIViewController, ClickWheelProtocol {
             }
             
             let vc = PhotosGridViewController()
+            let fetchOptions = timeMachinePhotoFetchOptions()
             
             if menuItems[counter] == "All Photos" {
-                let fetchOptions = PHFetchOptions()
-                fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
                 vc.photoAssets = PHAsset.fetchAssets(with: .image, options: fetchOptions)
                 vc.albumTitle = "All Photos"
             } else {
                 let collection = albumCollections[counter]
-                let fetchOptions = PHFetchOptions()
-                fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
-                fetchOptions.predicate = NSPredicate(format: "mediaType = %d", PHAssetMediaType.image.rawValue)
                 vc.photoAssets = PHAsset.fetchAssets(in: collection, options: fetchOptions)
                 vc.albumTitle = menuItems[counter]
             }

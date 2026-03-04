@@ -26,6 +26,7 @@ class SettingsMenuViewController: UIViewController, ClickWheelProtocol {
         "Brightness",
         "General",
         "iPod Color",
+        "Time Machine",
         "Sort By",
         "Language",
         "Legal",
@@ -38,7 +39,7 @@ class SettingsMenuViewController: UIViewController, ClickWheelProtocol {
     // Items that navigate to a sub-screen (show disclosure chevron)
     private let navigationItems: Set<String> = [
         "About", "EQ", "Volume Limit", "Audiobooks", "Backlight", "Brightness",
-        "General", "iPod Color", "Legal", "Reset Settings"
+        "General", "iPod Color", "Time Machine", "Legal", "Reset Settings"
     ]
 
     override func viewDidLoad() {
@@ -77,8 +78,9 @@ class SettingsMenuViewController: UIViewController, ClickWheelProtocol {
         case "EQ":          return SettingsStore.shared.eq
         case "Sound Check": return SettingsStore.shared.soundCheck ? "On" : "Off"
         case "Audiobooks":  return SettingsStore.shared.audiobooksDisplayValue
-        case "Backlight":   return SettingsStore.shared.backlightDisplayValue
-        default:            return nil
+        case "Backlight":     return SettingsStore.shared.backlightDisplayValue
+        case "Time Machine":  return SettingsStore.shared.timeMachineDisplayValue
+        default:              return nil
         }
     }
 
@@ -168,6 +170,21 @@ class SettingsMenuViewController: UIViewController, ClickWheelProtocol {
 
         case "iPod Color":
             navigationController?.pushViewController(SettingsColorViewController(), animated: true)
+
+        case "Time Machine":
+            let vc = SettingsPickerViewController()
+            vc.pickerTitle = "Time Machine"
+            vc.options = SettingsStore.timeMachineOptions
+            vc.selectedIndex = SettingsStore.shared.timeMachineIndex
+            vc.onSelect = { index in
+                if index == 0 {
+                    SettingsStore.shared.timeMachineYear = 0
+                } else {
+                    let currentYear = Calendar.current.component(.year, from: Date())
+                    SettingsStore.shared.timeMachineYear = currentYear - (index - 1)
+                }
+            }
+            navigationController?.pushViewController(vc, animated: true)
 
         case "Legal":
             navigationController?.pushViewController(SettingsLegalViewController(), animated: true)

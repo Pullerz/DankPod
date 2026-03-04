@@ -23,6 +23,21 @@ class CoverFlowViewController: UIViewController, ClickWheelProtocol {
     
     var hasSetupUI = false
     
+    // Continuous scrolling state
+    var prefersContinuousWheelInput: Bool { true }
+    private var scrollPosition: Double = 0
+    private var trackedVelocity: Double = 0
+    private var isFingerOnWheel = false
+    private var needsVisualUpdate = false
+    private var lastAppliedOffsetX: CGFloat = -.greatestFiniteMagnitude
+    private var displayLink: CADisplayLink?
+    private var lastFrameTime: CFTimeInterval = 0
+    private let albumsPerRevolution: Double = 10.0
+    private let friction: Double = 8.0
+    private let maxTrackedVelocity: Double = 30.0
+    private let maxInstantVelocity: Double = 50.0
+    private let haptics = UISelectionFeedbackGenerator()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
     }
@@ -32,6 +47,7 @@ class CoverFlowViewController: UIViewController, ClickWheelProtocol {
         setupUI()
         AppDelegate.baseVC.clickWheelDelegate = self
         AppDelegate.baseVC.navBarTitle = "Cover Flow"
+        haptics.prepare()
         loadAlbums()
     }
     
@@ -47,8 +63,10 @@ class CoverFlowViewController: UIViewController, ClickWheelProtocol {
         collectionView.layoutIfNeeded()
         if albums.count > 0 {
             emptyStateLabel.isHidden = true
+            scrollPosition = Double(currentIndex)
             scrollToCurrentIndex(animated: false)
             updateAlbumInfo()
+            prewarmImageCache()
         } else {
             emptyStateLabel.isHidden = false
             albumTitleLabel.text = ""
@@ -56,13 +74,29 @@ class CoverFlowViewController: UIViewController, ClickWheelProtocol {
         }
     }
     
-    func scrollToCurrentIndex(animated: Bool) {
+    private static let prewarmQueue = DispatchQueue(label: "com.dankpod.coverflow.prewarm", qos: .utility)
+    
+    private func prewarmImageCache() {
+        let albumsCopy = albums
+        Self.prewarmQueue.async {
+            for album in albumsCopy {
+                autoreleasepool {
+                    let key = CoverFlowCell.cacheKey(for: album)
+                    if CoverFlowCell.imageCache.object(forKey: key) == nil {
+                        CoverFlowCell.generateAndCache(for: album)
+                    }
+                }
+            }
+        }
+    }
+    
+    func scrollToCurrentIndex(animated: Bool, duration: TimeInterval = 0.15) {
         let offsetX = coverFlowLayout.contentOffsetForItem(at: currentIndex)
         let targetOffset = CGPoint(x: offsetX, y: 0)
         if animated {
-            UIView.animate(withDuration: 0.2,
+            UIView.animate(withDuration: duration,
                            delay: 0,
-                           options: [.curveLinear, .beginFromCurrentState, .allowUserInteraction],
+                           options: [.curveEaseOut, .beginFromCurrentState, .allowUserInteraction],
                            animations: {
                 self.collectionView.setContentOffset(targetOffset, animated: false)
                 self.collectionView.layoutIfNeeded()
@@ -169,27 +203,120 @@ class CoverFlowViewController: UIViewController, ClickWheelProtocol {
         }
     }
     
-    // MARK: - ClickWheelProtocol
+    // MARK: - Continuous Scrolling (physics-based)
     
-    func clickWheelDidRotate(rotationDirection: RotationDirection) {
-        if rotationDirection == .CLOCKWISE {
-            if currentIndex + 1 <= albums.count - 1 {
-                currentIndex += 1
-                scrollToCurrentIndex(animated: true)
-                updateAlbumInfo()
-                showLetterOverlay()
-            }
+    func clickWheelDidRotateContinuously(event: ClickWheelRotationEvent) {
+        guard albums.count > 0 else { return }
+        
+        if event.state == .ended {
+            isFingerOnWheel = false
+            return
+        }
+        
+        // .changed — active finger movement
+        isFingerOnWheel = true
+        
+        // Convert rotation delta to album units
+        let deltaAlbums = Double(event.deltaRadians) / (2.0 * .pi) * albumsPerRevolution
+        
+        // Move position directly with finger
+        scrollPosition += deltaAlbums
+        scrollPosition = max(0, min(Double(albums.count - 1), scrollPosition))
+        
+        // Blend instantaneous velocity into tracked velocity (exponential moving average)
+        // Clamp instant velocity to reject spikes from gesture event bunching
+        let rawInstant = Double(event.angularVelocity) / (2.0 * .pi) * albumsPerRevolution
+        let instantVelocity = max(-maxInstantVelocity, min(maxInstantVelocity, rawInstant))
+        trackedVelocity = trackedVelocity * 0.6 + instantVelocity * 0.4
+        trackedVelocity = max(-maxTrackedVelocity, min(maxTrackedVelocity, trackedVelocity))
+        
+        // Mark for next display link frame — don't update visuals directly
+        needsVisualUpdate = true
+        ensureDisplayLinkRunning()
+    }
+    
+    private func ensureDisplayLinkRunning() {
+        guard displayLink == nil else { return }
+        lastFrameTime = CACurrentMediaTime()
+        displayLink = CADisplayLink(target: self, selector: #selector(physicsFrame))
+        displayLink?.add(to: .main, forMode: .common)
+    }
+    
+    @objc private func physicsFrame() {
+        let now = CACurrentMediaTime()
+        let dt = now - lastFrameTime
+        lastFrameTime = now
+        guard dt > 0 && dt < 0.5 else { return }
+        
+        if isFingerOnWheel {
+            trackedVelocity *= exp(-friction * dt)
         } else {
-            if currentIndex > 0 {
-                currentIndex -= 1
-                scrollToCurrentIndex(animated: true)
-                updateAlbumInfo()
-                showLetterOverlay()
+            trackedVelocity *= exp(-friction * dt)
+            scrollPosition += trackedVelocity * dt
+            scrollPosition = max(0, min(Double(albums.count - 1), scrollPosition))
+            
+            if (scrollPosition <= 0 && trackedVelocity < 0) ||
+               (scrollPosition >= Double(albums.count - 1) && trackedVelocity > 0) {
+                trackedVelocity = 0
             }
+            
+            needsVisualUpdate = true
+            
+            if abs(trackedVelocity) < 0.3 {
+                stopPhysics()
+                snapToNearestAlbum()
+                return
+            }
+        }
+        
+        if needsVisualUpdate {
+            applyScrollPosition()
+            needsVisualUpdate = false
         }
     }
     
+    private func applyScrollPosition() {
+        let newIndex = Int(round(scrollPosition))
+        if newIndex != currentIndex {
+            currentIndex = newIndex
+            updateAlbumInfo()
+            if SettingsStore.shared.clickerEnabled {
+                haptics.selectionChanged()
+            }
+            if abs(trackedVelocity) > 3.0 {
+                showLetterOverlay()
+            }
+        }
+        
+        let offsetX = coverFlowLayout.contentOffsetForFractionalPosition(scrollPosition)
+        guard abs(offsetX - lastAppliedOffsetX) >= 0.5 else { return }
+        lastAppliedOffsetX = offsetX
+        collectionView.setContentOffset(CGPoint(x: offsetX, y: 0), animated: false)
+    }
+    
+    private func stopPhysics() {
+        displayLink?.invalidate()
+        displayLink = nil
+        trackedVelocity = 0
+        isFingerOnWheel = false
+    }
+    
+    private func snapToNearestAlbum() {
+        guard albums.count > 0 else { return }
+        currentIndex = Int(round(scrollPosition))
+        currentIndex = max(0, min(albums.count - 1, currentIndex))
+        scrollPosition = Double(currentIndex)
+        scrollToCurrentIndex(animated: true, duration: 0.15)
+        updateAlbumInfo()
+    }
+    
+    // MARK: - ClickWheelProtocol (discrete — unused in continuous mode)
+    
+    func clickWheelDidRotate(rotationDirection: RotationDirection) {}
+    
     func centerPressed(pressure: ClickWheelTouchPressure) {
+        stopPhysics()
+        snapToNearestAlbum()
         if pressure == .NORMAL {
             guard currentIndex >= 0 && currentIndex < albums.count else { return }
             let album = albums[currentIndex]
@@ -204,6 +331,7 @@ class CoverFlowViewController: UIViewController, ClickWheelProtocol {
     }
     
     func menuPressed(pressure: ClickWheelTouchPressure) {
+        stopPhysics()
         if pressure == .NORMAL {
             self.navigationController?.popViewController(animated: true)
         } else if pressure == .FORCE {
@@ -218,25 +346,32 @@ class CoverFlowViewController: UIViewController, ClickWheelProtocol {
     }
     
     func nextSongPressed(pressure: ClickWheelTouchPressure) {
+        stopPhysics()
         if pressure == .NORMAL {
             if currentIndex + 1 <= albums.count - 1 {
                 currentIndex += 1
+                scrollPosition = Double(currentIndex)
                 scrollToCurrentIndex(animated: true)
                 updateAlbumInfo()
-                showLetterOverlay()
             }
         }
     }
     
     func previousSongPressed(pressure: ClickWheelTouchPressure) {
+        stopPhysics()
         if pressure == .NORMAL {
             if currentIndex > 0 {
                 currentIndex -= 1
+                scrollPosition = Double(currentIndex)
                 scrollToCurrentIndex(animated: true)
                 updateAlbumInfo()
-                showLetterOverlay()
             }
         }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        stopPhysics()
     }
 }
 

@@ -130,6 +130,9 @@ class BasePodView: UIViewController, UIGestureRecognizerDelegate {
     var previousSongHeld = false
     var queueMode = false
     
+    private var lastRotationDelta: CGFloat = 0
+    private var lastRotationTime: CFTimeInterval = 0
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
@@ -561,6 +564,47 @@ class BasePodView: UIViewController, UIGestureRecognizerDelegate {
         let velocity = recognizer.velocity(in: recognizer.view)
         let magnitude = sqrtf(powf(Float(velocity.x), 2) + powf(Float(velocity.y), 2))
         
+        // Continuous mode: bypass tick-gating, pass raw rotation data directly
+        if clickWheelDelegate.prefersContinuousWheelInput {
+            if let rotation = recognizer.rotation, velocity.x != 0 && velocity.y != 0 {
+                let now = CACurrentMediaTime()
+                let dt = now - lastRotationTime
+                lastRotationTime = now
+                lastRotationDelta = rotation
+                
+                let angularVelocity: CGFloat = dt > 0 ? rotation / CGFloat(dt) : 0
+                let direction: RotationDirection = rotation >= 0 ? .CLOCKWISE : .COUNTER_CLOCKWISE
+                
+                let event = ClickWheelRotationEvent(
+                    deltaRadians: rotation,
+                    angularVelocity: angularVelocity,
+                    direction: direction,
+                    state: .changed
+                )
+                self.clickWheelDelegate.clickWheelDidRotateContinuously(event: event)
+            }
+            if recognizer.state == .ended {
+                let now = CACurrentMediaTime()
+                let dt = now - lastRotationTime
+                // Only carry momentum if the last rotation was very recent —
+                // if the user paused before lifting, velocity should be zero
+                let angularVelocity: CGFloat = dt > 0 && dt < 0.05 ? lastRotationDelta / CGFloat(dt) : 0
+                let direction: RotationDirection = lastRotationDelta >= 0 ? .CLOCKWISE : .COUNTER_CLOCKWISE
+                
+                let event = ClickWheelRotationEvent(
+                    deltaRadians: 0,
+                    angularVelocity: angularVelocity,
+                    direction: direction,
+                    state: .ended
+                )
+                self.clickWheelDelegate.clickWheelDidRotateContinuously(event: event)
+                lastRotationDelta = 0
+                lastRotationTime = 0
+            }
+            return
+        }
+        
+        // Discrete tick mode: existing behaviour for all other screens
         if magnitude > 800 {
             let newVal = map(n: magnitude, start1: 0, stop1: 2000, start2: 10, stop2: 3)
             clickwheelResolution = Int(newVal)

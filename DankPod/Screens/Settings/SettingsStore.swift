@@ -27,6 +27,7 @@ class SettingsStore {
         static let brightness = "dankpod.settings.brightness"
         static let clickerEnabled = "dankpod.settings.clickerEnabled"
         static let ipodColor = "dankpod.settings.ipodColor"
+        static let timeMachineYear = "dankpod.settings.timeMachineYear"
     }
 
     // MARK: - Init
@@ -42,7 +43,8 @@ class SettingsStore {
             Keys.backlightTimerIndex: 6,   // "Always On"
             Keys.brightness: Float(UIScreen.main.brightness),
             Keys.clickerEnabled: true,
-            Keys.ipodColor: "Silver"
+            Keys.ipodColor: "Silver",
+            Keys.timeMachineYear: 0
         ])
     }
 
@@ -221,6 +223,35 @@ class SettingsStore {
         set { UserDefaults.standard.set(newValue, forKey: Keys.ipodColor) }
     }
 
+    // MARK: - Time Machine
+
+    // Value: 0 means "Off" (no filter), otherwise a year (e.g. 1995)
+    static var timeMachineOptions: [String] {
+        let currentYear = Calendar.current.component(.year, from: Date())
+        var options = ["Off"]
+        for year in stride(from: currentYear, through: 1960, by: -1) {
+            options.append("\(year)")
+        }
+        return options
+    }
+
+    var timeMachineYear: Int {
+        get { return UserDefaults.standard.integer(forKey: Keys.timeMachineYear) }
+        set { UserDefaults.standard.set(newValue, forKey: Keys.timeMachineYear) }
+    }
+
+    var timeMachineDisplayValue: String {
+        let year = timeMachineYear
+        return year == 0 ? "Off" : "\(year)"
+    }
+
+    var timeMachineIndex: Int {
+        let year = timeMachineYear
+        if year == 0 { return 0 }
+        let currentYear = Calendar.current.component(.year, from: Date())
+        return max(0, currentYear - year + 1)
+    }
+
     // MARK: - Apply All (called on app launch)
 
     func applyAllSettings() {
@@ -251,7 +282,8 @@ class SettingsStore {
         let keys = [
             Keys.shuffle, Keys.repeatMode, Keys.eq, Keys.soundCheck,
             Keys.volumeLimit, Keys.audiobooksSpeed, Keys.backlightTimerIndex,
-            Keys.brightness, Keys.clickerEnabled, Keys.ipodColor
+            Keys.brightness, Keys.clickerEnabled, Keys.ipodColor,
+            Keys.timeMachineYear
         ]
         for key in keys {
             UserDefaults.standard.removeObject(forKey: key)

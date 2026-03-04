@@ -19,11 +19,15 @@ class CoverFlowLayout: UICollectionViewFlowLayout {
     let sideDepth: CGFloat = 170
     // Distance in points over which an item transitions from center to side state
     var transitionDistance: CGFloat = 0
+    private var cachedBoundsSize: CGSize = .zero
     
     override func prepare() {
         super.prepare()
         scrollDirection = .horizontal
         guard let collectionView = collectionView else { return }
+        // Only recompute metrics when bounds size changes (not on every scroll tick)
+        guard collectionView.bounds.size != cachedBoundsSize else { return }
+        cachedBoundsSize = collectionView.bounds.size
         // Art is square; cell is taller to fit reflection below
         let artSize = collectionView.bounds.height * 0.5
         itemSize = CGSize(width: artSize, height: artSize * 1.45)
@@ -43,7 +47,9 @@ class CoverFlowLayout: UICollectionViewFlowLayout {
         guard let collectionView = collectionView else { return nil }
         
         // Expand the rect to capture items that may be transformed into the visible area
-        let expandedRect = rect.insetBy(dx: -collectionView.bounds.width, dy: 0)
+        // Use half the viewport width — enough for the 3D perspective but avoids creating
+        // cells far beyond what's visible
+        let expandedRect = rect.insetBy(dx: -collectionView.bounds.width * 0.5, dy: 0)
         guard let superAttributes = super.layoutAttributesForElements(in: expandedRect) else { return nil }
         
         let centerX = collectionView.contentOffset.x + collectionView.bounds.width / 2.0
@@ -99,9 +105,13 @@ class CoverFlowLayout: UICollectionViewFlowLayout {
     
     // Returns the exact content offset.x needed to center the item at the given index
     func contentOffsetForItem(at index: Int) -> CGFloat {
+        return contentOffsetForFractionalPosition(Double(index))
+    }
+    
+    // Returns interpolated content offset for a fractional album position (e.g. 5.3)
+    func contentOffsetForFractionalPosition(_ position: Double) -> CGFloat {
         let layoutSpacing = itemSize.width + minimumLineSpacing
-        // Item N's center.x in content coordinates = sectionInset.left + itemSize.width/2 + N * layoutSpacing
-        let itemCenterX = sectionInset.left + itemSize.width / 2.0 + CGFloat(index) * layoutSpacing
+        let itemCenterX = sectionInset.left + itemSize.width / 2.0 + CGFloat(position) * layoutSpacing
         let viewportWidth = collectionView?.bounds.width ?? 0
         return itemCenterX - viewportWidth / 2.0
     }
