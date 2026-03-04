@@ -12,9 +12,9 @@ class CoverFlowLayout: UICollectionViewFlowLayout {
     // Angle in degrees that side covers are rotated around the Y axis
     let tiltAngle: CGFloat = 70
     // Horizontal distance from the center cover's center to the first side cover's center
-    let sideOffset: CGFloat = 90
-    // Horizontal spacing between successive side covers (tight stacking)
-    let sideSpacing: CGFloat = 22
+    let sideOffset: CGFloat = 85
+    // Horizontal spacing between successive side covers (tight stacking/overlapping)
+    let sideSpacing: CGFloat = 14
     // Z-depth that side covers are pushed behind the center
     let sideDepth: CGFloat = 200
     // Distance in points over which an item transitions from center to side state
@@ -57,33 +57,31 @@ class CoverFlowLayout: UICollectionViewFlowLayout {
             let absNormalized = abs(normalizedDistance)
             
             // Transition factor: 0 = fully centered, 1 = fully side-state
-            // Smooth transition over the range [0, 1] item widths
-            let t = min(absNormalized, 1.0)
+            // Ramp up fast so side items snap to full tilt quickly (×3 then clamp)
+            let t = min(absNormalized * 3.0, 1.0)
             let sign: CGFloat = normalizedDistance >= 0 ? 1.0 : -1.0
             
-            // Rotation: 0 at center, full tiltAngle at sides
-            // Negated so left items fan with left edge closer, right items with right edge closer
+            // Rotation: 0 at center, full tiltAngle at sides — constant angle once tilted
             let angle = -sign * t * tiltAngle * .pi / 180.0
             
             // Calculate where this item SHOULD be visually vs where the layout placed it.
-            // The layout places item N at: centerX + N * layoutSpacing
-            // We want item N to be at:
-            //   - Center item (N=0): centerX (no change)
-            //   - Side items: centerX + sign * (sideOffset + (absN - 1) * sideSpacing)
-            // The translation is the difference between desired and actual position.
+            // Center item stays put; side items stack tightly with overlap.
             var desiredX: CGFloat
             if absNormalized < 0.01 {
                 desiredX = centerX
-            } else if absNormalized < 1.0 {
-                // Transitioning: interpolate between natural center and first side position
-                let sideX = centerX + sign * sideOffset
-                let naturalX = centerX + distance
-                // Smoothly move from natural position toward side position
-                desiredX = naturalX + (sideX - naturalX) * t
             } else {
-                // Fully in side state: stack tightly
-                let sideIndex = absNormalized - 1.0
-                desiredX = centerX + sign * (sideOffset + sideIndex * sideSpacing)
+                // All non-center items: position based on their distance from center
+                // First side item at sideOffset, subsequent items stacked at sideSpacing apart
+                let sideIndex = max(absNormalized - 1.0, 0.0)
+                let fullSideX = centerX + sign * (sideOffset + sideIndex * sideSpacing)
+                
+                if absNormalized < 1.0 {
+                    // Transitioning: interpolate toward side position
+                    let naturalX = centerX + distance
+                    desiredX = naturalX + (fullSideX - naturalX) * t
+                } else {
+                    desiredX = fullSideX
+                }
             }
             
             let translateX = desiredX - attribute.center.x

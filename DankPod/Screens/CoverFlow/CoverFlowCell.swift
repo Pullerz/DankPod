@@ -27,17 +27,18 @@ class CoverFlowCell: UICollectionViewCell {
         backgroundColor = .clear
         contentView.backgroundColor = .clear
         
-        // Album art - top 75% of the cell
+        // Album art — square, fills cell width
         albumArtImageView.contentMode = .scaleAspectFill
         albumArtImageView.clipsToBounds = true
         albumArtImageView.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(albumArtImageView)
         
-        // Reflection - bottom 25% of the cell, below album art
+        // Reflection — flipped image below the art with a small gap
         reflectionImageView.contentMode = .scaleAspectFill
         reflectionImageView.clipsToBounds = true
         reflectionImageView.translatesAutoresizingMaskIntoConstraints = false
         reflectionImageView.transform = CGAffineTransform(scaleX: 1, y: -1)
+        reflectionImageView.alpha = 0.5
         contentView.addSubview(reflectionImageView)
         
         NSLayoutConstraint.activate([
@@ -47,8 +48,8 @@ class CoverFlowCell: UICollectionViewCell {
             albumArtImageView.rightAnchor.constraint(equalTo: contentView.rightAnchor),
             albumArtImageView.heightAnchor.constraint(equalTo: contentView.widthAnchor),
             
-            // Reflection fills the remaining space below the square art
-            reflectionImageView.topAnchor.constraint(equalTo: albumArtImageView.bottomAnchor),
+            // Small gap (2pt) between art and reflection for surface effect
+            reflectionImageView.topAnchor.constraint(equalTo: albumArtImageView.bottomAnchor, constant: 2),
             reflectionImageView.leftAnchor.constraint(equalTo: contentView.leftAnchor),
             reflectionImageView.rightAnchor.constraint(equalTo: contentView.rightAnchor),
             reflectionImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
@@ -57,12 +58,14 @@ class CoverFlowCell: UICollectionViewCell {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        // Update reflection gradient mask
+        // Gradient mask: starts visible at the top edge, fades to transparent quickly
         reflectionGradient.frame = reflectionImageView.bounds
         reflectionGradient.colors = [
+            UIColor.white.cgColor,
             UIColor.white.withAlphaComponent(0.3).cgColor,
             UIColor.clear.cgColor
         ]
+        reflectionGradient.locations = [0.0, 0.15, 0.6]
         reflectionGradient.startPoint = CGPoint(x: 0.5, y: 0)
         reflectionGradient.endPoint = CGPoint(x: 0.5, y: 1)
         reflectionImageView.layer.mask = reflectionGradient
