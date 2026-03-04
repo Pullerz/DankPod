@@ -10,11 +10,11 @@ import UIKit
 class CoverFlowLayout: UICollectionViewFlowLayout {
     
     // Angle in degrees that side covers are rotated around the Y axis
-    let tiltAngle: CGFloat = 75
+    let tiltAngle: CGFloat = 70
     // Horizontal distance from the center cover's center to the first side cover's center
-    let sideOffset: CGFloat = 100
+    let sideOffset: CGFloat = 90
     // Horizontal spacing between successive side covers (tight stacking)
-    let sideSpacing: CGFloat = 30
+    let sideSpacing: CGFloat = 22
     // Z-depth that side covers are pushed behind the center
     let sideDepth: CGFloat = 200
     // Distance in points over which an item transitions from center to side state
@@ -104,6 +104,15 @@ class CoverFlowLayout: UICollectionViewFlowLayout {
         }
         
         return attributes
+    }
+    
+    // Returns the exact content offset.x needed to center the item at the given index
+    func contentOffsetForItem(at index: Int) -> CGFloat {
+        let layoutSpacing = itemSize.width + minimumLineSpacing
+        // Item N's center.x in content coordinates = sectionInset.left + itemSize.width/2 + N * layoutSpacing
+        let itemCenterX = sectionInset.left + itemSize.width / 2.0 + CGFloat(index) * layoutSpacing
+        let viewportWidth = collectionView?.bounds.width ?? 0
+        return itemCenterX - viewportWidth / 2.0
     }
     
     override func targetContentOffset(forProposedContentOffset proposedContentOffset: CGPoint, withScrollingVelocity velocity: CGPoint) -> CGPoint {

@@ -44,17 +44,21 @@ class CoverFlowViewController: UIViewController, ClickWheelProtocol {
             return titleA.localizedCaseInsensitiveCompare(titleB) == .orderedAscending
         }
         collectionView.reloadData()
+        collectionView.layoutIfNeeded()
         if albums.count > 0 {
             emptyStateLabel.isHidden = true
-            // Scroll to current index
-            let indexPath = IndexPath(item: currentIndex, section: 0)
-            collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: false)
+            scrollToCurrentIndex(animated: false)
             updateAlbumInfo()
         } else {
             emptyStateLabel.isHidden = false
             albumTitleLabel.text = ""
             artistNameLabel.text = ""
         }
+    }
+    
+    func scrollToCurrentIndex(animated: Bool) {
+        let offsetX = coverFlowLayout.contentOffsetForItem(at: currentIndex)
+        collectionView.setContentOffset(CGPoint(x: offsetX, y: 0), animated: animated)
     }
     
     func setupUI() {
@@ -160,16 +164,14 @@ class CoverFlowViewController: UIViewController, ClickWheelProtocol {
         if rotationDirection == .CLOCKWISE {
             if currentIndex + 1 <= albums.count - 1 {
                 currentIndex += 1
-                let indexPath = IndexPath(item: currentIndex, section: 0)
-                collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                scrollToCurrentIndex(animated: true)
                 updateAlbumInfo()
                 showLetterOverlay()
             }
         } else {
             if currentIndex > 0 {
                 currentIndex -= 1
-                let indexPath = IndexPath(item: currentIndex, section: 0)
-                collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                scrollToCurrentIndex(animated: true)
                 updateAlbumInfo()
                 showLetterOverlay()
             }
@@ -208,8 +210,7 @@ class CoverFlowViewController: UIViewController, ClickWheelProtocol {
         if pressure == .NORMAL {
             if currentIndex + 1 <= albums.count - 1 {
                 currentIndex += 1
-                let indexPath = IndexPath(item: currentIndex, section: 0)
-                collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                scrollToCurrentIndex(animated: true)
                 updateAlbumInfo()
                 showLetterOverlay()
             }
@@ -220,8 +221,7 @@ class CoverFlowViewController: UIViewController, ClickWheelProtocol {
         if pressure == .NORMAL {
             if currentIndex > 0 {
                 currentIndex -= 1
-                let indexPath = IndexPath(item: currentIndex, section: 0)
-                collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                scrollToCurrentIndex(animated: true)
                 updateAlbumInfo()
                 showLetterOverlay()
             }
