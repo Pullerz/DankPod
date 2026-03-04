@@ -12,7 +12,6 @@ class CoverFlowCell: UICollectionViewCell {
     
     let albumArtImageView = UIImageView()
     let reflectionImageView = UIImageView()
-    private let reflectionGradientMask = CAGradientLayer()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -33,25 +32,12 @@ class CoverFlowCell: UICollectionViewCell {
         albumArtImageView.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(albumArtImageView)
         
-        // Reflection below artwork — use a gradient alpha mask for the fade-out
-        // (masking the layer itself ensures the fade transforms correctly in 3D space)
+        // Reflection below artwork — image is pre-rendered with gradient baked in
         reflectionImageView.contentMode = .scaleAspectFill
         reflectionImageView.clipsToBounds = true
         reflectionImageView.translatesAutoresizingMaskIntoConstraints = false
         reflectionImageView.transform = CGAffineTransform(scaleX: 1.02, y: -0.92)
-        reflectionImageView.alpha = 0.45
         contentView.addSubview(reflectionImageView)
-        
-        // Gradient mask: white = visible, clear = hidden
-        reflectionGradientMask.colors = [
-            UIColor.white.cgColor,
-            UIColor.white.withAlphaComponent(0.6).cgColor,
-            UIColor.clear.cgColor
-        ]
-        reflectionGradientMask.locations = [0.0, 0.15, 0.55]
-        reflectionGradientMask.startPoint = CGPoint(x: 0.5, y: 0)
-        reflectionGradientMask.endPoint = CGPoint(x: 0.5, y: 1)
-        reflectionImageView.layer.mask = reflectionGradientMask
         
         NSLayoutConstraint.activate([
             // Album art is square: width × width
@@ -68,25 +54,48 @@ class CoverFlowCell: UICollectionViewCell {
         ])
     }
     
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        // Keep the gradient mask sized to the reflection image view's bounds
-        CATransaction.begin()
-        CATransaction.setDisableActions(true)
-        reflectionGradientMask.frame = reflectionImageView.bounds
-        CATransaction.commit()
+    /// Creates a reflection image with a vertical gradient fade baked in.
+    /// The gradient goes from semi-visible at the top to fully transparent,
+    /// matching the iPod Classic reflection diffusion effect.
+    private func reflectionImage(from source: UIImage) -> UIImage {
+        let size = source.size
+        let renderer = UIGraphicsImageRenderer(size: size)
+        return renderer.image { context in
+            let rect = CGRect(origin: .zero, size: size)
+            // Draw the source image
+            source.draw(in: rect)
+            
+            // Overlay a gradient that goes from clear (top) to the background color (bottom).
+            // Because the reflection view is flipped (negative Y scale), the "top" of this
+            // image becomes the bottom of the visual reflection, and "bottom" becomes the
+            // junction with the album art. So we fade from clear at bottom to opaque at top.
+            let gradientColors = [
+                UIColor.white.withAlphaComponent(0.55).cgColor,
+                UIColor.white.withAlphaComponent(0.7).cgColor,
+                UIColor.white.withAlphaComponent(1.0).cgColor
+            ]
+            let colorSpace = CGColorSpaceCreateDeviceRGB()
+            let locations: [CGFloat] = [0.0, 0.35, 0.65]
+            if let gradient = CGGradient(colorsSpace: colorSpace, colors: gradientColors as CFArray, locations: locations) {
+                context.cgContext.setBlendMode(.sourceAtop)
+                context.cgContext.drawLinearGradient(gradient,
+                                                     start: CGPoint(x: size.width / 2, y: 0),
+                                                     end: CGPoint(x: size.width / 2, y: size.height),
+                                                     options: [])
+            }
+        }
     }
     
     func configure(with album: MPMediaItemCollection) {
         let artworkSize = CGSize(width: 200, height: 200)
         if let artwork = album.representativeItem?.artwork?.image(at: artworkSize) {
             albumArtImageView.image = artwork
-            reflectionImageView.image = artwork
+            reflectionImageView.image = reflectionImage(from: artwork)
         } else {
             // Placeholder: dark grey with music note
             let placeholderImage = createPlaceholderImage(size: artworkSize)
             albumArtImageView.image = placeholderImage
-            reflectionImageView.image = placeholderImage
+            reflectionImageView.image = reflectionImage(from: placeholderImage)
         }
     }
     
