@@ -59,13 +59,13 @@ class CoverFlowViewController: UIViewController, ClickWheelProtocol {
     
     func setupUI() {
         if !hasSetupUI {
-            view.backgroundColor = .black
+            view.backgroundColor = .white
             
             // Cover Flow layout + collection view
             coverFlowLayout = CoverFlowLayout()
             collectionView = UICollectionView(frame: .zero, collectionViewLayout: coverFlowLayout)
             collectionView.translatesAutoresizingMaskIntoConstraints = false
-            collectionView.backgroundColor = .black
+            collectionView.backgroundColor = .white
             collectionView.showsHorizontalScrollIndicator = false
             collectionView.decelerationRate = .fast
             collectionView.delegate = self
@@ -75,21 +75,21 @@ class CoverFlowViewController: UIViewController, ClickWheelProtocol {
             
             // Album title label
             albumTitleLabel.translatesAutoresizingMaskIntoConstraints = false
-            albumTitleLabel.textColor = .white
+            albumTitleLabel.textColor = .black
             albumTitleLabel.font = UIFont(name: "Helvetica-Bold", size: 14)
             albumTitleLabel.textAlignment = .center
             view.addSubview(albumTitleLabel)
             
             // Artist name label
             artistNameLabel.translatesAutoresizingMaskIntoConstraints = false
-            artistNameLabel.textColor = UIColor.lightGray
-            artistNameLabel.font = UIFont(name: "Helvetica-Bold", size: 12)
+            artistNameLabel.textColor = .black
+            artistNameLabel.font = UIFont(name: "Helvetica-Bold", size: 14)
             artistNameLabel.textAlignment = .center
             view.addSubview(artistNameLabel)
             
             // Letter overlay (shown during fast scrolling)
             letterOverlay.translatesAutoresizingMaskIntoConstraints = false
-            letterOverlay.textColor = UIColor.white.withAlphaComponent(0.8)
+            letterOverlay.textColor = UIColor.black.withAlphaComponent(0.6)
             letterOverlay.font = UIFont(name: "Helvetica-Bold", size: 80)
             letterOverlay.textAlignment = .center
             letterOverlay.alpha = 0

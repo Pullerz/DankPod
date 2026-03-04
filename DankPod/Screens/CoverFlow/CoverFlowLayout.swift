@@ -20,7 +20,7 @@ class CoverFlowLayout: UICollectionViewFlowLayout {
         guard let collectionView = collectionView else { return }
         let itemHeight = collectionView.bounds.height * 0.6
         itemSize = CGSize(width: itemHeight, height: itemHeight)
-        minimumLineSpacing = -itemHeight * 0.3  // Negative for overlap of side items
+        minimumLineSpacing = -itemHeight * 0.15  // Negative for overlap of side items
         let horizontalInset = (collectionView.bounds.width - itemSize.width) / 2.0
         sectionInset = UIEdgeInsets(top: 0, left: horizontalInset, bottom: 0, right: horizontalInset)
     }
@@ -58,7 +58,7 @@ class CoverFlowLayout: UICollectionViewFlowLayout {
                 
                 // Translate side items toward center for overlap effect
                 let translateX = -clampedDistance * centerGap
-                transform = CATransform3DTranslate(transform, translateX, 0, -abs(clampedDistance) * 200)
+                transform = CATransform3DTranslate(transform, translateX, 0, -abs(clampedDistance) * 400)
                 
                 attribute.zIndex = Int(1000 - abs(distance))
             }
