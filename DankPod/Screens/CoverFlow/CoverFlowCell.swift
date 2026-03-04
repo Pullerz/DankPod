@@ -12,7 +12,8 @@ class CoverFlowCell: UICollectionViewCell {
     
     let albumArtImageView = UIImageView()
     let reflectionImageView = UIImageView()
-    private let reflectionGradient = CAGradientLayer()
+    private let reflectionFadeView = UIView()
+    private let reflectionFadeGradient = CAGradientLayer()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -40,6 +41,10 @@ class CoverFlowCell: UICollectionViewCell {
         reflectionImageView.transform = CGAffineTransform(scaleX: 1.02, y: -0.92)
         reflectionImageView.alpha = 0.62
         contentView.addSubview(reflectionImageView)
+
+        reflectionFadeView.translatesAutoresizingMaskIntoConstraints = false
+        reflectionFadeView.isUserInteractionEnabled = false
+        reflectionImageView.addSubview(reflectionFadeView)
         
         NSLayoutConstraint.activate([
             // Album art is square: width × width
@@ -54,22 +59,31 @@ class CoverFlowCell: UICollectionViewCell {
             reflectionImageView.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: 4),
             reflectionImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         ])
+
+        NSLayoutConstraint.activate([
+            reflectionFadeView.topAnchor.constraint(equalTo: reflectionImageView.topAnchor),
+            reflectionFadeView.leftAnchor.constraint(equalTo: reflectionImageView.leftAnchor),
+            reflectionFadeView.rightAnchor.constraint(equalTo: reflectionImageView.rightAnchor),
+            reflectionFadeView.bottomAnchor.constraint(equalTo: reflectionImageView.bottomAnchor)
+        ])
     }
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        // Reflection mask: visible near seam then diffuses downward
-        reflectionGradient.frame = reflectionImageView.bounds
-        reflectionGradient.colors = [
-            UIColor.white.cgColor,
-            UIColor.white.withAlphaComponent(0.6).cgColor,
-            UIColor.white.withAlphaComponent(0.2).cgColor,
-            UIColor.clear.cgColor
+        // Fade overlay: top mostly clear (reflection visible), bottom opaque white (diffused out)
+        reflectionFadeGradient.frame = reflectionFadeView.bounds
+        reflectionFadeGradient.colors = [
+            UIColor.white.withAlphaComponent(0.05).cgColor,
+            UIColor.white.withAlphaComponent(0.35).cgColor,
+            UIColor.white.withAlphaComponent(0.75).cgColor,
+            UIColor.white.cgColor
         ]
-        reflectionGradient.locations = [0.0, 0.22, 0.55, 1.0]
-        reflectionGradient.startPoint = CGPoint(x: 0.5, y: 0)
-        reflectionGradient.endPoint = CGPoint(x: 0.5, y: 1)
-        reflectionImageView.layer.mask = reflectionGradient
+        reflectionFadeGradient.locations = [0.0, 0.28, 0.62, 1.0]
+        reflectionFadeGradient.startPoint = CGPoint(x: 0.5, y: 0)
+        reflectionFadeGradient.endPoint = CGPoint(x: 0.5, y: 1)
+        if reflectionFadeGradient.superlayer == nil {
+            reflectionFadeView.layer.addSublayer(reflectionFadeGradient)
+        }
     }
     
     func configure(with album: MPMediaItemCollection) {
