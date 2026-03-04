@@ -12,7 +12,9 @@ class CoverFlowCell: UICollectionViewCell {
     
     let albumArtImageView = UIImageView()
     let reflectionImageView = UIImageView()
+    let reflectionSpreadImageView = UIImageView()
     private let reflectionGradient = CAGradientLayer()
+    private let reflectionSpreadGradient = CAGradientLayer()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -33,12 +35,20 @@ class CoverFlowCell: UICollectionViewCell {
         albumArtImageView.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(albumArtImageView)
         
-        // Reflection — flipped image below the art with a small gap
+        // Diffused reflection spread layer (wider + softer), sits behind main reflection
+        reflectionSpreadImageView.contentMode = .scaleAspectFill
+        reflectionSpreadImageView.clipsToBounds = true
+        reflectionSpreadImageView.translatesAutoresizingMaskIntoConstraints = false
+        reflectionSpreadImageView.transform = CGAffineTransform(scaleX: 1, y: -1)
+        reflectionSpreadImageView.alpha = 0.2
+        contentView.addSubview(reflectionSpreadImageView)
+        
+        // Reflection — crisp layer near contact point
         reflectionImageView.contentMode = .scaleAspectFill
         reflectionImageView.clipsToBounds = true
         reflectionImageView.translatesAutoresizingMaskIntoConstraints = false
         reflectionImageView.transform = CGAffineTransform(scaleX: 1, y: -1)
-        reflectionImageView.alpha = 0.5
+        reflectionImageView.alpha = 0.55
         contentView.addSubview(reflectionImageView)
         
         NSLayoutConstraint.activate([
@@ -48,7 +58,13 @@ class CoverFlowCell: UICollectionViewCell {
             albumArtImageView.rightAnchor.constraint(equalTo: contentView.rightAnchor),
             albumArtImageView.heightAnchor.constraint(equalTo: contentView.widthAnchor),
             
-            // Small gap (2pt) between art and reflection for surface effect
+            // Wider diffused reflection starts just below the art
+            reflectionSpreadImageView.topAnchor.constraint(equalTo: albumArtImageView.bottomAnchor, constant: 1),
+            reflectionSpreadImageView.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: -8),
+            reflectionSpreadImageView.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: 8),
+            reflectionSpreadImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            
+            // Main reflection sits on top with a tiny gap from the art
             reflectionImageView.topAnchor.constraint(equalTo: albumArtImageView.bottomAnchor, constant: 2),
             reflectionImageView.leftAnchor.constraint(equalTo: contentView.leftAnchor),
             reflectionImageView.rightAnchor.constraint(equalTo: contentView.rightAnchor),
@@ -58,17 +74,29 @@ class CoverFlowCell: UICollectionViewCell {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        // Gradient mask: starts visible at the top edge, fades to transparent quickly
+        // Main reflection mask: visible near the seam, fades quickly
         reflectionGradient.frame = reflectionImageView.bounds
         reflectionGradient.colors = [
             UIColor.white.cgColor,
-            UIColor.white.withAlphaComponent(0.3).cgColor,
+            UIColor.white.withAlphaComponent(0.35).cgColor,
             UIColor.clear.cgColor
         ]
-        reflectionGradient.locations = [0.0, 0.15, 0.6]
+        reflectionGradient.locations = [0.0, 0.2, 0.65]
         reflectionGradient.startPoint = CGPoint(x: 0.5, y: 0)
         reflectionGradient.endPoint = CGPoint(x: 0.5, y: 1)
         reflectionImageView.layer.mask = reflectionGradient
+        
+        // Spread mask: softer and broader falloff for surface diffusion
+        reflectionSpreadGradient.frame = reflectionSpreadImageView.bounds
+        reflectionSpreadGradient.colors = [
+            UIColor.white.withAlphaComponent(0.65).cgColor,
+            UIColor.white.withAlphaComponent(0.2).cgColor,
+            UIColor.clear.cgColor
+        ]
+        reflectionSpreadGradient.locations = [0.0, 0.35, 1.0]
+        reflectionSpreadGradient.startPoint = CGPoint(x: 0.5, y: 0)
+        reflectionSpreadGradient.endPoint = CGPoint(x: 0.5, y: 1)
+        reflectionSpreadImageView.layer.mask = reflectionSpreadGradient
     }
     
     func configure(with album: MPMediaItemCollection) {
@@ -76,11 +104,13 @@ class CoverFlowCell: UICollectionViewCell {
         if let artwork = album.representativeItem?.artwork?.image(at: artworkSize) {
             albumArtImageView.image = artwork
             reflectionImageView.image = artwork
+            reflectionSpreadImageView.image = artwork
         } else {
             // Placeholder: dark grey with music note
             let placeholderImage = createPlaceholderImage(size: artworkSize)
             albumArtImageView.image = placeholderImage
             reflectionImageView.image = placeholderImage
+            reflectionSpreadImageView.image = placeholderImage
         }
     }
     
@@ -112,5 +142,6 @@ class CoverFlowCell: UICollectionViewCell {
         super.prepareForReuse()
         albumArtImageView.image = nil
         reflectionImageView.image = nil
+        reflectionSpreadImageView.image = nil
     }
 }

@@ -10,13 +10,13 @@ import UIKit
 class CoverFlowLayout: UICollectionViewFlowLayout {
     
     // Angle in degrees that side covers are rotated around the Y axis
-    let tiltAngle: CGFloat = 70
+    let tiltAngle: CGFloat = 62
     // Horizontal distance from the center cover's center to the first side cover's center
-    let sideOffset: CGFloat = 85
+    let sideOffset: CGFloat = 66
     // Horizontal spacing between successive side covers (tight stacking/overlapping)
-    let sideSpacing: CGFloat = 14
+    let sideSpacing: CGFloat = 10
     // Z-depth that side covers are pushed behind the center
-    let sideDepth: CGFloat = 200
+    let sideDepth: CGFloat = 150
     // Distance in points over which an item transitions from center to side state
     var transitionDistance: CGFloat = 0
     
@@ -26,7 +26,7 @@ class CoverFlowLayout: UICollectionViewFlowLayout {
         guard let collectionView = collectionView else { return }
         // Art is square; cell is taller to fit reflection below
         let artSize = collectionView.bounds.height * 0.5
-        itemSize = CGSize(width: artSize, height: artSize * 1.3)
+        itemSize = CGSize(width: artSize, height: artSize * 1.45)
         // Positive spacing — items are spaced apart; transforms handle visual positioning
         minimumLineSpacing = 10
         let horizontalInset = (collectionView.bounds.width - itemSize.width) / 2.0
@@ -52,44 +52,31 @@ class CoverFlowLayout: UICollectionViewFlowLayout {
         
         for attribute in attributes {
             let distance = attribute.center.x - centerX
-            // How many "item widths" away from center (can be fractional for smooth animation)
+            // How many layout slots away from center (fractional)
             let normalizedDistance = distance / layoutSpacing
+            let sign: CGFloat = normalizedDistance >= 0 ? 1.0 : -1.0
             let absNormalized = abs(normalizedDistance)
             
-            // Transition factor: 0 = fully centered, 1 = fully side-state
-            // Ramp up fast so side items snap to full tilt quickly (×3 then clamp)
-            let t = min(absNormalized * 3.0, 1.0)
-            let sign: CGFloat = normalizedDistance >= 0 ? 1.0 : -1.0
+            // Snap side items to discrete slot indices to avoid progressive tilt in settled states.
+            let nearestSlot = Int(round(absNormalized))
+            let isCenter = nearestSlot == 0
             
-            // Rotation: 0 at center, full tiltAngle at sides — constant angle once tilted
-            let angle = -sign * t * tiltAngle * .pi / 180.0
+            let slotProgress = min(abs(absNormalized - CGFloat(nearestSlot)) * 2.0, 1.0)
+            let transition = 1.0 - slotProgress
             
-            // Calculate where this item SHOULD be visually vs where the layout placed it.
-            // Center item stays put; side items stack tightly with overlap.
-            var desiredX: CGFloat
-            if absNormalized < 0.01 {
-                desiredX = centerX
-            } else {
-                // All non-center items: position based on their distance from center
-                // First side item at sideOffset, subsequent items stacked at sideSpacing apart
-                let sideIndex = max(absNormalized - 1.0, 0.0)
-                let fullSideX = centerX + sign * (sideOffset + sideIndex * sideSpacing)
-                
-                if absNormalized < 1.0 {
-                    // Transitioning: interpolate toward side position
-                    let naturalX = centerX + distance
-                    desiredX = naturalX + (fullSideX - naturalX) * t
-                } else {
-                    desiredX = fullSideX
-                }
-            }
+            let sideSlot = max(nearestSlot - 1, 0)
+            let slotX = centerX + sign * (sideOffset + CGFloat(sideSlot) * sideSpacing)
+            let naturalX = centerX + distance
+            let desiredX = isCenter ? centerX : (naturalX + (slotX - naturalX) * transition)
             
+            let sideFactor: CGFloat = isCenter ? 0.0 : transition
+            let angle = -sign * sideFactor * tiltAngle * .pi / 180.0
             let translateX = desiredX - attribute.center.x
-            let depth = -t * sideDepth
+            let depth = -sideFactor * sideDepth
             
             // Build transform: translate first (in parent coords), then rotate (around anchor)
             var transform = CATransform3DIdentity
-            transform.m34 = -1.0 / 800.0
+            transform.m34 = -1.0 / 1100.0
             // Translate to the desired visual position and push back in Z
             transform = CATransform3DTranslate(transform, translateX, 0, depth)
             // Rotate around Y axis — happens around the item's center after translation
@@ -98,7 +85,7 @@ class CoverFlowLayout: UICollectionViewFlowLayout {
             attribute.transform3D = transform
             
             // Z-index: center item on top, side items layered by distance
-            attribute.zIndex = Int(10000 - absNormalized * 100)
+            attribute.zIndex = isCenter ? 10000 : Int(9000 - CGFloat(sideSlot) * 10)
         }
         
         return attributes
