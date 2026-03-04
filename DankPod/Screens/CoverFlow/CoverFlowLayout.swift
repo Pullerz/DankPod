@@ -10,11 +10,11 @@ import UIKit
 class CoverFlowLayout: UICollectionViewFlowLayout {
     
     // Angle in degrees that side covers are rotated around the Y axis
-    let tiltAngle: CGFloat = 70
+    let tiltAngle: CGFloat = 75
     // Horizontal distance from the center cover's center to the first side cover's center
-    let sideOffset: CGFloat = 110
+    let sideOffset: CGFloat = 100
     // Horizontal spacing between successive side covers (tight stacking)
-    let sideSpacing: CGFloat = 42
+    let sideSpacing: CGFloat = 30
     // Z-depth that side covers are pushed behind the center
     let sideDepth: CGFloat = 200
     // Distance in points over which an item transitions from center to side state

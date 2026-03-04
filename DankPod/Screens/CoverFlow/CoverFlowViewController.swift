@@ -68,7 +68,7 @@ class CoverFlowViewController: UIViewController, ClickWheelProtocol {
             collectionView.backgroundColor = .white
             collectionView.showsHorizontalScrollIndicator = false
             collectionView.clipsToBounds = false
-            collectionView.decelerationRate = .fast
+            collectionView.isScrollEnabled = false
             collectionView.delegate = self
             collectionView.dataSource = self
             collectionView.register(CoverFlowCell.self, forCellWithReuseIdentifier: "CoverFlowCell")
@@ -243,23 +243,5 @@ extension CoverFlowViewController: UICollectionViewDataSource, UICollectionViewD
         return cell
     }
     
-    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        updateCurrentIndexFromScrollPosition()
-    }
-    
-    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        if !decelerate {
-            updateCurrentIndexFromScrollPosition()
-        }
-    }
-    
-    private func updateCurrentIndexFromScrollPosition() {
-        guard let collectionView = collectionView else { return }
-        let centerX = collectionView.contentOffset.x + collectionView.bounds.width / 2.0
-        let closestIndexPath = collectionView.indexPathForItem(at: CGPoint(x: centerX, y: collectionView.bounds.height / 2.0))
-        if let indexPath = closestIndexPath {
-            currentIndex = indexPath.item
-            updateAlbumInfo()
-        }
-    }
+
 }
