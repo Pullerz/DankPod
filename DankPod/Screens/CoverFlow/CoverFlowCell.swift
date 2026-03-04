@@ -44,7 +44,7 @@ class CoverFlowCell: UICollectionViewCell {
 
         reflectionFadeView.translatesAutoresizingMaskIntoConstraints = false
         reflectionFadeView.isUserInteractionEnabled = false
-        reflectionImageView.addSubview(reflectionFadeView)
+        contentView.addSubview(reflectionFadeView)
         
         NSLayoutConstraint.activate([
             // Album art is square: width × width
@@ -73,12 +73,12 @@ class CoverFlowCell: UICollectionViewCell {
         // Fade overlay: top mostly clear (reflection visible), bottom opaque white (diffused out)
         reflectionFadeGradient.frame = reflectionFadeView.bounds
         reflectionFadeGradient.colors = [
-            UIColor.white.withAlphaComponent(0.05).cgColor,
-            UIColor.white.withAlphaComponent(0.35).cgColor,
-            UIColor.white.withAlphaComponent(0.75).cgColor,
+            UIColor.white.withAlphaComponent(0.0).cgColor,
+            UIColor.white.withAlphaComponent(0.25).cgColor,
+            UIColor.white.withAlphaComponent(0.7).cgColor,
             UIColor.white.cgColor
         ]
-        reflectionFadeGradient.locations = [0.0, 0.28, 0.62, 1.0]
+        reflectionFadeGradient.locations = [0.0, 0.2, 0.55, 1.0]
         reflectionFadeGradient.startPoint = CGPoint(x: 0.5, y: 0)
         reflectionFadeGradient.endPoint = CGPoint(x: 0.5, y: 1)
         if reflectionFadeGradient.superlayer == nil {
