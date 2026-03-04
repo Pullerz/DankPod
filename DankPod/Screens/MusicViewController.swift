@@ -18,8 +18,8 @@ class MusicViewController: UIViewController, ClickWheelProtocol {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Conditionally add Made For You if iOS 15+ (requires MusicKit)
-        if #available(iOS 15.0, *) {
+        // Conditionally add Made For You if iOS 16+ (requires MusicKit)
+        if #available(iOS 16.0, *) {
             // Insert after "Recently Played" (index 2)
             menuItems.insert("Made For You", at: 2)
             vcs.insert(MadeForYouViewController(), at: 2)

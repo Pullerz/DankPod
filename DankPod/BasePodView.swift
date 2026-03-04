@@ -41,6 +41,9 @@ class BasePodView: UIViewController, UIGestureRecognizerDelegate {
     var forceTapGR: ForceTouchTapGestureRecogniser!
     let beneathScreen = UIView()
     let bodyBackground = UIImageView()
+    let bodyColorView = UIView()
+    private var screenHeightConstraint: NSLayoutConstraint!
+    private var screenBottomConstraint: NSLayoutConstraint?
     
     let menuButton = UIView()
     let nextSongButton = UIView()
@@ -135,15 +138,18 @@ class BasePodView: UIViewController, UIGestureRecognizerDelegate {
         setupDimmingOverlay()
         setupClickWheel()
         NotificationCenter.default.addObserver(self, selector: #selector(self.setBatteryIcon), name: UIDevice.batteryLevelDidChangeNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(applyTheme), name: .themeDidChange, object: nil)
+        applyTheme()
     }
     
     override func viewDidLayoutSubviews() {
+        let theme = ThemeManager.shared.currentTheme
         var colors: [UIColor]!
         
         if (safetyBar.frame.height > 0) {
-            colors = [UIColor.gradientVeryLightGrey, UIColor.gradientDarkGrey]
+            colors = [theme.navBarGradientTop, theme.navBarGradientBottom]
         } else {
-            colors = [UIColor.gradientLightGrey, UIColor.gradientDarkGrey]
+            colors = [theme.navBarGradientTop, theme.navBarGradientBottom]
         }
         
         navBar.removeGradient()
@@ -155,6 +161,69 @@ class BasePodView: UIViewController, UIGestureRecognizerDelegate {
         
     }
     
+    @objc func applyTheme() {
+        let theme = ThemeManager.shared.currentTheme
+        
+        // Body color behind texture
+        bodyColorView.backgroundColor = theme.bodyColor
+        
+        // Texture overlay alpha
+        bodyBackground.alpha = theme.textureAlpha
+        
+        // Click wheel - set image to template mode and tint
+        clickWheel.image = clickWheel.image?.withRenderingMode(.alwaysTemplate)
+        clickWheel.tintColor = theme.wheelRingColor
+        
+        // Label tints
+        menuLabel.setAttributedTitle(NSAttributedString(string: "MENU", attributes: [
+            NSAttributedString.Key.font: UIFont(name: "Helvetica-Bold", size: 17)!,
+            NSAttributedString.Key.foregroundColor: theme.labelTintColor
+        ]), for: .normal)
+        nextSongLabel.tintColor = theme.labelTintColor
+        previousSongLabel.tintColor = theme.labelTintColor
+        playPauseLabel.tintColor = theme.labelTintColor
+        
+        // Nav bar gradient - force re-layout
+        view.setNeedsLayout()
+    }
+
+    func setClickWheelHidden(_ hidden: Bool, animated: Bool = true) {
+        if hidden {
+            beneathScreen.isUserInteractionEnabled = false
+            screenHeightConstraint.isActive = false
+            screenBottomConstraint = screen.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            screenBottomConstraint?.isActive = true
+            let changes = {
+                self.beneathScreen.alpha = 0
+                self.bodyBackground.alpha = 0
+                self.bodyColorView.alpha = 0
+                self.view.layoutIfNeeded()
+            }
+            if animated {
+                UIView.animate(withDuration: 0.3, animations: changes)
+            } else {
+                changes()
+            }
+        } else {
+            beneathScreen.isUserInteractionEnabled = true
+            screenBottomConstraint?.isActive = false
+            screenBottomConstraint = nil
+            screenHeightConstraint.isActive = true
+            let theme = ThemeManager.shared.currentTheme
+            let changes = {
+                self.beneathScreen.alpha = 1
+                self.bodyBackground.alpha = theme.textureAlpha
+                self.bodyColorView.alpha = 1
+                self.view.layoutIfNeeded()
+            }
+            if animated {
+                UIView.animate(withDuration: 0.3, animations: changes)
+            } else {
+                changes()
+            }
+        }
+    }
+
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
     }
@@ -269,7 +338,8 @@ class BasePodView: UIViewController, UIGestureRecognizerDelegate {
         screen.topAnchor.constraint(equalTo: navBar.bottomAnchor).isActive = true
         screen.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
         screen.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
-        screen.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.4, constant: 0).isActive = true
+        screenHeightConstraint = screen.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.4, constant: 0)
+        screenHeightConstraint.isActive = true
     }
     
     private func setupDimmingOverlay() {
@@ -336,6 +406,14 @@ class BasePodView: UIViewController, UIGestureRecognizerDelegate {
     }
 
     private func setupClickWheel() {
+        bodyColorView.translatesAutoresizingMaskIntoConstraints = false
+        bodyColorView.backgroundColor = .clear
+        view.addSubview(bodyColorView)
+        bodyColorView.topAnchor.constraint(equalTo: screen.bottomAnchor).isActive = true
+        bodyColorView.leftAnchor.constraint(equalTo: screen.leftAnchor).isActive = true
+        bodyColorView.rightAnchor.constraint(equalTo: screen.rightAnchor).isActive = true
+        bodyColorView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+
         bodyBackground.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(bodyBackground)
         bodyBackground.topAnchor.constraint(equalTo: screen.bottomAnchor).isActive = true

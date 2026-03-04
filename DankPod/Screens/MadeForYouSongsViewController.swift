@@ -20,6 +20,7 @@ class MadeForYouSongsViewController: UIViewController, ClickWheelProtocol {
     var counter: Int = 0
     var hasSetupUI = false
     var isLoading = true
+    var hasLoadedOnce = false
     
     let emptyLabel: UILabel = UILabel()
     let loadingIndicator: UIActivityIndicatorView = UIActivityIndicatorView(style: .medium)
@@ -29,10 +30,18 @@ class MadeForYouSongsViewController: UIViewController, ClickWheelProtocol {
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         setupUI()
         AppDelegate.baseVC.clickWheelDelegate = self
         AppDelegate.baseVC.navBarTitle = playlist.name
-        loadTracks()
+        if !hasLoadedOnce {
+            loadTracks()
+            hasLoadedOnce = true
+        } else {
+            if !tracks.isEmpty {
+                tableView.selectRow(at: IndexPath(row: counter, section: 0), animated: false, scrollPosition: .none)
+            }
+        }
     }
     
     func loadTracks() {
@@ -148,24 +157,38 @@ class MadeForYouSongsViewController: UIViewController, ClickWheelProtocol {
     func centerPressed(pressure: ClickWheelTouchPressure) {
         if pressure == .NORMAL {
             guard !tracks.isEmpty else { return }
+            
+            // Start playback via MusicKit (sets queue + plays)
             MusicKitService.shared.playTracks(tracks, startingAt: counter)
             
-            // Wait briefly for the system player queue to populate, then push PlaybackViewController
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
-                guard let self = self else { return }
-                let queue = AppDelegate.music.getCurrentQueue()
-                if !queue.isEmpty {
-                    let vc = PlaybackViewController()
-                    vc.songs = queue
-                    vc.startingIndex = -1
-                    vc.comingFromHome = true
-                    self.navigationController?.pushViewController(vc, animated: true)
+            // Push PlaybackViewController immediately — use skipQueueSetup
+            // so it doesn't overwrite the MusicKit queue, and comingFromHome
+            // so it doesn't call play() again (MusicKitService already started playback)
+            let vc = PlaybackViewController()
+            // We need to provide a songs array for PlaybackVC's UI (track count, artwork, etc.)
+            // Use getCurrentQueue() as a best-effort; if empty, create a minimal placeholder
+            let queue = AppDelegate.music.getCurrentQueue()
+            if !queue.isEmpty {
+                vc.songs = queue
+            } else {
+                // Fallback: create a single-item array from the now-playing item
+                // PlaybackVC needs at least something for its UI
+                if let nowPlaying = AppDelegate.music.musicPlayer.nowPlayingItem {
+                    vc.songs = [nowPlaying]
+                } else {
+                    // Last resort: get all songs (not ideal but prevents crash)
+                    vc.songs = AppDelegate.music.getSongs().items ?? []
                 }
             }
+            vc.startingIndex = -1
+            vc.comingFromHome = true
+            vc.skipQueueSetup = true
+            self.navigationController?.pushViewController(vc, animated: true)
         }
     }
 }
 
+@available(iOS 15.0, *)
 extension MadeForYouSongsViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.tracks.count

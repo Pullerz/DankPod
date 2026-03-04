@@ -29,14 +29,18 @@ class MusicKitService {
     /// Filters for playlists with kind == .personalMix.
     /// Returns empty array if none found or on error.
     func getPersonalPlaylists() async throws -> [Playlist] {
-        var request = MusicLibraryRequest<Playlist>()
-        let response = try await request.response()
-        
-        let personalMixes = response.items.filter { playlist in
-            playlist.kind == .personalMix
+        if #available(iOS 16.0, *) {
+            let request = MusicLibraryRequest<Playlist>()
+            let response = try await request.response()
+            
+            let personalMixes = response.items.filter { playlist in
+                playlist.kind == .personalMix
+            }
+            
+            return Array(personalMixes)
+        } else {
+            return []
         }
-        
-        return Array(personalMixes)
     }
     
     /// Fetch tracks for a given playlist by loading it with the .tracks property.

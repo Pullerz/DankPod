@@ -27,9 +27,10 @@ class RecentlyPlayedViewController: UIViewController, ClickWheelProtocol {
         AppDelegate.baseVC.clickWheelDelegate = self
         AppDelegate.baseVC.navBarTitle = "Recently Played"
         loadRecentlyPlayed()
+        counter = 0
         tableView.reloadData()
         if !recentAlbums.isEmpty {
-            tableView.selectRow(at: IndexPath(row: counter, section: 0), animated: false, scrollPosition: .none)
+            tableView.selectRow(at: IndexPath(row: 0, section: 0), animated: false, scrollPosition: .none)
             emptyLabel.isHidden = true
         } else {
             emptyLabel.isHidden = false
@@ -47,16 +48,18 @@ class RecentlyPlayedViewController: UIViewController, ClickWheelProtocol {
             ($0.lastPlayedDate ?? .distantPast) > ($1.lastPlayedDate ?? .distantPast)
         }
 
-        // Group by album title, keeping the most recent play date per album
+        // Group by album+artist, keeping the most recent play date per album
         var seen = Set<String>()
         var result: [(albumTitle: String, artistName: String)] = []
         for song in sorted {
             guard let album = song.albumTitle, !album.isEmpty else { continue }
-            if !seen.contains(album) {
-                seen.insert(album)
+            let artist = song.albumArtist ?? song.artist ?? ""
+            let key = "\(album)__\(artist)"
+            if !seen.contains(key) {
+                seen.insert(key)
                 result.append((
                     albumTitle: album,
-                    artistName: song.albumArtist ?? song.artist ?? ""
+                    artistName: artist
                 ))
             }
             if result.count >= 25 { break }

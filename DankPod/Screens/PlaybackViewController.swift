@@ -37,7 +37,20 @@ class PlaybackViewController: UIViewController, ClickWheelProtocol {
     var lastIndex: Int = 0
     var comingFromHome = false
     var isShuffled = false
+    var skipQueueSetup = false
     
+    /// Returns the song at the given index, or nil if out of bounds
+    private func songAtIndex(_ index: Int) -> MPMediaItem? {
+        guard index >= 0 && index < songs.count else { return nil }
+        return songs[index]
+    }
+
+    /// Returns the best available item for display: either from the songs array
+    /// at the current playing index, or the nowPlayingItem directly from the player
+    private var currentDisplayItem: MPMediaItem? {
+        let index = AppDelegate.music.musicPlayer.indexOfNowPlayingItem
+        return songAtIndex(index) ?? AppDelegate.music.musicPlayer.nowPlayingItem
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -48,7 +61,9 @@ class PlaybackViewController: UIViewController, ClickWheelProtocol {
     override func viewWillAppear(_ animated: Bool) {
         AppDelegate.baseVC.clickWheelDelegate = self
         AppDelegate.baseVC.navBarTitle = "Now Playing"
-        AppDelegate.music.musicPlayer.setQueue(with: MPMediaItemCollection(items: songs))
+        if !skipQueueSetup {
+            AppDelegate.music.musicPlayer.setQueue(with: MPMediaItemCollection(items: songs))
+        }
         
         
         if startingIndex != -1 {
@@ -82,9 +97,10 @@ class PlaybackViewController: UIViewController, ClickWheelProtocol {
             trackNumber.translatesAutoresizingMaskIntoConstraints = false
             trackNumber.font = UIFont(name: "HelveticaNeue-Medium", size: 18)
             trackNumber.textColor = .black
+            let displayItem = currentDisplayItem
             trackNumber.text = "\(AppDelegate.music.musicPlayer.indexOfNowPlayingItem + 1) of \(songs.count)"
             
-            albumArt = UIImageView(image: songs[AppDelegate.music.musicPlayer.indexOfNowPlayingItem].artwork?.image(at: CGSize(width: 300, height: 300)))
+            albumArt = UIImageView(image: displayItem?.artwork?.image(at: CGSize(width: 300, height: 300)))
             albumArt.contentMode = .scaleAspectFill
             albumArt.translatesAutoresizingMaskIntoConstraints = false
             albumArt.clipsToBounds = true
@@ -136,15 +152,15 @@ class PlaybackViewController: UIViewController, ClickWheelProtocol {
             
             songName.translatesAutoresizingMaskIntoConstraints = false
             songName.font = UIFont(name: "HelveticaNeue-Medium", size: 18)
-            songName.text = songs[AppDelegate.music.musicPlayer.indexOfNowPlayingItem].title
+            songName.text = displayItem?.title ?? ""
             
             artistName.translatesAutoresizingMaskIntoConstraints = false
             artistName.font = UIFont(name: "HelveticaNeue-Medium", size: 18)
-            artistName.text = songs[AppDelegate.music.musicPlayer.indexOfNowPlayingItem].artist
+            artistName.text = displayItem?.artist ?? ""
             
             albumName.translatesAutoresizingMaskIntoConstraints = false
             albumName.font = UIFont(name: "HelveticaNeue-Medium", size: 18)
-            albumName.text = songs[AppDelegate.music.musicPlayer.indexOfNowPlayingItem].albumTitle
+            albumName.text = displayItem?.albumTitle ?? ""
             
             let metaStack = UIStackView(arrangedSubviews: [songName, artistName, albumName])
             metaStack.axis = .vertical
@@ -192,18 +208,23 @@ class PlaybackViewController: UIViewController, ClickWheelProtocol {
     }
 
     func updateUI() {
+        let displayItem = currentDisplayItem
         trackNumber.text = "\(AppDelegate.music.musicPlayer.indexOfNowPlayingItem + 1) of \(songs.count)"
-        albumArt.image = songs[AppDelegate.music.musicPlayer.indexOfNowPlayingItem].artwork?.image(at: CGSize(width: 300, height: 300))
-        songName.text = songs[AppDelegate.music.musicPlayer.indexOfNowPlayingItem].title
-        artistName.text = songs[AppDelegate.music.musicPlayer.indexOfNowPlayingItem].artist
-        albumName.text = songs[AppDelegate.music.musicPlayer.indexOfNowPlayingItem].albumTitle
+        albumArt.image = displayItem?.artwork?.image(at: CGSize(width: 300, height: 300))
+        songName.text = displayItem?.title ?? ""
+        artistName.text = displayItem?.artist ?? ""
+        albumName.text = displayItem?.albumTitle ?? ""
     }
     
     @objc func fireTimer() {
-        
-        progressBar.setProgress(Float(AppDelegate.music.musicPlayer.currentPlaybackTime / AppDelegate.music.musicPlayer.nowPlayingItem!.playbackDuration), animated: true)
+        guard let nowPlaying = AppDelegate.music.musicPlayer.nowPlayingItem else { return }
+
+        let duration = nowPlaying.playbackDuration
+        guard duration > 0 else { return }
+
+        progressBar.setProgress(Float(AppDelegate.music.musicPlayer.currentPlaybackTime / duration), animated: true)
         let (_,m1,s1) = secondsToHoursMinutesSeconds(seconds: Int(AppDelegate.music.musicPlayer.currentPlaybackTime))
-        let (_,m2,s2) = secondsToHoursMinutesSeconds(seconds: Int(AppDelegate.music.musicPlayer.nowPlayingItem!.playbackDuration - AppDelegate.music.musicPlayer.currentPlaybackTime))
+        let (_,m2,s2) = secondsToHoursMinutesSeconds(seconds: Int(duration - AppDelegate.music.musicPlayer.currentPlaybackTime))
         let elapsedSeconds: String = (s1 < 10) ? "0\(s1)" : String(s1)
         let remainingSeconds: String = (s2 < 10) ? "0\(s2)" : String(s2)
         timeElapsed.text = "\(m1):\(elapsedSeconds)"
@@ -213,6 +234,7 @@ class PlaybackViewController: UIViewController, ClickWheelProtocol {
         }
         if AppDelegate.music.musicPlayer.indexOfNowPlayingItem != lastTrackIndex {
             updateUI()
+            lastTrackIndex = AppDelegate.music.musicPlayer.indexOfNowPlayingItem
         }
     }
     

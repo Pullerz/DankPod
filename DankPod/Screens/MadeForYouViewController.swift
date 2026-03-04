@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import MediaPlayer
 import MusicKit
 
 @available(iOS 15.0, *)
@@ -170,6 +169,7 @@ class MadeForYouViewController: UIViewController, ClickWheelProtocol {
     }
 }
 
+@available(iOS 15.0, *)
 extension MadeForYouViewController: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

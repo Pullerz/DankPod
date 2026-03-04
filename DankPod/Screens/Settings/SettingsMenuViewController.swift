@@ -25,6 +25,7 @@ class SettingsMenuViewController: UIViewController, ClickWheelProtocol {
         "Backlight",
         "Brightness",
         "General",
+        "iPod Color",
         "Sort By",
         "Language",
         "Legal",
@@ -37,7 +38,7 @@ class SettingsMenuViewController: UIViewController, ClickWheelProtocol {
     // Items that navigate to a sub-screen (show disclosure chevron)
     private let navigationItems: Set<String> = [
         "About", "EQ", "Volume Limit", "Audiobooks", "Backlight", "Brightness",
-        "General", "Legal", "Reset Settings"
+        "General", "iPod Color", "Legal", "Reset Settings"
     ]
 
     override func viewDidLoad() {
@@ -164,6 +165,9 @@ class SettingsMenuViewController: UIViewController, ClickWheelProtocol {
 
         case "General":
             navigationController?.pushViewController(SettingsGeneralViewController(), animated: true)
+
+        case "iPod Color":
+            navigationController?.pushViewController(SettingsColorViewController(), animated: true)
 
         case "Legal":
             navigationController?.pushViewController(SettingsLegalViewController(), animated: true)

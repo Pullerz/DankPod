@@ -9,9 +9,10 @@
 import UIKit
 import MediaPlayer
 
-class SearchViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate, UIScrollViewDelegate {
+class SearchViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate, ClickWheelProtocol {
 
     let searchField = UITextField()
+    let cancelButton = UIButton(type: .system)
     let tableView = UITableView()
     let emptyLabel = UILabel()
 
@@ -46,12 +47,15 @@ class SearchViewController: UIViewController, UITableViewDelegate, UITableViewDa
         super.viewWillAppear(animated)
         setupUI()
         AppDelegate.baseVC.navBarTitle = "Search"
+        AppDelegate.baseVC.clickWheelDelegate = self
         AppDelegate.baseVC.setClickWheelHidden(true, animated: true)
         searchField.becomeFirstResponder()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        searchTimer?.invalidate()
+        searchTimer = nil
         searchField.resignFirstResponder()
         AppDelegate.baseVC.setClickWheelHidden(false, animated: true)
     }
@@ -94,11 +98,21 @@ class SearchViewController: UIViewController, UITableViewDelegate, UITableViewDa
 
             searchField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
 
+            // Cancel button
+            cancelButton.translatesAutoresizingMaskIntoConstraints = false
+            cancelButton.setTitle("Cancel", for: .normal)
+            cancelButton.titleLabel?.font = UIFont(name: "Helvetica", size: 15)
+            cancelButton.addTarget(self, action: #selector(cancelTapped), for: .touchUpInside)
+
             view.addSubview(searchField)
+            view.addSubview(cancelButton)
             searchField.topAnchor.constraint(equalTo: view.topAnchor, constant: 8).isActive = true
             searchField.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 12).isActive = true
-            searchField.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -12).isActive = true
+            searchField.rightAnchor.constraint(equalTo: cancelButton.leftAnchor, constant: -8).isActive = true
             searchField.heightAnchor.constraint(equalToConstant: 36).isActive = true
+
+            cancelButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -12).isActive = true
+            cancelButton.centerYAnchor.constraint(equalTo: searchField.centerYAnchor).isActive = true
 
             // Table view
             tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -109,7 +123,7 @@ class SearchViewController: UIViewController, UITableViewDelegate, UITableViewDa
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
             tableView.delegate = self
             tableView.dataSource = self
-            tableView.separatorStyle = .singleLine
+            tableView.separatorStyle = .none
             tableView.keyboardDismissMode = .onDrag
 
             // Empty label
@@ -126,6 +140,10 @@ class SearchViewController: UIViewController, UITableViewDelegate, UITableViewDa
 
             hasSetupUI = true
         }
+    }
+
+    @objc func cancelTapped() {
+        self.navigationController?.popViewController(animated: true)
     }
 
     // MARK: - Search Logic
@@ -192,13 +210,32 @@ class SearchViewController: UIViewController, UITableViewDelegate, UITableViewDa
         return cachedVisibleSections.count
     }
 
-    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         guard section < cachedVisibleSections.count else { return nil }
+
+        let header = UIView()
+        header.backgroundColor = UIColor(red: 228/255, green: 228/255, blue: 228/255, alpha: 1)
+
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont(name: "Helvetica-Bold", size: 13)
+        label.textColor = .darkGray
+        header.addSubview(label)
+        label.leftAnchor.constraint(equalTo: header.leftAnchor, constant: 15).isActive = true
+        label.centerYAnchor.constraint(equalTo: header.centerYAnchor).isActive = true
+
         switch cachedVisibleSections[section] {
-        case .songs: return "Songs"
-        case .artists: return "Artists"
-        case .albums: return "Albums"
+        case .songs: label.text = "Songs"
+        case .artists: label.text = "Artists"
+        case .albums: label.text = "Albums"
         }
+
+        return header
+    }
+
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        guard section < cachedVisibleSections.count else { return 0 }
+        return 22
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -215,31 +252,28 @@ class SearchViewController: UIViewController, UITableViewDelegate, UITableViewDa
             return UITableViewCell()
         }
 
-        let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "SearchCell")
-        cell.textLabel?.font = UIFont(name: "Helvetica-Bold", size: 15)
-        cell.detailTextLabel?.font = UIFont(name: "Helvetica", size: 12)
-        cell.detailTextLabel?.textColor = .gray
-        cell.accessoryType = .disclosureIndicator
+        let cell = CustomTableViewCell()
+        cell.selectionStyle = .none
 
         switch cachedVisibleSections[indexPath.section] {
         case .songs:
             let song = songResults[indexPath.row]
-            cell.textLabel?.text = song.title
-            cell.detailTextLabel?.text = song.artist
+            let artist = song.artist ?? ""
+            cell.label.text = artist.isEmpty ? (song.title ?? "") : "\(song.title ?? "") — \(artist)"
         case .artists:
-            cell.textLabel?.text = artistResults[indexPath.row]
-            cell.detailTextLabel?.text = nil
+            cell.label.text = artistResults[indexPath.row]
         case .albums:
             let album = albumResults[indexPath.row]
-            cell.textLabel?.text = album.representativeItem?.albumTitle
-            cell.detailTextLabel?.text = album.representativeItem?.albumArtist ?? album.representativeItem?.artist
+            let title = album.representativeItem?.albumTitle ?? ""
+            let artist = album.representativeItem?.albumArtist ?? album.representativeItem?.artist ?? ""
+            cell.label.text = artist.isEmpty ? title : "\(title) — \(artist)"
         }
 
         return cell
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 44
+        return 30
     }
 
     // MARK: - UITableViewDelegate
@@ -252,7 +286,6 @@ class SearchViewController: UIViewController, UITableViewDelegate, UITableViewDa
 
         switch cachedVisibleSections[indexPath.section] {
         case .songs:
-            let song = songResults[indexPath.row]
             let vc = PlaybackViewController()
             vc.songs = songResults
             vc.startingIndex = indexPath.row
@@ -274,5 +307,35 @@ class SearchViewController: UIViewController, UITableViewDelegate, UITableViewDa
                 self.navigationController?.pushViewController(vc, animated: true)
             }
         }
+    }
+
+    // MARK: - ClickWheelProtocol
+
+    func clickWheelDidRotate(rotationDirection: RotationDirection) {
+        // No-op: click wheel is hidden during search
+    }
+
+    func playPausePressed(pressure: ClickWheelTouchPressure) {
+        if pressure == .NORMAL {
+            AppDelegate.music.playPause()
+        }
+    }
+
+    func nextSongPressed(pressure: ClickWheelTouchPressure) {
+    }
+
+    func previousSongPressed(pressure: ClickWheelTouchPressure) {
+    }
+
+    func menuPressed(pressure: ClickWheelTouchPressure) {
+        if pressure == .NORMAL {
+            self.navigationController?.popViewController(animated: true)
+        } else if pressure == .FORCE {
+            self.navigationController?.popToRootViewController(animated: true)
+        }
+    }
+
+    func centerPressed(pressure: ClickWheelTouchPressure) {
+        // No-op: click wheel is hidden during search
     }
 }

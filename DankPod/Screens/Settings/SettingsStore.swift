@@ -26,6 +26,7 @@ class SettingsStore {
         static let backlightTimerIndex = "dankpod.settings.backlightTimerIndex"
         static let brightness = "dankpod.settings.brightness"
         static let clickerEnabled = "dankpod.settings.clickerEnabled"
+        static let ipodColor = "dankpod.settings.ipodColor"
     }
 
     // MARK: - Init
@@ -40,7 +41,8 @@ class SettingsStore {
             Keys.audiobooksSpeed: "normal",
             Keys.backlightTimerIndex: 6,   // "Always On"
             Keys.brightness: Float(UIScreen.main.brightness),
-            Keys.clickerEnabled: true
+            Keys.clickerEnabled: true,
+            Keys.ipodColor: "Silver"
         ])
     }
 
@@ -212,6 +214,13 @@ class SettingsStore {
         set { UserDefaults.standard.set(newValue, forKey: Keys.clickerEnabled) }
     }
 
+    // MARK: - iPod Color
+
+    var ipodColor: String {
+        get { return UserDefaults.standard.string(forKey: Keys.ipodColor) ?? "Silver" }
+        set { UserDefaults.standard.set(newValue, forKey: Keys.ipodColor) }
+    }
+
     // MARK: - Apply All (called on app launch)
 
     func applyAllSettings() {
@@ -242,7 +251,7 @@ class SettingsStore {
         let keys = [
             Keys.shuffle, Keys.repeatMode, Keys.eq, Keys.soundCheck,
             Keys.volumeLimit, Keys.audiobooksSpeed, Keys.backlightTimerIndex,
-            Keys.brightness, Keys.clickerEnabled
+            Keys.brightness, Keys.clickerEnabled, Keys.ipodColor
         ]
         for key in keys {
             UserDefaults.standard.removeObject(forKey: key)
@@ -254,5 +263,6 @@ class SettingsStore {
         AppDelegate.baseVC.setScreenBrightness(1.0)
         AppDelegate.baseVC.resetBacklightTimer()
         UserDefaults.standard.synchronize()
+        ThemeManager.shared.applyTheme(named: "Silver")
     }
 }
