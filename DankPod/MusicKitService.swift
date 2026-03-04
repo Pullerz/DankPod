@@ -25,19 +25,24 @@ class MusicKitService {
         return MusicAuthorization.currentStatus == .authorized
     }
     
-    /// Fetch "Made for You" personal mix playlists from the user's library.
-    /// Filters for playlists with kind == .personalMix.
+    /// Fetch Apple Music curated playlists from the user's library.
+    /// Includes personal mixes (Favorites Mix, New Music Mix, etc.),
+    /// Replay playlists, and editorial playlists added to the library.
     /// Returns empty array if none found or on error.
     func getPersonalPlaylists() async throws -> [Playlist] {
         if #available(iOS 16.0, *) {
             let request = MusicLibraryRequest<Playlist>()
             let response = try await request.response()
             
-            let personalMixes = response.items.filter { playlist in
-                playlist.kind == .personalMix
+            let curatedKinds: Set<Playlist.Kind> = [.personalMix, .replay, .editorial]
+            let curated = response.items.filter { playlist in
+                if let kind = playlist.kind {
+                    return curatedKinds.contains(kind)
+                }
+                return false
             }
             
-            return Array(personalMixes)
+            return Array(curated)
         } else {
             return []
         }
