@@ -67,6 +67,7 @@ class CoverFlowViewController: UIViewController, ClickWheelProtocol {
             collectionView.translatesAutoresizingMaskIntoConstraints = false
             collectionView.backgroundColor = .white
             collectionView.showsHorizontalScrollIndicator = false
+            collectionView.clipsToBounds = false
             collectionView.decelerationRate = .fast
             collectionView.delegate = self
             collectionView.dataSource = self
