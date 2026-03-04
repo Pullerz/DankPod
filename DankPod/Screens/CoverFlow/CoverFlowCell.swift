@@ -37,8 +37,8 @@ class CoverFlowCell: UICollectionViewCell {
         reflectionImageView.contentMode = .scaleAspectFill
         reflectionImageView.clipsToBounds = true
         reflectionImageView.translatesAutoresizingMaskIntoConstraints = false
-        reflectionImageView.transform = CGAffineTransform(scaleX: 1, y: -1)
-        reflectionImageView.alpha = 0.45
+        reflectionImageView.transform = CGAffineTransform(scaleX: 1.06, y: -0.72)
+        reflectionImageView.alpha = 0.38
         contentView.addSubview(reflectionImageView)
         
         NSLayoutConstraint.activate([
@@ -49,9 +49,9 @@ class CoverFlowCell: UICollectionViewCell {
             albumArtImageView.heightAnchor.constraint(equalTo: contentView.widthAnchor),
             
             // Reflection sits with a tiny gap from the art
-            reflectionImageView.topAnchor.constraint(equalTo: albumArtImageView.bottomAnchor, constant: 2),
-            reflectionImageView.leftAnchor.constraint(equalTo: contentView.leftAnchor),
-            reflectionImageView.rightAnchor.constraint(equalTo: contentView.rightAnchor),
+            reflectionImageView.topAnchor.constraint(equalTo: albumArtImageView.bottomAnchor, constant: 1),
+            reflectionImageView.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: -4),
+            reflectionImageView.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: 4),
             reflectionImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         ])
     }
@@ -62,10 +62,11 @@ class CoverFlowCell: UICollectionViewCell {
         reflectionGradient.frame = reflectionImageView.bounds
         reflectionGradient.colors = [
             UIColor.white.cgColor,
-            UIColor.white.withAlphaComponent(0.22).cgColor,
+            UIColor.white.withAlphaComponent(0.35).cgColor,
+            UIColor.white.withAlphaComponent(0.08).cgColor,
             UIColor.clear.cgColor
         ]
-        reflectionGradient.locations = [0.0, 0.28, 0.95]
+        reflectionGradient.locations = [0.0, 0.12, 0.45, 1.0]
         reflectionGradient.startPoint = CGPoint(x: 0.5, y: 0)
         reflectionGradient.endPoint = CGPoint(x: 0.5, y: 1)
         reflectionImageView.layer.mask = reflectionGradient

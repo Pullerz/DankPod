@@ -58,7 +58,18 @@ class CoverFlowViewController: UIViewController, ClickWheelProtocol {
     
     func scrollToCurrentIndex(animated: Bool) {
         let offsetX = coverFlowLayout.contentOffsetForItem(at: currentIndex)
-        collectionView.setContentOffset(CGPoint(x: offsetX, y: 0), animated: animated)
+        let targetOffset = CGPoint(x: offsetX, y: 0)
+        if animated {
+            UIView.animate(withDuration: 0.2,
+                           delay: 0,
+                           options: [.curveLinear, .beginFromCurrentState, .allowUserInteraction],
+                           animations: {
+                self.collectionView.setContentOffset(targetOffset, animated: false)
+                self.collectionView.layoutIfNeeded()
+                           })
+        } else {
+            collectionView.setContentOffset(targetOffset, animated: false)
+        }
     }
     
     func setupUI() {

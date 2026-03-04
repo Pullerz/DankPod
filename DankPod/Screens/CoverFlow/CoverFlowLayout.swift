@@ -58,8 +58,9 @@ class CoverFlowLayout: UICollectionViewFlowLayout {
             let sign: CGFloat = normalizedDistance >= 0 ? 1.0 : -1.0
 
             // Only center transitions; once item leaves center neighborhood it has constant side tilt.
-            let centerTransitionWidth: CGFloat = 0.35
-            let sideFactor = min(absNormalized / centerTransitionWidth, 1.0)
+            let centerTransitionWidth: CGFloat = 0.75
+            let linearFactor = min(absNormalized / centerTransitionWidth, 1.0)
+            let sideFactor = linearFactor * linearFactor * (3.0 - 2.0 * linearFactor)
             let angle = -sign * sideFactor * tiltAngle * .pi / 180.0
 
             var desiredX: CGFloat
