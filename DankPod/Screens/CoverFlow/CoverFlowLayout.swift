@@ -24,8 +24,9 @@ class CoverFlowLayout: UICollectionViewFlowLayout {
         super.prepare()
         scrollDirection = .horizontal
         guard let collectionView = collectionView else { return }
-        let itemHeight = collectionView.bounds.height * 0.6
-        itemSize = CGSize(width: itemHeight, height: itemHeight)
+        // Art is square; cell is taller to fit reflection below
+        let artSize = collectionView.bounds.height * 0.5
+        itemSize = CGSize(width: artSize, height: artSize * 1.3)
         // Positive spacing — items are spaced apart; transforms handle visual positioning
         minimumLineSpacing = 10
         let horizontalInset = (collectionView.bounds.width - itemSize.width) / 2.0
@@ -61,7 +62,8 @@ class CoverFlowLayout: UICollectionViewFlowLayout {
             let sign: CGFloat = normalizedDistance >= 0 ? 1.0 : -1.0
             
             // Rotation: 0 at center, full tiltAngle at sides
-            let angle = sign * t * tiltAngle * .pi / 180.0
+            // Negated so left items fan with left edge closer, right items with right edge closer
+            let angle = -sign * t * tiltAngle * .pi / 180.0
             
             // Calculate where this item SHOULD be visually vs where the layout placed it.
             // The layout places item N at: centerX + N * layoutSpacing

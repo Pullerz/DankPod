@@ -41,11 +41,13 @@ class CoverFlowCell: UICollectionViewCell {
         contentView.addSubview(reflectionImageView)
         
         NSLayoutConstraint.activate([
+            // Album art is square: width × width
             albumArtImageView.topAnchor.constraint(equalTo: contentView.topAnchor),
             albumArtImageView.leftAnchor.constraint(equalTo: contentView.leftAnchor),
             albumArtImageView.rightAnchor.constraint(equalTo: contentView.rightAnchor),
-            albumArtImageView.heightAnchor.constraint(equalTo: contentView.heightAnchor, multiplier: 0.75),
+            albumArtImageView.heightAnchor.constraint(equalTo: contentView.widthAnchor),
             
+            // Reflection fills the remaining space below the square art
             reflectionImageView.topAnchor.constraint(equalTo: albumArtImageView.bottomAnchor),
             reflectionImageView.leftAnchor.constraint(equalTo: contentView.leftAnchor),
             reflectionImageView.rightAnchor.constraint(equalTo: contentView.rightAnchor),
