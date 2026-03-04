@@ -12,8 +12,7 @@ class CoverFlowCell: UICollectionViewCell {
     
     let albumArtImageView = UIImageView()
     let reflectionImageView = UIImageView()
-    private let reflectionFadeView = UIView()
-    private let reflectionFadeGradient = CAGradientLayer()
+    private let reflectionGradientMask = CAGradientLayer()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -34,17 +33,25 @@ class CoverFlowCell: UICollectionViewCell {
         albumArtImageView.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(albumArtImageView)
         
-        // Reflection below artwork
+        // Reflection below artwork — use a gradient alpha mask for the fade-out
+        // (masking the layer itself ensures the fade transforms correctly in 3D space)
         reflectionImageView.contentMode = .scaleAspectFill
         reflectionImageView.clipsToBounds = true
         reflectionImageView.translatesAutoresizingMaskIntoConstraints = false
         reflectionImageView.transform = CGAffineTransform(scaleX: 1.02, y: -0.92)
-        reflectionImageView.alpha = 0.62
+        reflectionImageView.alpha = 0.45
         contentView.addSubview(reflectionImageView)
-
-        reflectionFadeView.translatesAutoresizingMaskIntoConstraints = false
-        reflectionFadeView.isUserInteractionEnabled = false
-        contentView.addSubview(reflectionFadeView)
+        
+        // Gradient mask: white = visible, clear = hidden
+        reflectionGradientMask.colors = [
+            UIColor.white.cgColor,
+            UIColor.white.withAlphaComponent(0.6).cgColor,
+            UIColor.clear.cgColor
+        ]
+        reflectionGradientMask.locations = [0.0, 0.15, 0.55]
+        reflectionGradientMask.startPoint = CGPoint(x: 0.5, y: 0)
+        reflectionGradientMask.endPoint = CGPoint(x: 0.5, y: 1)
+        reflectionImageView.layer.mask = reflectionGradientMask
         
         NSLayoutConstraint.activate([
             // Album art is square: width × width
@@ -53,37 +60,21 @@ class CoverFlowCell: UICollectionViewCell {
             albumArtImageView.rightAnchor.constraint(equalTo: contentView.rightAnchor),
             albumArtImageView.heightAnchor.constraint(equalTo: contentView.widthAnchor),
             
-            // Reflection sits with a tiny gap from the art
+            // Reflection sits directly beneath the art
             reflectionImageView.topAnchor.constraint(equalTo: albumArtImageView.bottomAnchor, constant: 0),
             reflectionImageView.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: -4),
             reflectionImageView.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: 4),
             reflectionImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         ])
-
-        NSLayoutConstraint.activate([
-            reflectionFadeView.topAnchor.constraint(equalTo: reflectionImageView.topAnchor),
-            reflectionFadeView.leftAnchor.constraint(equalTo: reflectionImageView.leftAnchor),
-            reflectionFadeView.rightAnchor.constraint(equalTo: reflectionImageView.rightAnchor),
-            reflectionFadeView.bottomAnchor.constraint(equalTo: reflectionImageView.bottomAnchor)
-        ])
     }
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        // Fade overlay: top mostly clear (reflection visible), bottom opaque white (diffused out)
-        reflectionFadeGradient.frame = reflectionFadeView.bounds
-        reflectionFadeGradient.colors = [
-            UIColor.white.withAlphaComponent(0.0).cgColor,
-            UIColor.white.withAlphaComponent(0.25).cgColor,
-            UIColor.white.withAlphaComponent(0.7).cgColor,
-            UIColor.white.cgColor
-        ]
-        reflectionFadeGradient.locations = [0.0, 0.2, 0.55, 1.0]
-        reflectionFadeGradient.startPoint = CGPoint(x: 0.5, y: 0)
-        reflectionFadeGradient.endPoint = CGPoint(x: 0.5, y: 1)
-        if reflectionFadeGradient.superlayer == nil {
-            reflectionFadeView.layer.addSublayer(reflectionFadeGradient)
-        }
+        // Keep the gradient mask sized to the reflection image view's bounds
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
+        reflectionGradientMask.frame = reflectionImageView.bounds
+        CATransaction.commit()
     }
     
     func configure(with album: MPMediaItemCollection) {
