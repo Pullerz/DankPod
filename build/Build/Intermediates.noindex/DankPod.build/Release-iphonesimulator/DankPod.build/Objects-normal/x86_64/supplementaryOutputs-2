@@ -1,0 +1,12 @@
+{
+  "/Users/alistairpullen/Documents/DankPod/DankPod/CustomTableViewCell.swift" : {
+    "abi-baseline-json" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/DankPod.abi.json",
+    "const-values" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/DankPod-primary.swiftconstvalues",
+    "dependencies" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/DankPod-primary.d",
+    "diagnostics" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/DankPod-primary.dia",
+    "objc-header" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/DankPod-Swift.h",
+    "swiftdoc" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/DankPod.swiftdoc",
+    "swiftmodule" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/DankPod.swiftmodule",
+    "swiftsourceinfo" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/DankPod.swiftsourceinfo"
+  }
+}

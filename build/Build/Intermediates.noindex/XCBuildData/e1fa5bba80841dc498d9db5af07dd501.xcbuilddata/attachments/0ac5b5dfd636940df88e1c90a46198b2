@@ -1,0 +1,246 @@
+{
+  "" : {
+    "const-values" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/DankPod-primary.swiftconstvalues",
+    "dependencies" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/DankPod-primary.d",
+    "diagnostics" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/DankPod-primary.dia",
+    "emit-module-dependencies" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/DankPod-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/DankPod-primary-emit-module.dia",
+    "pch" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/DankPod-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/DankPod-primary.swiftdeps"
+  },
+  "/Users/alistairpullen/Documents/DankPod/DankPod/AppDelegate.swift" : {
+    "index-unit-output-path" : "/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/AppDelegate.o",
+    "llvm-bc" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/AppDelegate.bc",
+    "object" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/AppDelegate.o"
+  },
+  "/Users/alistairpullen/Documents/DankPod/DankPod/BasePodView.swift" : {
+    "index-unit-output-path" : "/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/BasePodView.o",
+    "llvm-bc" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/BasePodView.bc",
+    "object" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/BasePodView.o"
+  },
+  "/Users/alistairpullen/Documents/DankPod/DankPod/CircularGestureRecogniser.swift" : {
+    "index-unit-output-path" : "/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/CircularGestureRecogniser.o",
+    "llvm-bc" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/CircularGestureRecogniser.bc",
+    "object" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/CircularGestureRecogniser.o"
+  },
+  "/Users/alistairpullen/Documents/DankPod/DankPod/ClickWheelProtocol.swift" : {
+    "index-unit-output-path" : "/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/ClickWheelProtocol.o",
+    "llvm-bc" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/ClickWheelProtocol.bc",
+    "object" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/ClickWheelProtocol.o"
+  },
+  "/Users/alistairpullen/Documents/DankPod/DankPod/CustomTableViewCell.swift" : {
+    "index-unit-output-path" : "/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/CustomTableViewCell.o",
+    "llvm-bc" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/CustomTableViewCell.bc",
+    "object" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/CustomTableViewCell.o"
+  },
+  "/Users/alistairpullen/Documents/DankPod/DankPod/ForceTouchGestureRecogniser.swift" : {
+    "index-unit-output-path" : "/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/ForceTouchGestureRecogniser.o",
+    "llvm-bc" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/ForceTouchGestureRecogniser.bc",
+    "object" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/ForceTouchGestureRecogniser.o"
+  },
+  "/Users/alistairpullen/Documents/DankPod/DankPod/Globals.swift" : {
+    "index-unit-output-path" : "/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/Globals.o",
+    "llvm-bc" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/Globals.bc",
+    "object" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/Globals.o"
+  },
+  "/Users/alistairpullen/Documents/DankPod/DankPod/MainViewController.swift" : {
+    "index-unit-output-path" : "/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/MainViewController.o",
+    "llvm-bc" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/MainViewController.bc",
+    "object" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/MainViewController.o"
+  },
+  "/Users/alistairpullen/Documents/DankPod/DankPod/Music.swift" : {
+    "index-unit-output-path" : "/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/Music.o",
+    "llvm-bc" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/Music.bc",
+    "object" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/Music.o"
+  },
+  "/Users/alistairpullen/Documents/DankPod/DankPod/MusicKitService.swift" : {
+    "index-unit-output-path" : "/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/MusicKitService.o",
+    "llvm-bc" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/MusicKitService.bc",
+    "object" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/MusicKitService.o"
+  },
+  "/Users/alistairpullen/Documents/DankPod/DankPod/SceneDelegate.swift" : {
+    "index-unit-output-path" : "/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/SceneDelegate.o",
+    "llvm-bc" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/SceneDelegate.bc",
+    "object" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/SceneDelegate.o"
+  },
+  "/Users/alistairpullen/Documents/DankPod/DankPod/Screens/AlbumsViewController.swift" : {
+    "index-unit-output-path" : "/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/AlbumsViewController.o",
+    "llvm-bc" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/AlbumsViewController.bc",
+    "object" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/AlbumsViewController.o"
+  },
+  "/Users/alistairpullen/Documents/DankPod/DankPod/Screens/ArtistsViewController.swift" : {
+    "index-unit-output-path" : "/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/ArtistsViewController.o",
+    "llvm-bc" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/ArtistsViewController.bc",
+    "object" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/ArtistsViewController.o"
+  },
+  "/Users/alistairpullen/Documents/DankPod/DankPod/Screens/BrickBreakerViewController.swift" : {
+    "index-unit-output-path" : "/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/BrickBreakerViewController.o",
+    "llvm-bc" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/BrickBreakerViewController.bc",
+    "object" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/BrickBreakerViewController.o"
+  },
+  "/Users/alistairpullen/Documents/DankPod/DankPod/Screens/CoverFlow/CoverFlowAlbumViewController.swift" : {
+    "index-unit-output-path" : "/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/CoverFlowAlbumViewController.o",
+    "llvm-bc" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/CoverFlowAlbumViewController.bc",
+    "object" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/CoverFlowAlbumViewController.o"
+  },
+  "/Users/alistairpullen/Documents/DankPod/DankPod/Screens/CoverFlow/CoverFlowCell.swift" : {
+    "index-unit-output-path" : "/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/CoverFlowCell.o",
+    "llvm-bc" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/CoverFlowCell.bc",
+    "object" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/CoverFlowCell.o"
+  },
+  "/Users/alistairpullen/Documents/DankPod/DankPod/Screens/CoverFlow/CoverFlowLayout.swift" : {
+    "index-unit-output-path" : "/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/CoverFlowLayout.o",
+    "llvm-bc" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/CoverFlowLayout.bc",
+    "object" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/CoverFlowLayout.o"
+  },
+  "/Users/alistairpullen/Documents/DankPod/DankPod/Screens/CoverFlow/CoverFlowViewController.swift" : {
+    "index-unit-output-path" : "/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/CoverFlowViewController.o",
+    "llvm-bc" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/CoverFlowViewController.bc",
+    "object" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/CoverFlowViewController.o"
+  },
+  "/Users/alistairpullen/Documents/DankPod/DankPod/Screens/ExtrasMenuViewController.swift" : {
+    "index-unit-output-path" : "/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/ExtrasMenuViewController.o",
+    "llvm-bc" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/ExtrasMenuViewController.bc",
+    "object" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/ExtrasMenuViewController.o"
+  },
+  "/Users/alistairpullen/Documents/DankPod/DankPod/Screens/GamesMenuViewController.swift" : {
+    "index-unit-output-path" : "/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/GamesMenuViewController.o",
+    "llvm-bc" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/GamesMenuViewController.bc",
+    "object" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/GamesMenuViewController.o"
+  },
+  "/Users/alistairpullen/Documents/DankPod/DankPod/Screens/GenresViewController.swift" : {
+    "index-unit-output-path" : "/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/GenresViewController.o",
+    "llvm-bc" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/GenresViewController.bc",
+    "object" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/GenresViewController.o"
+  },
+  "/Users/alistairpullen/Documents/DankPod/DankPod/Screens/HomeViewController.swift" : {
+    "index-unit-output-path" : "/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/HomeViewController.o",
+    "llvm-bc" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/HomeViewController.bc",
+    "object" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/HomeViewController.o"
+  },
+  "/Users/alistairpullen/Documents/DankPod/DankPod/Screens/MadeForYouSongsViewController.swift" : {
+    "index-unit-output-path" : "/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/MadeForYouSongsViewController.o",
+    "llvm-bc" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/MadeForYouSongsViewController.bc",
+    "object" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/MadeForYouSongsViewController.o"
+  },
+  "/Users/alistairpullen/Documents/DankPod/DankPod/Screens/MadeForYouViewController.swift" : {
+    "index-unit-output-path" : "/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/MadeForYouViewController.o",
+    "llvm-bc" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/MadeForYouViewController.bc",
+    "object" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/MadeForYouViewController.o"
+  },
+  "/Users/alistairpullen/Documents/DankPod/DankPod/Screens/MusicViewController.swift" : {
+    "index-unit-output-path" : "/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/MusicViewController.o",
+    "llvm-bc" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/MusicViewController.bc",
+    "object" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/MusicViewController.o"
+  },
+  "/Users/alistairpullen/Documents/DankPod/DankPod/Screens/PhotoFullScreenViewController.swift" : {
+    "index-unit-output-path" : "/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/PhotoFullScreenViewController.o",
+    "llvm-bc" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/PhotoFullScreenViewController.bc",
+    "object" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/PhotoFullScreenViewController.o"
+  },
+  "/Users/alistairpullen/Documents/DankPod/DankPod/Screens/PhotoSettingsViewController.swift" : {
+    "index-unit-output-path" : "/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/PhotoSettingsViewController.o",
+    "llvm-bc" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/PhotoSettingsViewController.bc",
+    "object" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/PhotoSettingsViewController.o"
+  },
+  "/Users/alistairpullen/Documents/DankPod/DankPod/Screens/PhotosGridViewController.swift" : {
+    "index-unit-output-path" : "/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/PhotosGridViewController.o",
+    "llvm-bc" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/PhotosGridViewController.bc",
+    "object" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/PhotosGridViewController.o"
+  },
+  "/Users/alistairpullen/Documents/DankPod/DankPod/Screens/PhotosMenuViewController.swift" : {
+    "index-unit-output-path" : "/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/PhotosMenuViewController.o",
+    "llvm-bc" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/PhotosMenuViewController.bc",
+    "object" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/PhotosMenuViewController.o"
+  },
+  "/Users/alistairpullen/Documents/DankPod/DankPod/Screens/PlaybackViewController.swift" : {
+    "index-unit-output-path" : "/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/PlaybackViewController.o",
+    "llvm-bc" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/PlaybackViewController.bc",
+    "object" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/PlaybackViewController.o"
+  },
+  "/Users/alistairpullen/Documents/DankPod/DankPod/Screens/PlaylistsViewController.swift" : {
+    "index-unit-output-path" : "/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/PlaylistsViewController.o",
+    "llvm-bc" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/PlaylistsViewController.bc",
+    "object" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/PlaylistsViewController.o"
+  },
+  "/Users/alistairpullen/Documents/DankPod/DankPod/Screens/RecentlyPlayedViewController.swift" : {
+    "index-unit-output-path" : "/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/RecentlyPlayedViewController.o",
+    "llvm-bc" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/RecentlyPlayedViewController.bc",
+    "object" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/RecentlyPlayedViewController.o"
+  },
+  "/Users/alistairpullen/Documents/DankPod/DankPod/Screens/SearchViewController.swift" : {
+    "index-unit-output-path" : "/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/SearchViewController.o",
+    "llvm-bc" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/SearchViewController.bc",
+    "object" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/SearchViewController.o"
+  },
+  "/Users/alistairpullen/Documents/DankPod/DankPod/Screens/Settings/CustomSettingsTableViewCell.swift" : {
+    "index-unit-output-path" : "/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/CustomSettingsTableViewCell.o",
+    "llvm-bc" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/CustomSettingsTableViewCell.bc",
+    "object" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/CustomSettingsTableViewCell.o"
+  },
+  "/Users/alistairpullen/Documents/DankPod/DankPod/Screens/Settings/SettingsAboutViewController.swift" : {
+    "index-unit-output-path" : "/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/SettingsAboutViewController.o",
+    "llvm-bc" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/SettingsAboutViewController.bc",
+    "object" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/SettingsAboutViewController.o"
+  },
+  "/Users/alistairpullen/Documents/DankPod/DankPod/Screens/Settings/SettingsColorViewController.swift" : {
+    "index-unit-output-path" : "/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/SettingsColorViewController.o",
+    "llvm-bc" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/SettingsColorViewController.bc",
+    "object" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/SettingsColorViewController.o"
+  },
+  "/Users/alistairpullen/Documents/DankPod/DankPod/Screens/Settings/SettingsGeneralViewController.swift" : {
+    "index-unit-output-path" : "/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/SettingsGeneralViewController.o",
+    "llvm-bc" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/SettingsGeneralViewController.bc",
+    "object" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/SettingsGeneralViewController.o"
+  },
+  "/Users/alistairpullen/Documents/DankPod/DankPod/Screens/Settings/SettingsLegalViewController.swift" : {
+    "index-unit-output-path" : "/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/SettingsLegalViewController.o",
+    "llvm-bc" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/SettingsLegalViewController.bc",
+    "object" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/SettingsLegalViewController.o"
+  },
+  "/Users/alistairpullen/Documents/DankPod/DankPod/Screens/Settings/SettingsMenuViewController.swift" : {
+    "index-unit-output-path" : "/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/SettingsMenuViewController.o",
+    "llvm-bc" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/SettingsMenuViewController.bc",
+    "object" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/SettingsMenuViewController.o"
+  },
+  "/Users/alistairpullen/Documents/DankPod/DankPod/Screens/Settings/SettingsPickerViewController.swift" : {
+    "index-unit-output-path" : "/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/SettingsPickerViewController.o",
+    "llvm-bc" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/SettingsPickerViewController.bc",
+    "object" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/SettingsPickerViewController.o"
+  },
+  "/Users/alistairpullen/Documents/DankPod/DankPod/Screens/Settings/SettingsResetViewController.swift" : {
+    "index-unit-output-path" : "/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/SettingsResetViewController.o",
+    "llvm-bc" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/SettingsResetViewController.bc",
+    "object" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/SettingsResetViewController.o"
+  },
+  "/Users/alistairpullen/Documents/DankPod/DankPod/Screens/Settings/SettingsSliderViewController.swift" : {
+    "index-unit-output-path" : "/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/SettingsSliderViewController.o",
+    "llvm-bc" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/SettingsSliderViewController.bc",
+    "object" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/SettingsSliderViewController.o"
+  },
+  "/Users/alistairpullen/Documents/DankPod/DankPod/Screens/Settings/SettingsStore.swift" : {
+    "index-unit-output-path" : "/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/SettingsStore.o",
+    "llvm-bc" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/SettingsStore.bc",
+    "object" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/SettingsStore.o"
+  },
+  "/Users/alistairpullen/Documents/DankPod/DankPod/Screens/SongsViewController.swift" : {
+    "index-unit-output-path" : "/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/SongsViewController.o",
+    "llvm-bc" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/SongsViewController.bc",
+    "object" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/SongsViewController.o"
+  },
+  "/Users/alistairpullen/Documents/DankPod/DankPod/SplashScreenViewController.swift" : {
+    "index-unit-output-path" : "/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/SplashScreenViewController.o",
+    "llvm-bc" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/SplashScreenViewController.bc",
+    "object" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/SplashScreenViewController.o"
+  },
+  "/Users/alistairpullen/Documents/DankPod/DankPod/Theme.swift" : {
+    "index-unit-output-path" : "/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/Theme.o",
+    "llvm-bc" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/Theme.bc",
+    "object" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/Theme.o"
+  },
+  "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/DerivedSources/GeneratedAssetSymbols.swift" : {
+    "index-unit-output-path" : "/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/GeneratedAssetSymbols.o",
+    "llvm-bc" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/GeneratedAssetSymbols.bc",
+    "object" : "/Users/alistairpullen/Documents/DankPod/build/Build/Intermediates.noindex/DankPod.build/Release-iphonesimulator/DankPod.build/Objects-normal/x86_64/GeneratedAssetSymbols.o"
+  }
+}
