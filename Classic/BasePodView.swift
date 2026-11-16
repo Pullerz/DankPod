@@ -1,0 +1,1113 @@
+//
+//  ViewController.swift
+//  Classic
+//
+//  Created by Alistair Pullen on 22/05/2020.
+//  Copyright © 2020 Apullen Developments Ltd. All rights reserved.
+//
+
+import UIKit
+import UIKit.UIGestureRecognizerSubclass
+
+class BasePodView: UIViewController, UIGestureRecognizerDelegate {
+
+    private let safetyBar = UIView()
+    public let navBar = UIView()
+    private var navBarTitleLabel = UILabel()
+    public var navBarTitle: String {
+        set {
+            self.navBarTitleLabel.text = newValue
+        }
+        get {
+            return self.navBarTitleLabel.text!
+        }
+    }
+    public var screen: UIView = UIView()
+    public let dimmingOverlay = UIView()
+    private var backlightTimer: Timer?
+    private var backlightIsOff = false
+    public var clickWheel: UIImageView!
+    public var clickWheelDelegate: ClickWheelProtocol!
+    
+    let centerClickLabel = UIButton()
+    let playPauseLabel = UIButton()
+    let previousSongLabel = UIButton()
+    let nextSongLabel = UIButton()
+    let menuLabel = UIButton()
+    let feedbackLabel = UILabel()
+    var clickwheelResolution: Int = 10
+    let clickWheelOverlay = UIView()
+    
+    var circleGR: CircleGestureRecogniser!
+    var forceTapGR: ForceTouchTapGestureRecogniser!
+    let beneathScreen = UIView()
+    let bodyBackground = UIImageView()
+    let bodyColorView = UIView()
+    /// Metal-rendered body and wheel; nil if Metal is unavailable (flat artwork is used instead).
+    private var bodyView: PodBodyView?
+    private var screenHeightConstraint: NSLayoutConstraint!
+    private var screenBottomConstraint: NSLayoutConstraint?
+    
+    let menuButton = UIView()
+    let nextSongButton = UIView()
+    let prevSongButton = UIView()
+    let playPauseButton = UIView()
+    let centerButton = UIView()
+    
+    let playbackStatusIcon: UIImageView = UIImageView()
+    let shuffleIcon: UIImageView = UIImageView()
+    let batteryIcon: UIImageView = UIImageView()
+    let queueIcon: UIImageView = UIImageView()
+
+    // Game HUD (hidden by default, shown by game screens)
+    private let navBarScoreLabel = UILabel()
+    private let navBarBallsContainer = UIView()
+
+    public var navBarScore: Int? {
+        didSet {
+            if let score = navBarScore {
+                navBarScoreLabel.text = "\(score)"
+                navBarScoreLabel.isHidden = false
+            } else {
+                navBarScoreLabel.isHidden = true
+            }
+        }
+    }
+
+    public var navBarBalls: Int? {
+        didSet {
+            navBarBallsContainer.isHidden = navBarBalls == nil
+            guard let count = navBarBalls else { return }
+            navBarBallsContainer.subviews.forEach { $0.removeFromSuperview() }
+            let ballDiameter: CGFloat = 7
+            let ballSpacing: CGFloat = 3
+            for i in 0..<max(count, 0) {
+                let b = makeNavBallView(diameter: ballDiameter)
+                b.frame = CGRect(x: CGFloat(i) * (ballDiameter + ballSpacing), y: 0, width: ballDiameter, height: ballDiameter)
+                navBarBallsContainer.addSubview(b)
+            }
+            let totalWidth = CGFloat(max(count, 0)) * (ballDiameter + ballSpacing) - (count > 0 ? ballSpacing : 0)
+            navBarBallsContainer.frame.size.width = max(totalWidth, 0)
+        }
+    }
+
+    private func makeNavBallView(diameter: CGFloat) -> UIView {
+        let container = UIView(frame: CGRect(x: 0, y: 0, width: diameter, height: diameter))
+        container.layer.cornerRadius = diameter / 2
+        container.clipsToBounds = true
+        // Base dark colour
+        container.backgroundColor = UIColor(red: 40/255, green: 40/255, blue: 40/255, alpha: 1)
+        // Diagonal highlight gradient to simulate a sphere
+        let grad = CAGradientLayer()
+        grad.frame = container.bounds
+        grad.colors = [
+            UIColor(white: 1.0, alpha: 0.85).cgColor,
+            UIColor(white: 0.3, alpha: 0.9).cgColor
+        ]
+        grad.startPoint = CGPoint(x: 0.2, y: 0.1)
+        grad.endPoint = CGPoint(x: 0.9, y: 0.9)
+        container.layer.addSublayer(grad)
+        return container
+    }
+    
+    var currentValue:CGFloat = 0.0 {
+        didSet {
+            if (currentValue > 100) {
+                currentValue = 100
+            }
+            if (currentValue < 0) {
+                currentValue = 0
+            }
+        }
+    }
+    
+    let rotateAnimation = CABasicAnimation()
+    fileprivate var rotation: CGFloat = 0
+    fileprivate var startRotationAngle: CGFloat = 0
+    var lastUpdate: CGFloat = 0
+    var calls: Int = 0
+    var resetValue: CGFloat = 0
+    var hasLayedOut = false
+    
+    var nextSongHeld = false
+    var previousSongHeld = false
+    var queueMode = false
+    
+    private var lastRotationDelta: CGFloat = 0
+    private var lastRotationTime: CFTimeInterval = 0
+
+    // MARK: Clicker sound
+    /// Degrees of rotation accumulated in continuous mode since the last tick sound.
+    private var continuousTickAccumulator: CGFloat = 0
+    private let continuousTickDegrees: CGFloat = 15
+
+    // MARK: Hold
+    private static let holdDefaultsKey = "classic.hold"
+    let holdSwitch = HoldSwitchView()
+    private let navBarLockIcon = HoldPadlockView()
+    private let holdOverlay = HoldOverlayView()
+    public private(set) var isHoldOn = false
+
+    // MARK: Sleep
+    public private(set) var isAsleep = false
+    private var longPressGR: UILongPressGestureRecognizer!
+    private var sleepWork: DispatchWorkItem?
+    private let sleepHoldDuration: TimeInterval = 1.2
+    /// Watches every touch on the wheel so a wake / sleep touch can be swallowed whole.
+    private var touchTracker: WheelTouchTracker!
+    /// True while the touch that woke (or slept) the iPod is still down; its input is dropped.
+    private var consumingTouch = false
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        // Do any additional setup after loading the view.
+        setupNavBar()
+        setupScreen()
+        setupDimmingOverlay()
+        setupClickWheel()
+        setupHold()
+        if SettingsStore.shared.clickerSoundEnabled { ClickSoundPlayer.shared.prepare() }
+        NotificationCenter.default.addObserver(self, selector: #selector(self.setBatteryIcon), name: UIDevice.batteryLevelDidChangeNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(applyTheme), name: .themeDidChange, object: nil)
+        applyTheme()
+    }
+    
+    override func viewDidLayoutSubviews() {
+        let theme = ThemeManager.shared.currentTheme
+        var colors: [UIColor]!
+        
+        if (safetyBar.frame.height > 0) {
+            colors = [theme.navBarGradientTop, theme.navBarGradientBottom]
+        } else {
+            colors = [theme.navBarGradientTop, theme.navBarGradientBottom]
+        }
+        
+        navBar.removeGradient()
+        navBar.applyGradient(colours: colors)
+
+        
+        circleGR.midPoint = clickWheelOverlay.center
+
+        if let bodyView = bodyView {
+            beneathScreen.layoutIfNeeded()
+            bodyView.wheelFrame = clickWheel.convert(clickWheel.bounds, to: bodyView)
+        }
+    }
+    
+    @objc func applyTheme() {
+        let theme = ThemeManager.shared.currentTheme
+        
+        // Body color behind texture
+        bodyColorView.backgroundColor = theme.bodyColor
+        
+        // Texture overlay alpha
+        bodyBackground.alpha = theme.textureAlpha
+        bodyView?.apply(theme: theme)
+        
+        // Click wheel - set image to template mode and tint
+        clickWheel.image = clickWheel.image?.withRenderingMode(.alwaysTemplate)
+        clickWheel.tintColor = theme.wheelRingColor
+        
+        // Label tints
+        menuLabel.setAttributedTitle(NSAttributedString(string: "MENU", attributes: [
+            NSAttributedString.Key.font: UIFont(name: "Helvetica-Bold", size: 17)!,
+            NSAttributedString.Key.foregroundColor: theme.labelTintColor
+        ]), for: .normal)
+        nextSongLabel.tintColor = theme.labelTintColor
+        previousSongLabel.tintColor = theme.labelTintColor
+        playPauseLabel.tintColor = theme.labelTintColor
+        
+        // Nav bar gradient - force re-layout
+        view.setNeedsLayout()
+    }
+
+    func setClickWheelHidden(_ hidden: Bool, animated: Bool = true) {
+        if hidden {
+            beneathScreen.isUserInteractionEnabled = false
+            screenHeightConstraint.isActive = false
+            screenBottomConstraint = screen.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            screenBottomConstraint?.isActive = true
+            let changes = {
+                self.beneathScreen.alpha = 0
+                self.bodyBackground.alpha = 0
+                self.bodyColorView.alpha = 0
+                self.view.layoutIfNeeded()
+            }
+            if animated {
+                UIView.animate(withDuration: 0.3, animations: changes)
+            } else {
+                changes()
+            }
+        } else {
+            beneathScreen.isUserInteractionEnabled = true
+            screenBottomConstraint?.isActive = false
+            screenBottomConstraint = nil
+            screenHeightConstraint.isActive = true
+            let theme = ThemeManager.shared.currentTheme
+            let changes = {
+                self.beneathScreen.alpha = 1
+                self.bodyBackground.alpha = theme.textureAlpha
+                self.bodyColorView.alpha = 1
+                self.view.layoutIfNeeded()
+            }
+            if animated {
+                UIView.animate(withDuration: 0.3, animations: changes)
+            } else {
+                changes()
+            }
+        }
+    }
+
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return true
+    }
+ 
+
+    private func setupNavBar() {
+        self.view.backgroundColor = .white
+        
+        safetyBar.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(safetyBar)
+        safetyBar.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+        safetyBar.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
+        safetyBar.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
+        if #available(iOS 11.0, *) {
+            safetyBar.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
+        } else {
+            safetyBar.bottomAnchor.constraint(equalTo: view.topAnchor).isActive = true
+        }
+        
+        safetyBar.backgroundColor = .green
+        
+        let navBarBottom = UIView()
+        navBarBottom.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(navBarBottom)
+        navBarBottom.topAnchor.constraint(equalTo: safetyBar.bottomAnchor).isActive = true
+        navBarBottom.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
+        navBarBottom.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
+        navBarBottom.heightAnchor.constraint(equalToConstant: 27).isActive = true
+        navBarBottom.backgroundColor = .white
+        navBarBottom.layer.shadowColor = UIColor.black.cgColor
+        navBarBottom.layer.shadowOffset = CGSize(width: 0, height: 0.5)
+        navBarBottom.layer.shadowOpacity = 0.5
+        
+        navBar.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(navBar)
+        navBar.topAnchor.constraint(equalTo: safetyBar.topAnchor).isActive = true
+        navBar.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
+        navBar.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
+        navBar.bottomAnchor.constraint(equalTo: navBarBottom.bottomAnchor).isActive = true
+        navBar.backgroundColor = .red
+        
+        navBarTitleLabel = UILabel()
+        navBarTitleLabel.translatesAutoresizingMaskIntoConstraints = false
+        navBar.addSubview(navBarTitleLabel)
+        navBarTitleLabel.centerYAnchor.constraint(equalTo: navBarBottom.centerYAnchor, constant: -5).isActive = true
+        navBarTitleLabel.centerXAnchor.constraint(equalTo: navBarBottom.centerXAnchor).isActive = true
+        navBarTitleLabel.font = UIFont(name: "Helvetica-Bold", size: 17)
+        navBarTitleLabel.textColor = .black
+        navBarTitleLabel.textAlignment = .center
+        navBarTitleLabel.text = "iPod"
+        
+        playbackStatusIcon.translatesAutoresizingMaskIntoConstraints = false
+        navBar.addSubview(playbackStatusIcon)
+        playbackStatusIcon.leftAnchor.constraint(equalTo: navBar.leftAnchor, constant: 20).isActive = true
+        playbackStatusIcon.centerYAnchor.constraint(equalTo: navBarTitleLabel.centerYAnchor).isActive = true
+        playbackStatusIcon.widthAnchor.constraint(equalToConstant: 16).isActive = true
+        playbackStatusIcon.heightAnchor.constraint(equalToConstant: 16).isActive = true
+        if AppDelegate.music.musicPlayer.playbackState == .playing {
+            setPlaybackIcon(state: .playing)
+        }
+
+        // Hold padlock — sits in the margin just left of the play-state icon.
+        navBarLockIcon.translatesAutoresizingMaskIntoConstraints = false
+        navBarLockIcon.style = .glyph
+        navBarLockIcon.glyphColor = UIColor(white: 0.12, alpha: 1)
+        navBar.addSubview(navBarLockIcon)
+        navBarLockIcon.rightAnchor.constraint(equalTo: playbackStatusIcon.leftAnchor, constant: -3).isActive = true
+        navBarLockIcon.centerYAnchor.constraint(equalTo: navBarTitleLabel.centerYAnchor).isActive = true
+        navBarLockIcon.widthAnchor.constraint(equalToConstant: 10).isActive = true
+        navBarLockIcon.heightAnchor.constraint(equalToConstant: 13).isActive = true
+        navBarLockIcon.isHidden = true
+        
+        shuffleIcon.translatesAutoresizingMaskIntoConstraints = false
+        navBar.addSubview(shuffleIcon)
+        shuffleIcon.leftAnchor.constraint(equalTo: playbackStatusIcon.rightAnchor, constant: 7).isActive = true
+        shuffleIcon.centerYAnchor.constraint(equalTo: navBarTitleLabel.centerYAnchor).isActive = true
+        shuffleIcon.widthAnchor.constraint(equalToConstant: 16).isActive = true
+        shuffleIcon.heightAnchor.constraint(equalToConstant: 16).isActive = true
+        shuffleIcon.image = #imageLiteral(resourceName: "navbarShuffleIcon")
+        shuffleIcon.isHidden = true
+        
+        queueIcon.translatesAutoresizingMaskIntoConstraints = false
+        navBar.addSubview(queueIcon)
+        queueIcon.leftAnchor.constraint(equalTo: shuffleIcon.rightAnchor, constant: 7).isActive = true
+        queueIcon.centerYAnchor.constraint(equalTo: navBarTitleLabel.centerYAnchor).isActive = true
+        queueIcon.widthAnchor.constraint(equalToConstant: 12).isActive = true
+        queueIcon.heightAnchor.constraint(equalToConstant: 12).isActive = true
+        queueIcon.image = #imageLiteral(resourceName: "qeueIcon")
+        queueIcon.isHidden = true
+        
+        batteryIcon.translatesAutoresizingMaskIntoConstraints = false
+        navBar.addSubview(batteryIcon)
+        batteryIcon.rightAnchor.constraint(equalTo: navBar.rightAnchor, constant: -20).isActive = true
+        batteryIcon.centerYAnchor.constraint(equalTo: navBarTitleLabel.centerYAnchor).isActive = true
+        batteryIcon.widthAnchor.constraint(equalToConstant: 26).isActive = true
+        batteryIcon.heightAnchor.constraint(equalToConstant: 13).isActive = true
+        
+        setBatteryIcon()
+
+        // Score label — shown left of battery during game screens
+        navBarScoreLabel.translatesAutoresizingMaskIntoConstraints = false
+        navBar.addSubview(navBarScoreLabel)
+        navBarScoreLabel.rightAnchor.constraint(equalTo: batteryIcon.leftAnchor, constant: -6).isActive = true
+        navBarScoreLabel.centerYAnchor.constraint(equalTo: navBarTitleLabel.centerYAnchor).isActive = true
+        navBarScoreLabel.font = UIFont(name: "Helvetica-Bold", size: 13)
+        navBarScoreLabel.textColor = .black
+        navBarScoreLabel.isHidden = true
+
+        // Ball icons container — shown right of play/pause icon during game screens
+        navBarBallsContainer.translatesAutoresizingMaskIntoConstraints = false
+        navBar.addSubview(navBarBallsContainer)
+        navBarBallsContainer.leftAnchor.constraint(equalTo: playbackStatusIcon.rightAnchor, constant: 5).isActive = true
+        navBarBallsContainer.centerYAnchor.constraint(equalTo: navBarTitleLabel.centerYAnchor).isActive = true
+        navBarBallsContainer.heightAnchor.constraint(equalToConstant: 7).isActive = true
+        navBarBallsContainer.widthAnchor.constraint(equalToConstant: 33).isActive = true
+        navBarBallsContainer.isHidden = true
+    }
+
+    
+    private func setupScreen() {
+        screen.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(screen)
+        screen.topAnchor.constraint(equalTo: navBar.bottomAnchor).isActive = true
+        screen.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
+        screen.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
+        screenHeightConstraint = screen.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.4, constant: 0)
+        screenHeightConstraint.isActive = true
+    }
+    
+    private func setupDimmingOverlay() {
+        dimmingOverlay.translatesAutoresizingMaskIntoConstraints = false
+        dimmingOverlay.backgroundColor = .black
+        dimmingOverlay.alpha = 0.0
+        dimmingOverlay.isUserInteractionEnabled = false
+        view.addSubview(dimmingOverlay)
+        dimmingOverlay.topAnchor.constraint(equalTo: navBar.topAnchor).isActive = true
+        dimmingOverlay.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
+        dimmingOverlay.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
+        dimmingOverlay.bottomAnchor.constraint(equalTo: screen.bottomAnchor).isActive = true
+    }
+
+    func setScreenBrightness(_ brightness: Float) {
+        // Asleep: the screen stays black until woken.
+        guard !isAsleep else { return }
+        let clamped = max(0.0, min(1.0, brightness))
+        let maxDimAlpha: CGFloat = 0.7
+        dimmingOverlay.alpha = CGFloat(1.0 - clamped) * maxDimAlpha
+    }
+
+    func resetBacklightTimer() {
+        // Asleep: wake() owns the backlight; nothing else may relight the screen.
+        guard !isAsleep else { return }
+        backlightTimer?.invalidate()
+        backlightTimer = nil
+
+        guard let duration = SettingsStore.shared.backlightTimerDuration else {
+            // "Always On" — restore brightness, no timer
+            if backlightIsOff {
+                backlightIsOff = false
+                UIView.animate(withDuration: 0.3) {
+                    self.setScreenBrightness(SettingsStore.shared.brightness)
+                }
+            }
+            return
+        }
+
+        if duration == 0 {
+            // "Off" — backlight is always off
+            if !backlightIsOff {
+                backlightIsOff = true
+                UIView.animate(withDuration: 0.3) {
+                    self.dimmingOverlay.alpha = 0.92
+                }
+            }
+            return
+        }
+
+        // Restore brightness on interaction
+        if backlightIsOff {
+            backlightIsOff = false
+            UIView.animate(withDuration: 0.3) {
+                self.setScreenBrightness(SettingsStore.shared.brightness)
+            }
+        }
+
+        // Schedule dimming after the timeout
+        backlightTimer = Timer.scheduledTimer(timeInterval: duration, target: self, selector: #selector(backlightTimerFired), userInfo: nil, repeats: false)
+    }
+
+    @objc private func backlightTimerFired() {
+        guard !isAsleep else { return }
+        backlightIsOff = true
+        UIView.animate(withDuration: 0.5) {
+            self.dimmingOverlay.alpha = 0.92
+        }
+    }
+
+    private func setupClickWheel() {
+        bodyColorView.translatesAutoresizingMaskIntoConstraints = false
+        bodyColorView.backgroundColor = .clear
+        view.addSubview(bodyColorView)
+        bodyColorView.topAnchor.constraint(equalTo: screen.bottomAnchor).isActive = true
+        bodyColorView.leftAnchor.constraint(equalTo: screen.leftAnchor).isActive = true
+        bodyColorView.rightAnchor.constraint(equalTo: screen.rightAnchor).isActive = true
+        bodyColorView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+
+        bodyBackground.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(bodyBackground)
+        bodyBackground.topAnchor.constraint(equalTo: screen.bottomAnchor).isActive = true
+        bodyBackground.leftAnchor.constraint(equalTo: screen.leftAnchor).isActive = true
+        bodyBackground.rightAnchor.constraint(equalTo: screen.rightAnchor).isActive = true
+        bodyBackground.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+        bodyBackground.image = #imageLiteral(resourceName: "alumninium_texture")
+        bodyBackground.alpha = 0.35
+        
+        beneathScreen.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(beneathScreen)
+        beneathScreen.topAnchor.constraint(equalTo: screen.bottomAnchor).isActive = true
+        beneathScreen.leftAnchor.constraint(equalTo: screen.leftAnchor).isActive = true
+        beneathScreen.rightAnchor.constraint(equalTo: screen.rightAnchor).isActive = true
+        beneathScreen.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+        beneathScreen.backgroundColor = .clear
+
+        if let bodyView = PodBodyView.make() {
+            bodyView.translatesAutoresizingMaskIntoConstraints = false
+            beneathScreen.insertSubview(bodyView, at: 0)
+            NSLayoutConstraint.activate([
+                bodyView.topAnchor.constraint(equalTo: beneathScreen.topAnchor),
+                bodyView.leftAnchor.constraint(equalTo: beneathScreen.leftAnchor),
+                bodyView.rightAnchor.constraint(equalTo: beneathScreen.rightAnchor),
+                bodyView.bottomAnchor.constraint(equalTo: beneathScreen.bottomAnchor),
+            ])
+            // The shader draws the body, so the flat texture layers stay hidden.
+            bodyColorView.isHidden = true
+            bodyBackground.isHidden = true
+            self.bodyView = bodyView
+        }
+        
+        let bezel = UIView()
+        bezel.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(bezel)
+        bezel.centerYAnchor.constraint(equalTo: beneathScreen.topAnchor).isActive = true
+        bezel.leftAnchor.constraint(equalTo: beneathScreen.leftAnchor).isActive = true
+        bezel.rightAnchor.constraint(equalTo: beneathScreen.rightAnchor).isActive = true
+        bezel.heightAnchor.constraint(equalToConstant: 2).isActive = true
+        bezel.backgroundColor = .lightGray
+        bezel.isHidden = bodyView != nil
+        
+        clickWheel = UIImageView(image: #imageLiteral(resourceName: "clickwheelbackground"))
+        clickWheel.translatesAutoresizingMaskIntoConstraints = false
+        beneathScreen.addSubview(clickWheel)
+        clickWheel.topAnchor.constraint(equalTo: beneathScreen.topAnchor, constant: 35).isActive = true
+        clickWheel.centerXAnchor.constraint(equalTo: beneathScreen.centerXAnchor).isActive = true
+        clickWheel.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.75).isActive = true
+        clickWheel.heightAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.75).isActive = true
+        // Still used for layout; the Metal view draws the wheel itself.
+        if bodyView != nil { clickWheel.alpha = 0 }
+        
+       
+        menuLabel.setAttributedTitle(NSAttributedString(string: "MENU", attributes: [NSAttributedString.Key.font: UIFont(name: "Helvetica-Bold", size: 17)!, NSAttributedString.Key.foregroundColor: UIColor.white]), for: .normal)
+        menuLabel.translatesAutoresizingMaskIntoConstraints = false
+        beneathScreen.addSubview(menuLabel)
+        menuLabel.topAnchor.constraint(equalTo: clickWheel.topAnchor, constant: 15).isActive = true
+        menuLabel.centerXAnchor.constraint(equalTo: clickWheel.centerXAnchor).isActive = true
+        
+        
+        nextSongLabel.setImage(#imageLiteral(resourceName: "nextSong"), for: .normal)
+        nextSongLabel.tintColor = UIColor.white
+        nextSongLabel.translatesAutoresizingMaskIntoConstraints = false
+        beneathScreen.addSubview(nextSongLabel)
+        nextSongLabel.rightAnchor.constraint(equalTo: clickWheel.rightAnchor, constant: -18).isActive = true
+        nextSongLabel.centerYAnchor.constraint(equalTo: clickWheel.centerYAnchor).isActive = true
+        nextSongLabel.widthAnchor.constraint(equalToConstant: 25).isActive = true
+        nextSongLabel.heightAnchor.constraint(equalToConstant: 25).isActive = true
+    
+        previousSongLabel.setImage(#imageLiteral(resourceName: "previousSong"), for: .normal)
+        previousSongLabel.tintColor = UIColor.white
+        previousSongLabel.translatesAutoresizingMaskIntoConstraints = false
+        beneathScreen.addSubview(previousSongLabel)
+        previousSongLabel.leftAnchor.constraint(equalTo: clickWheel.leftAnchor, constant: 18).isActive = true
+        previousSongLabel.centerYAnchor.constraint(equalTo: clickWheel.centerYAnchor).isActive = true
+        previousSongLabel.widthAnchor.constraint(equalToConstant: 25).isActive = true
+        previousSongLabel.heightAnchor.constraint(equalToConstant: 25).isActive = true
+        
+        playPauseLabel.setImage(#imageLiteral(resourceName: "playPause"), for: .normal)
+        playPauseLabel.tintColor = UIColor.white
+        playPauseLabel.translatesAutoresizingMaskIntoConstraints = false
+        beneathScreen.addSubview(playPauseLabel)
+        playPauseLabel.centerXAnchor.constraint(equalTo: clickWheel.centerXAnchor).isActive = true
+        playPauseLabel.bottomAnchor.constraint(equalTo: clickWheel.bottomAnchor, constant: -10).isActive = true
+        playPauseLabel.widthAnchor.constraint(equalToConstant: 28).isActive = true
+        playPauseLabel.heightAnchor.constraint(equalToConstant: 28).isActive = true
+
+        clickWheelOverlay.translatesAutoresizingMaskIntoConstraints = false
+        beneathScreen.addSubview(clickWheelOverlay)
+        clickWheelOverlay.topAnchor.constraint(equalTo: clickWheel.topAnchor).isActive = true
+        clickWheelOverlay.leftAnchor.constraint(equalTo: clickWheel.leftAnchor).isActive = true
+        clickWheelOverlay.rightAnchor.constraint(equalTo: clickWheel.rightAnchor).isActive = true
+        clickWheelOverlay.bottomAnchor.constraint(equalTo: clickWheel.bottomAnchor).isActive = true
+        clickWheelOverlay.isUserInteractionEnabled = true
+        circleGR = CircleGestureRecogniser(midPoint: clickWheelOverlay.center, target: self, action: #selector(self.rotateGesture(recognizer:)))
+        circleGR.delegate = self
+        circleGR.cancelsTouchesInView = false
+        clickWheelOverlay.addGestureRecognizer(circleGR)
+        //UITapGestureRecognizer(target: self, action: #selector(self.wheelClicked(sender:)))
+        forceTapGR = ForceTouchTapGestureRecogniser(target: self, action: #selector(self.wheelClicked(sender:)))
+        forceTapGR.delegate = self
+        forceTapGR.cancelsTouchesInView = false
+        clickWheelOverlay.addGestureRecognizer(forceTapGR)
+        let lpGR = UILongPressGestureRecognizer(target: self, action: #selector(self.wheelLongPress(sender:)))
+        lpGR.minimumPressDuration = 0.1
+        lpGR.delegate = self
+        lpGR.cancelsTouchesInView = true
+        clickWheelOverlay.addGestureRecognizer(lpGR)
+        longPressGR = lpGR
+
+        touchTracker = WheelTouchTracker(target: nil, action: nil)
+        touchTracker.cancelsTouchesInView = false
+        touchTracker.delaysTouchesEnded = false
+        touchTracker.delegate = self
+        touchTracker.onBegan = { [weak self] in self?.wheelTouchBegan() }
+        touchTracker.onEnded = { [weak self] in self?.wheelTouchEnded() }
+        clickWheelOverlay.addGestureRecognizer(touchTracker)
+        
+        
+        menuButton.translatesAutoresizingMaskIntoConstraints = false
+        beneathScreen.addSubview(menuButton)
+        menuButton.topAnchor.constraint(equalTo: clickWheel.topAnchor, constant: 10).isActive = true
+        menuButton.widthAnchor.constraint(equalTo: clickWheel.widthAnchor, multiplier: 0.3).isActive = true
+        menuButton.heightAnchor.constraint(equalTo: clickWheel.heightAnchor, multiplier: 0.3).isActive = true
+        menuButton.centerXAnchor.constraint(equalTo: clickWheel.centerXAnchor).isActive = true
+        menuButton.backgroundColor = .clear
+        menuButton.isUserInteractionEnabled = false
+        
+        nextSongButton.translatesAutoresizingMaskIntoConstraints = false
+        beneathScreen.addSubview(nextSongButton)
+        nextSongButton.centerYAnchor.constraint(equalTo: clickWheel.centerYAnchor).isActive = true
+        nextSongButton.widthAnchor.constraint(equalTo: clickWheel.widthAnchor, multiplier: 0.3).isActive = true
+        nextSongButton.heightAnchor.constraint(equalTo: clickWheel.heightAnchor, multiplier: 0.3).isActive = true
+        nextSongButton.rightAnchor.constraint(equalTo: clickWheel.rightAnchor, constant: -10).isActive = true
+        nextSongButton.backgroundColor = .clear
+        nextSongButton.isUserInteractionEnabled = false
+        
+        prevSongButton.translatesAutoresizingMaskIntoConstraints = false
+        beneathScreen.addSubview(prevSongButton)
+        prevSongButton.centerYAnchor.constraint(equalTo: clickWheel.centerYAnchor).isActive = true
+        prevSongButton.widthAnchor.constraint(equalTo: clickWheel.widthAnchor, multiplier: 0.3).isActive = true
+        prevSongButton.heightAnchor.constraint(equalTo: clickWheel.heightAnchor, multiplier: 0.3).isActive = true
+        prevSongButton.leftAnchor.constraint(equalTo: clickWheel.leftAnchor, constant: 10).isActive = true
+        prevSongButton.backgroundColor = .clear
+        prevSongButton.isUserInteractionEnabled = false
+        
+        playPauseButton.translatesAutoresizingMaskIntoConstraints = false
+        beneathScreen.addSubview(playPauseButton)
+        playPauseButton.bottomAnchor.constraint(equalTo: clickWheel.bottomAnchor, constant: -10).isActive = true
+        playPauseButton.widthAnchor.constraint(equalTo: clickWheel.widthAnchor, multiplier: 0.3).isActive = true
+        playPauseButton.heightAnchor.constraint(equalTo: clickWheel.heightAnchor, multiplier: 0.3).isActive = true
+        playPauseButton.centerXAnchor.constraint(equalTo: clickWheel.centerXAnchor).isActive = true
+        playPauseButton.backgroundColor = .clear
+        playPauseButton.isUserInteractionEnabled = false
+    
+        centerButton.translatesAutoresizingMaskIntoConstraints = false
+        beneathScreen.addSubview(centerButton)
+        centerButton.centerYAnchor.constraint(equalTo: clickWheel.centerYAnchor).isActive = true
+        centerButton.widthAnchor.constraint(equalTo: clickWheel.widthAnchor, multiplier: 0.3).isActive = true
+        centerButton.heightAnchor.constraint(equalTo: clickWheel.heightAnchor, multiplier: 0.3).isActive = true
+        centerButton.centerXAnchor.constraint(equalTo: clickWheel.centerXAnchor).isActive = true
+        centerButton.backgroundColor = .clear
+        centerButton.isUserInteractionEnabled = false
+        
+        
+    }
+    
+    
+    @objc
+    func rotateGesture(recognizer:CircleGestureRecogniser){
+        guard admitWheelInput() else { return }
+        resetBacklightTimer()
+        let velocity = recognizer.velocity(in: recognizer.view)
+        let magnitude = sqrtf(powf(Float(velocity.x), 2) + powf(Float(velocity.y), 2))
+        
+        // Continuous mode: bypass tick-gating, pass raw rotation data directly
+        if clickWheelDelegate.prefersContinuousWheelInput {
+            if let rotation = recognizer.rotation, velocity.x != 0 && velocity.y != 0 {
+                let now = CACurrentMediaTime()
+                let dt = now - lastRotationTime
+                lastRotationTime = now
+                lastRotationDelta = rotation
+                
+                let angularVelocity: CGFloat = dt > 0 ? rotation / CGFloat(dt) : 0
+                let direction: RotationDirection = rotation >= 0 ? .CLOCKWISE : .COUNTER_CLOCKWISE
+                
+                let event = ClickWheelRotationEvent(
+                    deltaRadians: rotation,
+                    angularVelocity: angularVelocity,
+                    direction: direction,
+                    state: .changed
+                )
+                self.clickWheelDelegate.clickWheelDidRotateContinuously(event: event)
+
+                // No per-event clicks for continuous screens: one tick per ~15°.
+                continuousTickAccumulator += abs(rotation.degrees)
+                if continuousTickAccumulator >= continuousTickDegrees {
+                    continuousTickAccumulator = continuousTickAccumulator.truncatingRemainder(dividingBy: continuousTickDegrees)
+                    if SettingsStore.shared.clickerSoundEnabled { ClickSoundPlayer.shared.playTick() }
+                }
+            }
+            if recognizer.state == .ended {
+                let now = CACurrentMediaTime()
+                let dt = now - lastRotationTime
+                // Only carry momentum if the last rotation was very recent —
+                // if the user paused before lifting, velocity should be zero
+                let angularVelocity: CGFloat = dt > 0 && dt < 0.05 ? lastRotationDelta / CGFloat(dt) : 0
+                let direction: RotationDirection = lastRotationDelta >= 0 ? .CLOCKWISE : .COUNTER_CLOCKWISE
+                
+                let event = ClickWheelRotationEvent(
+                    deltaRadians: 0,
+                    angularVelocity: angularVelocity,
+                    direction: direction,
+                    state: .ended
+                )
+                self.clickWheelDelegate.clickWheelDidRotateContinuously(event: event)
+                lastRotationDelta = 0
+                lastRotationTime = 0
+                continuousTickAccumulator = 0
+            }
+            return
+        }
+        
+        // Discrete tick mode: existing behaviour for all other screens
+        if magnitude > 800 {
+            let newVal = map(n: magnitude, start1: 0, stop1: 2000, start2: 10, stop2: 3)
+            clickwheelResolution = Int(newVal)
+        } else {
+            clickwheelResolution = 10
+        }
+        if let rotation = recognizer.rotation, velocity.x != 0 && velocity.y != 0 {
+            currentValue += rotation.degrees / 360 * 100
+            
+            var direction: RotationDirection!
+            
+            if (currentValue > lastUpdate) {
+                direction = RotationDirection.CLOCKWISE
+            } else if (currentValue < lastUpdate) {
+                direction = RotationDirection.COUNTER_CLOCKWISE
+            } else if (currentValue == lastUpdate && currentValue == 100) {
+                direction = RotationDirection.CLOCKWISE
+            } else if (currentValue == lastUpdate && currentValue == 0) {
+                direction = RotationDirection.COUNTER_CLOCKWISE
+            }
+            
+            
+            lastUpdate = currentValue
+            
+            calls += 1
+            if (calls >= clickwheelResolution && direction != nil) {
+                self.clickWheelDelegate.clickWheelDidRotate(rotationDirection: direction)
+                if SettingsStore.shared.clickerEnabled {
+                    let generator = UISelectionFeedbackGenerator()
+                    generator.selectionChanged()
+                }
+                if SettingsStore.shared.clickerSoundEnabled { ClickSoundPlayer.shared.playTick() }
+                // Scrolling isn't a hold on Play/Pause.
+                cancelPendingSleep()
+                calls = 0
+            }
+        }
+        if recognizer.state == .ended {
+            clickwheelResolution = 10
+        }
+    }
+    
+    @objc func wheelLongPress(sender: UILongPressGestureRecognizer) {
+        guard admitWheelInput() else {
+            if sender.state == .ended || sender.state == .cancelled { forceTapGR.isForceTouch = false }
+            return
+        }
+        resetBacklightTimer()
+        guard sender.numberOfTouches > 0 || sender.state == .ended else {
+            cancelPendingSleep()
+            return
+        }
+        let touchLocation = sender.numberOfTouches > 0 ? sender.location(ofTouch: 0, in: beneathScreen) : sender.location(in: beneathScreen)
+        let forceGenerator = UIImpactFeedbackGenerator(style: .heavy)
+
+        // Holding Play/Pause puts the iPod to sleep.
+        switch sender.state {
+        case .began:
+            if playPauseButton.frame.contains(touchLocation) { schedulePendingSleep() }
+        case .changed:
+            if !playPauseButton.frame.contains(touchLocation) { cancelPendingSleep() }
+        default:
+            cancelPendingSleep()
+        }
+        
+        if sender.state == .ended {
+            if forceTapGR.isForceTouch {
+                if (touchLocation.x >= menuButton.frame.minX && touchLocation.x <= menuButton.frame.maxX
+                    && touchLocation.y >= menuButton.frame.minY && touchLocation.y <= menuButton.frame.maxY) {
+                    self.clickWheelDelegate.menuPressed(pressure: .FORCE_ENDED)
+                    playButtonFeedback(forceGenerator)
+                } else if (touchLocation.x >= nextSongButton.frame.minX && touchLocation.x <= nextSongButton.frame.maxX
+                    && touchLocation.y >= nextSongButton.frame.minY && touchLocation.y <= nextSongButton.frame.maxY) {
+                    self.clickWheelDelegate.nextSongPressed(pressure: .FORCE_ENDED)
+                    nextSongHeld = false
+                    playButtonFeedback(forceGenerator)
+                } else if (touchLocation.x >= prevSongButton.frame.minX && touchLocation.x <= prevSongButton.frame.maxX
+                   && touchLocation.y >= prevSongButton.frame.minY && touchLocation.y <= prevSongButton.frame.maxY) {
+                    self.clickWheelDelegate.previousSongPressed(pressure: .FORCE_ENDED)
+                    previousSongHeld = false
+                    playButtonFeedback(forceGenerator)
+                } else if (touchLocation.x >= playPauseButton.frame.minX && touchLocation.x <= playPauseButton.frame.maxX
+                   && touchLocation.y >= playPauseButton.frame.minY && touchLocation.y <= playPauseButton.frame.maxY) {
+                    self.clickWheelDelegate.playPausePressed(pressure: .FORCE_ENDED)
+                    playButtonFeedback(forceGenerator)
+                } else if (touchLocation.x >= centerButton.frame.minX && touchLocation.x <= centerButton.frame.maxX
+                   && touchLocation.y >= centerButton.frame.minY && touchLocation.y <= centerButton.frame.maxY) {
+                    self.clickWheelDelegate.centerPressed(pressure: .FORCE_ENDED)
+                    playButtonFeedback(forceGenerator)
+                }
+                forceTapGR.isForceTouch = false
+            }
+        }
+    }
+    
+    
+    @objc func wheelClicked(sender: ForceTouchTapGestureRecogniser) {
+        guard admitWheelInput() else { return }
+        resetBacklightTimer()
+        let generator = UIImpactFeedbackGenerator(style: .light)
+        let forceGenerator = UIImpactFeedbackGenerator(style: .heavy)
+        
+        let touchLocation = sender.location(ofTouch: 0, in: beneathScreen)
+        
+        if (touchLocation.x >= menuButton.frame.minX && touchLocation.x <= menuButton.frame.maxX
+            && touchLocation.y >= menuButton.frame.minY && touchLocation.y <= menuButton.frame.maxY) {
+            if sender.isForceTouch == true {
+                self.clickWheelDelegate.menuPressed(pressure: .FORCE)
+                bodyView?.press(.menu)
+                playButtonFeedback(forceGenerator)
+            } else {
+                self.clickWheelDelegate.menuPressed(pressure: .NORMAL)
+                bodyView?.press(.menu)
+                playButtonFeedback(generator)
+            }
+        } else if (touchLocation.x >= nextSongButton.frame.minX && touchLocation.x <= nextSongButton.frame.maxX
+            && touchLocation.y >= nextSongButton.frame.minY && touchLocation.y <= nextSongButton.frame.maxY) {
+            if sender.isForceTouch == true {
+                self.clickWheelDelegate.nextSongPressed(pressure: .FORCE)
+                bodyView?.press(.next)
+                nextSongHeld = true
+                playButtonFeedback(forceGenerator)
+            } else {
+                self.clickWheelDelegate.nextSongPressed(pressure: .NORMAL)
+                bodyView?.press(.next)
+                playButtonFeedback(generator)
+            }
+        } else if (touchLocation.x >= prevSongButton.frame.minX && touchLocation.x <= prevSongButton.frame.maxX
+           && touchLocation.y >= prevSongButton.frame.minY && touchLocation.y <= prevSongButton.frame.maxY) {
+            if sender.isForceTouch == true {
+                self.clickWheelDelegate.previousSongPressed(pressure: .FORCE)
+                bodyView?.press(.previous)
+                previousSongHeld = true
+                playButtonFeedback(forceGenerator)
+            } else {
+                self.clickWheelDelegate.previousSongPressed(pressure: .NORMAL)
+                bodyView?.press(.previous)
+                playButtonFeedback(generator)
+            }
+        } else if (touchLocation.x >= playPauseButton.frame.minX && touchLocation.x <= playPauseButton.frame.maxX
+           && touchLocation.y >= playPauseButton.frame.minY && touchLocation.y <= playPauseButton.frame.maxY) {
+            if sender.isForceTouch == true {
+                self.clickWheelDelegate.playPausePressed(pressure: .FORCE)
+                bodyView?.press(.playPause)
+                playButtonFeedback(forceGenerator)
+            } else {
+                self.clickWheelDelegate.playPausePressed(pressure: .NORMAL)
+                bodyView?.press(.playPause)
+                playButtonFeedback(generator)
+            }
+        } else if (touchLocation.x >= centerButton.frame.minX && touchLocation.x <= centerButton.frame.maxX
+           && touchLocation.y >= centerButton.frame.minY && touchLocation.y <= centerButton.frame.maxY) {
+            if sender.isForceTouch == true {
+                self.clickWheelDelegate.centerPressed(pressure: .FORCE)
+                bodyView?.press(.center)
+                playButtonFeedback(forceGenerator)
+            } else {
+                self.clickWheelDelegate.centerPressed(pressure: .NORMAL)
+                bodyView?.press(.center)
+                playButtonFeedback(generator)
+            }
+        }
+        
+        
+        
+        if nextSongHeld && previousSongHeld {
+            //Toggle queue mode
+            queueIcon.isHidden = !queueIcon.isHidden
+            nextSongHeld = false
+            previousSongHeld = false
+            AppDelegate.music.toggleQueueMode()
+        }
+        
+    }
+    
+    
+    // MARK: - Button feedback
+
+    private func playButtonFeedback(_ generator: UIImpactFeedbackGenerator) {
+        if SettingsStore.shared.clickerEnabled { generator.impactOccurred() }
+        if SettingsStore.shared.clickerSoundEnabled { ClickSoundPlayer.shared.playButton() }
+    }
+
+    /// Gate at the top of every wheel/button handler. Returns false when the
+    /// input must be dropped: Hold is on, the iPod is asleep (the input wakes
+    /// it), or the touch that woke / slept the iPod is still down.
+    private func admitWheelInput() -> Bool {
+        if isHoldOn {
+            if !isAsleep {
+                resetBacklightTimer()
+                holdOverlay.flash()
+            }
+            return false
+        }
+        if consumingTouch { return false }
+        if isAsleep {
+            wake()
+            consumingTouch = true
+            return false
+        }
+        return true
+    }
+
+    private func wheelTouchBegan() {
+        if isAsleep && !isHoldOn {
+            wake()
+            consumingTouch = true
+        }
+    }
+
+    private func wheelTouchEnded() {
+        cancelPendingSleep()
+        // Gesture actions for this touch fire after the tracker sees it end,
+        // so keep swallowing until the current event has been dispatched.
+        if consumingTouch {
+            DispatchQueue.main.async { [weak self] in self?.consumingTouch = false }
+        }
+    }
+
+    /// Continuous-input screens may be mid-spin; give them a clean stop.
+    private func endContinuousRotationIfNeeded() {
+        continuousTickAccumulator = 0
+        calls = 0
+        guard lastRotationTime != 0, let delegate = clickWheelDelegate, delegate.prefersContinuousWheelInput else { return }
+        let event = ClickWheelRotationEvent(deltaRadians: 0, angularVelocity: 0,
+                                            direction: lastRotationDelta >= 0 ? .CLOCKWISE : .COUNTER_CLOCKWISE,
+                                            state: .ended)
+        delegate.clickWheelDidRotateContinuously(event: event)
+        lastRotationDelta = 0
+        lastRotationTime = 0
+    }
+
+    // MARK: - Hold
+
+    private func setupHold() {
+        holdSwitch.translatesAutoresizingMaskIntoConstraints = false
+        beneathScreen.addSubview(holdSwitch)
+        let preferredBottom = holdSwitch.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10)
+        preferredBottom.priority = .defaultHigh
+        let clearOfWheel = holdSwitch.topAnchor.constraint(greaterThanOrEqualTo: clickWheel.bottomAnchor, constant: 2)
+        clearOfWheel.priority = UILayoutPriority(999)
+        NSLayoutConstraint.activate([
+            holdSwitch.leftAnchor.constraint(equalTo: beneathScreen.leftAnchor, constant: 20),
+            holdSwitch.bottomAnchor.constraint(lessThanOrEqualTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -4),
+            preferredBottom,
+            clearOfWheel,
+        ])
+        holdSwitch.onChange = { [weak self] on in self?.setHold(on) }
+
+        holdOverlay.translatesAutoresizingMaskIntoConstraints = false
+        view.insertSubview(holdOverlay, belowSubview: dimmingOverlay)
+        NSLayoutConstraint.activate([
+            holdOverlay.topAnchor.constraint(equalTo: screen.topAnchor),
+            holdOverlay.leftAnchor.constraint(equalTo: screen.leftAnchor),
+            holdOverlay.rightAnchor.constraint(equalTo: screen.rightAnchor),
+            holdOverlay.bottomAnchor.constraint(equalTo: screen.bottomAnchor),
+        ])
+
+        let saved = UserDefaults.standard.bool(forKey: BasePodView.holdDefaultsKey)
+        holdSwitch.setOn(saved, animated: false)
+        setHold(saved)
+    }
+
+    /// Turns Hold on or off (the switch calls this; it can also be used programmatically).
+    func setHold(_ on: Bool) {
+        if holdSwitch.isOn != on { holdSwitch.setOn(on, animated: true) }
+        isHoldOn = on
+        UserDefaults.standard.set(on, forKey: BasePodView.holdDefaultsKey)
+        navBarLockIcon.isHidden = !on
+        if on {
+            cancelPendingSleep()
+            endContinuousRotationIfNeeded()
+            // A force-held Next/Previous (seeking) would never see its FORCE_ENDED
+            // once Hold gates the release, so end it now.
+            if forceTapGR?.isForceTouch == true {
+                if nextSongHeld { clickWheelDelegate?.nextSongPressed(pressure: .FORCE_ENDED) }
+                if previousSongHeld { clickWheelDelegate?.previousSongPressed(pressure: .FORCE_ENDED) }
+                forceTapGR.isForceTouch = false
+            }
+            nextSongHeld = false
+            previousSongHeld = false
+        } else {
+            holdOverlay.hide()
+        }
+    }
+
+    // MARK: - Sleep
+
+    private func schedulePendingSleep() {
+        sleepWork?.cancel()
+        let work = DispatchWorkItem { [weak self] in
+            guard let self = self, !self.isHoldOn, !self.isAsleep else { return }
+            let gr = self.longPressGR!
+            guard (gr.state == .began || gr.state == .changed), gr.numberOfTouches > 0 else { return }
+            let location = gr.location(ofTouch: 0, in: self.beneathScreen)
+            guard self.playPauseButton.frame.contains(location) else { return }
+            // Swallow the rest of this touch so its release doesn't toggle playback.
+            self.consumingTouch = true
+            self.goToSleep()
+        }
+        sleepWork = work
+        let delay = max(0, sleepHoldDuration - longPressGR.minimumPressDuration)
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: work)
+    }
+
+    private func cancelPendingSleep() {
+        sleepWork?.cancel()
+        sleepWork = nil
+    }
+
+    /// Like holding Play/Pause on the iPod: pause the music and turn the screen off.
+    func goToSleep() {
+        guard !isAsleep else { return }
+        cancelPendingSleep()
+        endContinuousRotationIfNeeded()
+        if AppDelegate.music.musicPlayer.playbackState == .playing {
+            AppDelegate.music.playPause()
+        }
+        playButtonFeedback(UIImpactFeedbackGenerator(style: .heavy))
+        backlightTimer?.invalidate()
+        backlightTimer = nil
+        holdOverlay.hide()
+        isAsleep = true
+        UIView.animate(withDuration: 0.6, delay: 0, options: [.beginFromCurrentState]) {
+            self.dimmingOverlay.alpha = 1
+        }
+    }
+
+    /// Restores the backlight; the input that triggered it is consumed by the caller.
+    func wake() {
+        guard isAsleep else { return }
+        isAsleep = false
+        backlightIsOff = false
+        UIView.animate(withDuration: 0.3, delay: 0, options: [.beginFromCurrentState]) {
+            self.setScreenBrightness(SettingsStore.shared.brightness)
+        }
+        // Re-arms the timer (or re-dims if the backlight setting is "Off").
+        resetBacklightTimer()
+        playButtonFeedback(UIImpactFeedbackGenerator(style: .light))
+    }
+
+    func setPlaybackIcon(state: PlaybackState) {
+        switch state {
+        case .playing:
+            playbackStatusIcon.image = #imageLiteral(resourceName: "navbarPlayIcon")
+        case .paused:
+            playbackStatusIcon.image = #imageLiteral(resourceName: "navbarPauseIcon")
+        case .stopped:
+            playbackStatusIcon.isHidden = true
+        }
+    }
+    
+    @objc
+    func setBatteryIcon() {
+        let level = UIDevice.current.batteryLevel * 100
+        if level > 80 {
+            batteryIcon.image = #imageLiteral(resourceName: "battery_100")
+        } else if level <= 80 && level > 60 {
+            batteryIcon.image = #imageLiteral(resourceName: "battery_80")
+        } else if level <= 60 && level > 40 {
+            batteryIcon.image = #imageLiteral(resourceName: "battery_60")
+        } else if level <= 40 && level > 20 {
+            batteryIcon.image = #imageLiteral(resourceName: "battery_40")
+        } else if level <= 20 {
+            batteryIcon.image = #imageLiteral(resourceName: "battery_20")
+        }
+    }
+    
+    
+    
+}
+
+
+
+
+/// Observes every touch on the wheel without ever recognising, so BasePodView
+/// knows when a touch starts and when all fingers have lifted.
+fileprivate final class WheelTouchTracker: UIGestureRecognizer {
+    var onBegan: (() -> Void)?
+    var onEnded: (() -> Void)?
+    private var activeTouches = 0
+
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent) {
+        super.touchesBegan(touches, with: event)
+        if activeTouches == 0 { onBegan?() }
+        activeTouches += touches.count
+    }
+
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent) {
+        super.touchesEnded(touches, with: event)
+        touchesFinished(touches.count)
+    }
+
+    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent) {
+        super.touchesCancelled(touches, with: event)
+        touchesFinished(touches.count)
+    }
+
+    private func touchesFinished(_ count: Int) {
+        activeTouches -= count
+        if activeTouches <= 0 {
+            activeTouches = 0
+            onEnded?()
+            state = .failed
+        }
+    }
+
+    override func reset() {
+        super.reset()
+        activeTouches = 0
+    }
+}
+
+enum RotationDirection {
+    case CLOCKWISE
+    case COUNTER_CLOCKWISE
+}
+
+enum PlaybackState {
+    case playing
+    case paused
+    case stopped
+}

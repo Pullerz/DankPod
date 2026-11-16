@@ -1,0 +1,117 @@
+//
+//  CustomTableViewCell.swift
+//  Classic
+//
+//  Created by Alistair Pullen on 22/05/2020.
+//  Copyright © 2020 Apullen Developments Ltd. All rights reserved.
+//
+
+import UIKit
+
+class CustomTableViewCell: UITableViewCell {
+
+    let background: UIView = UIView()
+    private let selectionGradient = CAGradientLayer()
+    let label = UILabel()
+    var indicatorButton: UIButton?
+    var indicatorButtonShouldChange: Bool = false
+
+    
+    init() {
+        super.init(style: .default, reuseIdentifier: nil)
+        self.textLabel?.font = UIFont(name: "Helvetica-Bold", size: 15)
+        self.accessoryType = .disclosureIndicator
+        self.tintColor = .black
+        self.selectionStyle = .blue
+        self.accessoryView?.tintColor = .white
+        if let subviews = self.accessoryView?.subviews {
+            for subview in subviews {
+                subview.tintColor = .white
+            }
+        }
+    
+        background.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(background)
+        background.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
+        background.leftAnchor.constraint(equalTo: contentView.leftAnchor).isActive = true
+        background.rightAnchor.constraint(equalTo: contentView.rightAnchor).isActive = true
+        background.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
+        background.isHidden = true
+        selectionGradient.colors = [UIColor.gradientLightBlue, UIColor.gradientDarkBlue].map { $0.cgColor }
+        selectionGradient.startPoint = CGPoint(x: 0, y: 0)
+        selectionGradient.endPoint = CGPoint(x: 0, y: 1)
+        background.layer.insertSublayer(selectionGradient, at: 0)
+        
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont(name: "Helvetica-Bold", size: 15)
+        contentView.addSubview(label)
+        label.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
+        label.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 15).isActive = true
+        label.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -20).isActive = true
+        
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        // Initialization code
+        
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
+        // Span the whole row, including the accessory area outside contentView.
+        selectionGradient.frame = background.convert(bounds, from: self)
+        CATransaction.commit()
+        if let indicatorButton = allSubviews.compactMap({ $0 as? UIButton }).last {
+            self.indicatorButton = indicatorButton
+            if indicatorButtonShouldChange == true && self.isSelected {
+                self.setIndicatorButtonTint(color: .white)
+                indicatorButtonShouldChange = false
+            }
+         }
+    }
+    
+    
+
+    override func setSelected(_ selected: Bool, animated: Bool) {
+        super.setSelected(selected, animated: animated)
+        if (selected) {
+            self.label.textColor = .white
+            self.tintColor = .white
+            self.background.isHidden = false
+
+            self.setIndicatorButtonTint(color: .white)
+            
+        } else {
+            self.label.textColor = .black
+            self.tintColor = .black
+            self.background.isHidden = true
+            
+            self.setIndicatorButtonTint(color: UIColor.lightGray)
+        }
+        // Configure the view for the selected state
+    }
+    
+    func setIndicatorButtonTint(color: UIColor) {
+        if let indicatorButton = self.indicatorButton {
+            let image = indicatorButton.backgroundImage(for: .normal)?.withRenderingMode(.alwaysTemplate)
+            indicatorButton.setBackgroundImage(image, for: .normal)
+            indicatorButton.tintColor = color
+        } else {
+            indicatorButtonShouldChange = true
+        }
+    }
+
+}
+
+extension UIView {
+   var allSubviews: [UIView] {
+      return subviews.flatMap { [$0] + $0.allSubviews }
+   }
+}

@@ -2,7 +2,7 @@
 
 ## 1. Project Overview
 
-**DankPod** is an iPod Classic emulator iOS application written in Swift. It recreates the iconic iPod Classic user interface — including the click wheel, gradient navigation bar, and hierarchical menu navigation — as a native iOS app that plays music from the device's Apple Music library.
+**Classic** is an iPod Classic emulator iOS application written in Swift. It recreates the iconic iPod Classic user interface — including the click wheel, gradient navigation bar, and hierarchical menu navigation — as a native iOS app that plays music from the device's Apple Music library.
 
 - **Purpose**: Fun/hobby project emulating the iPod Classic experience on modern iPhones
 - **Author**: Alistair Pullen (Apullen Developments Ltd.)
@@ -93,27 +93,27 @@ SplashScreenViewController → MainViewController
 | **Dependencies** | **None** — zero external dependencies (no CocoaPods, Carthage, or SPM) |
 | **Testing** | XCTest (template only — no actual tests implemented) |
 | **Design Tool** | Sketch (`design.sketch` in root) |
-| **Bundle ID** | `com.apullen.DankPod` |
+| **Bundle ID** | `com.apullen.Classic` |
 
 ## 4. Directory Structure
 
 ```
-DankPod/                          ← Repository root
+Classic/                          ← Repository root
 ├── README.md                     ← Project description and status
 ├── LICENSE                       ← MIT License
 ├── design.sketch                 ← Sketch design file for UI mockups
 ├── DankPod.ipa                   ← Pre-built IPA binary
-├── DankPod.xcodeproj/            ← Xcode project configuration
+├── Classic.xcodeproj/            ← Xcode project configuration
 │   └── project.pbxproj           ← Build settings, targets, file references
 │
-├── DankPod/                      ← Main app source code
+├── Classic/                      ← Main app source code
 │   ├── AppDelegate.swift         ← App lifecycle, static Music and baseVC references
 │   ├── SceneDelegate.swift       ← iOS 13+ scene lifecycle, window setup
 │   ├── Info.plist                ← App configuration (permissions, orientation, etc.)
 │   │
 │   ├── BasePodView.swift         ← iPod chrome: nav bar, click wheel, gesture handling
 │   ├── MainViewController.swift  ← Root VC, subclass of BasePodView, hosts UINavigationController
-│   ├── SplashScreenViewController.swift ← 2-second splash screen with DankPod branding
+│   ├── SplashScreenViewController.swift ← 2-second splash screen with Classic branding
 │   ├── ViewController.swift      ← Appears orphaned / duplicate of BasePodView reference
 │   │
 │   ├── Music.swift               ← Music service: library queries, playback, queue management
@@ -136,16 +136,16 @@ DankPod/                          ← Repository root
 │   │
 │   ├── Assets.xcassets/          ← Image assets (app icons, UI elements)
 │   ├── Base.lproj/               ← Storyboards (LaunchScreen used; Main.storyboard orphaned)
-│   └── DankPodTests/             ← Unit test target (template only)
+│   └── ClassicTests/             ← Unit test target (template only)
 │
-├── DankPodUITests/               ← UI test target (template only)
+├── ClassicUITests/               ← UI test target (template only)
 └── Resources/                    ← Raw image resources (duplicated in Assets.xcassets)
 ```
 
 ### Naming Conventions
 - View controllers: `XxxViewController.swift`
 - Screen VCs in `Screens/` directory
-- Core UI in root `DankPod/` directory
+- Core UI in root `Classic/` directory
 - British spelling in some filenames: `Recogniser` (not `Recognizer`)
 - Custom colors prefixed with `gradient` (e.g., `gradientLightBlue`)
 
@@ -246,8 +246,8 @@ enum ClickWheelTouchPressure { case NORMAL, FORCE, FORCE_ENDED }
 
 ### Current State
 - **No actual tests are implemented** — both test targets contain only Xcode-generated template code
-- Unit test target: `DankPodTests/DankPodTests.swift` — empty `XCTest` boilerplate
-- UI test target: `DankPodUITests/DankPodUITests.swift` — only launches the app
+- Unit test target: `ClassicTests/ClassicTests.swift` — empty `XCTest` boilerplate
+- UI test target: `ClassicUITests/ClassicUITests.swift` — only launches the app
 
 ### Testing Considerations
 - The app has **zero external dependencies**, simplifying test setup
@@ -265,7 +265,7 @@ enum ClickWheelTouchPressure { case NORMAL, FORCE, FORCE_ENDED }
 
 ### Setup
 1. Clone the repository
-2. Open `DankPod.xcodeproj` in Xcode
+2. Open `Classic.xcodeproj` in Xcode
 3. Set your development team in Signing & Capabilities (replacing `WPY678LZM4`)
 4. Connect an iOS device
 5. Build and run (⌘R)
@@ -273,7 +273,7 @@ enum ClickWheelTouchPressure { case NORMAL, FORCE, FORCE_ENDED }
 ### Important Notes
 - The app requires **Apple Music permission** — it will prompt on first launch
 - The device must have **music in its library** for the app to display anything
-- A pre-built `DankPod.ipa` is included in the repository root
+- A pre-built `DankPod.ipa` is included in the repository root (legacy build from before the rename to Classic)
 - The `design.sketch` file contains the UI design mockups (requires Sketch app)
 
 ### Common Development Tasks
