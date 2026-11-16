@@ -1,0 +1,839 @@
+//
+//  BlocksViewController.swift
+//  Classic
+//
+//  Blocks: the falling-block puzzle from the click-wheel iPods. Standard 10×20
+//  well, the seven tetrominoes from a 7-bag, SRS rotation with wall kicks,
+//  ghost piece, hold, 0.5s lock delay with a move-reset limit, and the
+//  Guideline gravity curve ((0.8 − (level−1)·0.007)^(level−1) seconds per row),
+//  levelling up every 10 lines.
+//
+//  Controls (wheel-only device):
+//    Wheel      — slide the piece left/right (analog, one column per ~18°)
+//    Center     — rotate clockwise
+//    Next ⏭     — hard drop
+//    Previous ⏮ — hold piece (once per piece). Rotating counter-clockwise is
+//                 three clockwise clicks, so hold adds more to the game.
+//    Play/Pause — pause
+//  There is no soft drop: the wheel's only free axis is used for sliding, and
+//  hard drop + ghost piece cover the need on a five-button device.
+//
+
+import UIKit
+
+class BlocksViewController: PodGameViewController {
+
+    private enum Phase { case title, playing, clearing, gameOver }
+
+    /// Tetromino kinds; raw value indexes `shapes`, `pieceColors` and the image caches.
+    private enum Kind: Int, CaseIterable { case i, o, t, s, z, j, l }
+
+    private struct Piece {
+        let kind: Kind
+        var rotation: Int   // 0 = spawn, 1 = R, 2 = 180°, 3 = L
+        var x: Int          // bounding-box origin column
+        var y: Int          // bounding-box origin row (row 0 = top hidden row)
+    }
+
+    override var gameTitle: String { "Blocks" }
+
+    // Game state
+    private var phase: Phase = .title
+    private var score = 0
+    private var lines = 0
+    private var level = 1
+    private var board: [[Int]] = []          // board[row][col]: -1 empty, else Kind.rawValue (7 = grey)
+    private var piece: Piece?
+    private var nextKind: Kind = .t
+    private var heldKind: Kind?
+    private var holdUsed = false
+    private var bag: [Kind] = []
+
+    // Timing state
+    private var gravityTimer: CGFloat = 0
+    private var lockTimer: CGFloat = 0
+    private var lockResets = 0
+    private var lowestRow = 0
+    private var clearTimer: CGFloat = 0
+    private var clearingRows: [Int] = []
+    private var wheelAccumulator: CGFloat = 0
+
+    // Layers & views (all created once and reused)
+    private var background: CAGradientLayer?
+    private let wellFrame = CAGradientLayer()
+    private let well = CAGradientLayer()
+    private let grid = CAShapeLayer()
+    private var boardLayers: [CALayer] = []
+    private var activeLayers: [CALayer] = []
+    private var ghostLayers: [CALayer] = []
+    private var flashLayers: [CALayer] = []
+    private var nextLayers: [CALayer] = []
+    private var holdLayers: [CALayer] = []
+    private let nextBox = PanelBox(title: "NEXT")
+    private let holdBox = PanelBox(title: "HOLD")
+    private let levelBox = PanelBox(title: "LEVEL")
+    private let linesBox = PanelBox(title: "LINES")
+    private let levelLabel = UILabel()
+    private let linesLabel = UILabel()
+
+    // Rendered block images, rebuilt only when the cell size changes.
+    private var blockImages: [CGImage?] = []
+    private var ghostImages: [CGImage?] = []
+    private var previewImages: [CGImage?] = []
+    private var renderedCellSize: CGFloat = 0
+
+    // Layout
+    private let columns = 10
+    private let visibleRows = 20
+    private let hiddenRows = 2
+    private var totalRows: Int { visibleRows + hiddenRows }
+    private var cell: CGFloat = 15
+    private var previewCell: CGFloat = 11
+    private let frameInset: CGFloat = 3
+    private let panelGap: CGFloat = 14
+    private let maxPanelWidth: CGFloat = 108
+
+    // Tuning
+    private let radiansPerColumn: CGFloat = 0.32
+    private let lockDelay: CGFloat = 0.5
+    private let maxLockResets = 15
+    private let clearDuration: CGFloat = 0.32
+    private let lineScores = [0, 100, 300, 500, 800]
+    private let gravityLevelCap = 20
+
+    // Haptics
+    private let selection = UISelectionFeedbackGenerator()
+    private let impact = UIImpactFeedbackGenerator(style: .medium)
+
+    /// Classic colours: I cyan, O yellow, T purple, S green, Z red, J blue, L orange, then grey for top-out.
+    private let pieceColors: [UIColor] = [
+        UIColor(red: 40/255, green: 200/255, blue: 230/255, alpha: 1),
+        UIColor(red: 240/255, green: 205/255, blue: 35/255, alpha: 1),
+        UIColor(red: 160/255, green: 65/255, blue: 205/255, alpha: 1),
+        UIColor(red: 60/255, green: 190/255, blue: 60/255, alpha: 1),
+        UIColor(red: 220/255, green: 50/255, blue: 50/255, alpha: 1),
+        UIColor(red: 45/255, green: 95/255, blue: 220/255, alpha: 1),
+        UIColor(red: 240/255, green: 140/255, blue: 30/255, alpha: 1),
+        UIColor(red: 130/255, green: 136/255, blue: 145/255, alpha: 1),
+    ]
+    private let greyIndex = 7
+
+    // MARK: - Shapes & kicks
+
+    /// Every rotation state of every piece, as (x, y) offsets inside its SRS
+    /// bounding box (y grows downward). States are generated by rotating the
+    /// spawn state clockwise within the box, which is exactly how SRS defines them.
+    private static let shapes: [[[(x: Int, y: Int)]]] = {
+        let spawn: [(Int, [(x: Int, y: Int)])] = [
+            (4, [(0, 1), (1, 1), (2, 1), (3, 1)]),  // I
+            (2, [(0, 0), (1, 0), (0, 1), (1, 1)]),  // O
+            (3, [(1, 0), (0, 1), (1, 1), (2, 1)]),  // T
+            (3, [(1, 0), (2, 0), (0, 1), (1, 1)]),  // S
+            (3, [(0, 0), (1, 0), (1, 1), (2, 1)]),  // Z
+            (3, [(0, 0), (0, 1), (1, 1), (2, 1)]),  // J
+            (3, [(2, 0), (0, 1), (1, 1), (2, 1)]),  // L
+        ]
+        return spawn.map { size, cells in
+            var states = [cells]
+            for _ in 1..<4 {
+                states.append(states.last!.map { (x: size - 1 - $0.y, y: $0.x) })
+            }
+            return states
+        }
+    }()
+
+    /// SRS clockwise wall kicks from state `index` (y flipped to grow downward).
+    private static let kicksJLSTZ: [[(Int, Int)]] = [
+        [(0, 0), (-1, 0), (-1, -1), (0, 2), (-1, 2)],   // 0 → R
+        [(0, 0), (1, 0), (1, 1), (0, -2), (1, -2)],     // R → 2
+        [(0, 0), (1, 0), (1, -1), (0, 2), (1, 2)],      // 2 → L
+        [(0, 0), (-1, 0), (-1, 1), (0, -2), (-1, -2)],  // L → 0
+    ]
+    private static let kicksI: [[(Int, Int)]] = [
+        [(0, 0), (-2, 0), (1, 0), (-2, 1), (1, -2)],    // 0 → R
+        [(0, 0), (-1, 0), (2, 0), (-1, -2), (2, 1)],    // R → 2
+        [(0, 0), (2, 0), (-1, 0), (2, -1), (-1, 2)],    // 2 → L
+        [(0, 0), (1, 0), (-2, 0), (1, 2), (-2, -1)],    // L → 0
+    ]
+
+    // MARK: - Setup
+
+    override func setupGame() {
+        let bg = GameStyle.gradientLayer(UIColor(red: 222/255, green: 229/255, blue: 237/255, alpha: 1),
+                                         UIColor(red: 172/255, green: 185/255, blue: 202/255, alpha: 1),
+                                         frame: view.bounds)
+        view.layer.insertSublayer(bg, at: 0)
+        background = bg
+
+        // Brushed-silver bezel around a dark glass well.
+        wellFrame.colors = [UIColor(white: 0.97, alpha: 1).cgColor, UIColor(red: 150/255, green: 162/255, blue: 178/255, alpha: 1).cgColor]
+        wellFrame.cornerRadius = 4
+        wellFrame.borderWidth = 0.5
+        wellFrame.borderColor = UIColor(red: 90/255, green: 102/255, blue: 120/255, alpha: 1).cgColor
+        wellFrame.shadowColor = UIColor.black.cgColor
+        wellFrame.shadowOpacity = 0.35
+        wellFrame.shadowRadius = 2
+        wellFrame.shadowOffset = CGSize(width: 0, height: 1.5)
+        view.layer.addSublayer(wellFrame)
+
+        well.colors = [UIColor(red: 30/255, green: 38/255, blue: 52/255, alpha: 1).cgColor,
+                       UIColor(red: 12/255, green: 15/255, blue: 22/255, alpha: 1).cgColor]
+        well.masksToBounds = true
+        view.layer.addSublayer(well)
+
+        grid.strokeColor = UIColor(white: 1, alpha: 0.06).cgColor
+        grid.lineWidth = 0.5
+        grid.fillColor = nil
+        well.addSublayer(grid)
+
+        func makeLayer() -> CALayer {
+            let l = CALayer()
+            l.actions = ["position": NSNull(), "bounds": NSNull(), "contents": NSNull(), "hidden": NSNull(), "opacity": NSNull()]
+            return l
+        }
+        boardLayers = (0..<(columns * visibleRows)).map { _ in makeLayer() }
+        boardLayers.forEach { well.addSublayer($0); $0.isHidden = true }
+        ghostLayers = (0..<4).map { _ in makeLayer() }
+        ghostLayers.forEach { well.addSublayer($0) }
+        activeLayers = (0..<4).map { _ in makeLayer() }
+        activeLayers.forEach { well.addSublayer($0) }
+        flashLayers = (0..<4).map { _ in
+            let l = makeLayer()
+            l.backgroundColor = UIColor.white.cgColor
+            l.isHidden = true
+            well.addSublayer(l)
+            return l
+        }
+
+        for box in [nextBox, holdBox, levelBox, linesBox] { view.addSubview(box) }
+        nextLayers = (0..<4).map { _ in makeLayer() }
+        nextLayers.forEach { nextBox.content.layer.addSublayer($0) }
+        holdLayers = (0..<4).map { _ in makeLayer() }
+        holdLayers.forEach { holdBox.content.layer.addSublayer($0) }
+        for (label, box) in [(levelLabel, levelBox), (linesLabel, linesBox)] {
+            label.font = GameStyle.font(18)
+            label.textColor = UIColor(red: 28/255, green: 42/255, blue: 60/255, alpha: 1)
+            label.textAlignment = .center
+            label.shadowColor = UIColor(white: 1, alpha: 0.8)
+            label.shadowOffset = CGSize(width: 0, height: 1)
+            box.content.addSubview(label)
+        }
+
+        selection.prepare()
+        resetState()
+        showMessage("BLOCKS", lines: ["Wheel moves · Center rotates", "Next drops · Previous holds", "Press center to start"])
+    }
+
+    override func layoutGame() {
+        let b = view.bounds
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
+        background?.frame = b
+
+        // Well at full height, grouped with the side panel and centred as a unit.
+        cell = max(4, floor(min((b.height - 2 * frameInset - 8) / CGFloat(visibleRows),
+                                (b.width * 0.62) / CGFloat(columns))))
+        previewCell = round(cell * 0.72)
+        let wellSize = CGSize(width: cell * CGFloat(columns), height: cell * CGFloat(visibleRows))
+        let panelWidth = max(70, min(maxPanelWidth, b.width - wellSize.width - 2 * frameInset - panelGap - 16))
+        let groupWidth = wellSize.width + 2 * frameInset + panelGap + panelWidth
+        let wellOrigin = CGPoint(x: round((b.width - groupWidth) / 2) + frameInset,
+                                 y: round((b.height - wellSize.height) / 2))
+        well.frame = CGRect(origin: wellOrigin, size: wellSize)
+        wellFrame.frame = well.frame.insetBy(dx: -frameInset, dy: -frameInset)
+
+        let path = UIBezierPath()
+        for c in 1..<columns {
+            path.move(to: CGPoint(x: CGFloat(c) * cell, y: 0))
+            path.addLine(to: CGPoint(x: CGFloat(c) * cell, y: wellSize.height))
+        }
+        for r in 1..<visibleRows {
+            path.move(to: CGPoint(x: 0, y: CGFloat(r) * cell))
+            path.addLine(to: CGPoint(x: wellSize.width, y: CGFloat(r) * cell))
+        }
+        grid.frame = well.bounds
+        grid.path = path.cgPath
+
+        for r in 0..<visibleRows {
+            for c in 0..<columns {
+                boardLayers[r * columns + c].frame = CGRect(x: CGFloat(c) * cell, y: CGFloat(r) * cell, width: cell, height: cell)
+            }
+        }
+
+        // Side panel: NEXT and HOLD at the top, LEVEL and LINES at the bottom.
+        let panelX = wellFrame.frame.maxX + panelGap
+        let previewHeight = PanelBox.headerHeight + previewCell * 2 + 18
+        let statHeight = PanelBox.headerHeight + 30
+        let top = wellFrame.frame.minY, bottom = wellFrame.frame.maxY
+        nextBox.frame = CGRect(x: panelX, y: top, width: panelWidth, height: previewHeight)
+        holdBox.frame = CGRect(x: panelX, y: nextBox.frame.maxY + 10, width: panelWidth, height: previewHeight)
+        linesBox.frame = CGRect(x: panelX, y: bottom - statHeight, width: panelWidth, height: statHeight)
+        levelBox.frame = CGRect(x: panelX, y: linesBox.frame.minY - 10 - statHeight, width: panelWidth, height: statHeight)
+        for (label, box) in [(levelLabel, levelBox), (linesLabel, linesBox)] {
+            box.layoutIfNeeded()
+            label.frame = box.bodyFrame
+        }
+
+        if renderedCellSize != cell { rebuildImages() }
+        CATransaction.commit()
+        renderAll()
+    }
+
+    override func refreshHUD() {
+        hudScore = score
+        hudLives = nil
+    }
+
+    // MARK: - Block artwork
+
+    private func rebuildImages() {
+        renderedCellSize = cell
+        blockImages = pieceColors.map { blockImage($0, size: cell) }
+        ghostImages = pieceColors.map { ghostImage($0, size: cell) }
+        previewImages = pieceColors.map { blockImage($0, size: previewCell) }
+    }
+
+    private func shade(_ color: UIColor, _ brightness: CGFloat, _ saturation: CGFloat = 0) -> UIColor {
+        var h: CGFloat = 0, s: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
+        color.getHue(&h, saturation: &s, brightness: &b, alpha: &a)
+        return UIColor(hue: h, saturation: min(max(s + saturation, 0), 1), brightness: min(max(b + brightness, 0), 1), alpha: 1)
+    }
+
+    /// A glossy bevelled square: lit from the top-left, specular band on the upper face.
+    private func blockImage(_ color: UIColor, size s: CGFloat) -> CGImage? {
+        let renderer = UIGraphicsImageRenderer(size: CGSize(width: s, height: s))
+        return renderer.image { ctx in
+            let c = ctx.cgContext
+            let bevel = max(1.5, round(s * 0.16))
+            func poly(_ pts: [CGPoint], _ fill: UIColor) {
+                c.setFillColor(fill.cgColor)
+                c.move(to: pts[0])
+                pts.dropFirst().forEach { c.addLine(to: $0) }
+                c.closePath()
+                c.fillPath()
+            }
+            let p0 = CGPoint(x: 0, y: 0), p1 = CGPoint(x: s, y: 0), p2 = CGPoint(x: s, y: s), p3 = CGPoint(x: 0, y: s)
+            let i0 = CGPoint(x: bevel, y: bevel), i1 = CGPoint(x: s - bevel, y: bevel)
+            let i2 = CGPoint(x: s - bevel, y: s - bevel), i3 = CGPoint(x: bevel, y: s - bevel)
+            poly([p0, p1, i1, i0], shade(color, 0.32, -0.3))   // top
+            poly([p0, i0, i3, p3], shade(color, 0.16, -0.15))  // left
+            poly([p1, p2, i2, i1], shade(color, -0.2, 0.05))   // right
+            poly([p3, i3, i2, p2], shade(color, -0.34, 0.08))  // bottom
+
+            let face = CGRect(x: bevel, y: bevel, width: s - 2 * bevel, height: s - 2 * bevel)
+            let space = CGColorSpaceCreateDeviceRGB()
+            if let g = CGGradient(colorsSpace: space, colors: [shade(color, 0.1, -0.08).cgColor, color.cgColor, shade(color, -0.06).cgColor] as CFArray,
+                                  locations: [0, 0.55, 1]) {
+                c.saveGState()
+                c.clip(to: face)
+                c.drawLinearGradient(g, start: CGPoint(x: 0, y: face.minY), end: CGPoint(x: 0, y: face.maxY), options: [])
+                c.restoreGState()
+            }
+            // Specular band across the upper half of the face.
+            let gloss = CGRect(x: face.minX, y: face.minY, width: face.width, height: face.height * 0.48)
+            if let g = CGGradient(colorsSpace: space, colors: [UIColor(white: 1, alpha: 0.5).cgColor, UIColor(white: 1, alpha: 0.12).cgColor] as CFArray,
+                                  locations: [0, 1]) {
+                c.saveGState()
+                c.clip(to: gloss)
+                c.drawLinearGradient(g, start: CGPoint(x: 0, y: gloss.minY), end: CGPoint(x: 0, y: gloss.maxY), options: [])
+                c.restoreGState()
+            }
+            c.setStrokeColor(shade(color, -0.5).withAlphaComponent(0.9).cgColor)
+            c.setLineWidth(1)
+            c.stroke(CGRect(x: 0, y: 0, width: s, height: s).insetBy(dx: 0.5, dy: 0.5))
+        }.cgImage
+    }
+
+    /// Translucent outline used for the ghost piece.
+    private func ghostImage(_ color: UIColor, size s: CGFloat) -> CGImage? {
+        let renderer = UIGraphicsImageRenderer(size: CGSize(width: s, height: s))
+        return renderer.image { ctx in
+            let c = ctx.cgContext
+            let r = CGRect(x: 0, y: 0, width: s, height: s).insetBy(dx: 1, dy: 1)
+            c.setFillColor(color.withAlphaComponent(0.16).cgColor)
+            c.fill(r)
+            c.setStrokeColor(shade(color, 0.15, -0.1).withAlphaComponent(0.8).cgColor)
+            c.setLineWidth(1)
+            c.stroke(r.insetBy(dx: 0.5, dy: 0.5))
+        }.cgImage
+    }
+
+    // MARK: - Pieces
+
+    private func cells(of p: Piece) -> [(x: Int, y: Int)] {
+        Self.shapes[p.kind.rawValue][p.rotation].map { (x: p.x + $0.x, y: p.y + $0.y) }
+    }
+
+    /// Cells above the board (y < 0) are allowed so kicks near the ceiling work.
+    private func fits(_ p: Piece) -> Bool {
+        for c in cells(of: p) {
+            if c.x < 0 || c.x >= columns || c.y >= totalRows { return false }
+            if c.y >= 0 && board[c.y][c.x] >= 0 { return false }
+        }
+        return true
+    }
+
+    private func dropDistance(_ p: Piece) -> Int {
+        var test = p
+        var d = 0
+        while true {
+            test.y += 1
+            guard fits(test) else { return d }
+            d += 1
+        }
+    }
+
+    private var isGrounded: Bool {
+        guard var p = piece else { return false }
+        p.y += 1
+        return !fits(p)
+    }
+
+    private func drawFromBag() -> Kind {
+        if bag.isEmpty { bag = Kind.allCases.shuffled() }
+        return bag.removeLast()
+    }
+
+    /// Spawns `kind` above the visible well and nudges it down a row, Guideline style.
+    @discardableResult
+    private func spawn(_ kind: Kind) -> Bool {
+        var p = Piece(kind: kind, rotation: 0, x: kind == .o ? 4 : 3, y: 0)
+        guard fits(p) else {
+            piece = nil
+            topOut()
+            return false
+        }
+        var lower = p
+        lower.y += 1
+        if fits(lower) { p = lower }
+        piece = p
+        gravityTimer = 0
+        lockTimer = 0
+        lockResets = 0
+        lowestRow = p.y
+        renderActive()
+        renderPreviews()
+        return true
+    }
+
+    private func spawnNext() {
+        let kind = nextKind
+        nextKind = drawFromBag()
+        holdUsed = false
+        spawn(kind)
+    }
+
+    /// Moves by (dx, dy) if possible. Player moves on the ground use up a lock reset.
+    @discardableResult
+    private func shift(dx: Int, dy: Int) -> Bool {
+        guard var p = piece else { return false }
+        let wasGrounded = isGrounded
+        p.x += dx
+        p.y += dy
+        guard fits(p) else { return false }
+        piece = p
+        if p.y > lowestRow {
+            // Reaching a new lowest row refreshes the lock delay entirely.
+            lowestRow = p.y
+            lockResets = 0
+            lockTimer = 0
+        } else if dx != 0 {
+            registerLockReset(wasGrounded: wasGrounded)
+        }
+        renderActive()
+        return true
+    }
+
+    private func registerLockReset(wasGrounded: Bool) {
+        guard wasGrounded || isGrounded, lockResets < maxLockResets else { return }
+        lockResets += 1
+        lockTimer = 0
+    }
+
+    private func rotateClockwise() {
+        guard let p = piece, p.kind != .o else { return }
+        let wasGrounded = isGrounded
+        let kicks = p.kind == .i ? Self.kicksI[p.rotation] : Self.kicksJLSTZ[p.rotation]
+        for (dx, dy) in kicks {
+            var test = p
+            test.rotation = (p.rotation + 1) % 4
+            test.x += dx
+            test.y += dy
+            guard fits(test) else { continue }
+            piece = test
+            if test.y > lowestRow {
+                lowestRow = test.y
+                lockResets = 0
+                lockTimer = 0
+            } else {
+                registerLockReset(wasGrounded: wasGrounded)
+            }
+            haptic(.selection)
+            renderActive()
+            return
+        }
+    }
+
+    private func hardDrop() {
+        guard var p = piece else { return }
+        let d = dropDistance(p)
+        p.y += d
+        piece = p
+        score += 2 * d
+        hudScore = score
+        haptic(.drop)
+        lockPiece()
+    }
+
+    private func hold() {
+        guard let p = piece, !holdUsed else { return }
+        let swapped = heldKind
+        heldKind = p.kind
+        if let swapped {
+            spawn(swapped)
+        } else {
+            spawnNext()
+        }
+        holdUsed = true
+        renderPreviews()
+        haptic(.selection)
+    }
+
+    // MARK: - Locking & clears
+
+    private func lockPiece() {
+        guard let p = piece else { return }
+        let cs = cells(of: p)
+        piece = nil
+        for c in cs where c.y >= 0 { board[c.y][c.x] = p.kind.rawValue }
+        // Lock out: the whole piece came to rest above the visible well.
+        if cs.allSatisfy({ $0.y < hiddenRows }) {
+            renderBoard()
+            topOut()
+            return
+        }
+
+        let full = (0..<totalRows).filter { r in board[r].allSatisfy { $0 >= 0 } }
+        renderBoard()
+        renderActive()
+        if full.isEmpty {
+            haptic(.lock)
+            spawnNext()
+            return
+        }
+
+        let cleared = full.count
+        score += lineScores[min(cleared, 4)] * level
+        hudScore = score
+        clearingRows = full
+        clearTimer = 0
+        phase = .clearing
+        for (i, layer) in flashLayers.enumerated() {
+            if i < full.count {
+                layer.frame = CGRect(x: 0, y: CGFloat(full[i] - hiddenRows) * cell, width: cell * CGFloat(columns), height: cell)
+                layer.isHidden = false
+                layer.opacity = 0.9
+            } else {
+                layer.isHidden = true
+            }
+        }
+        haptic(.clear)
+    }
+
+    private func finishClear() {
+        flashLayers.forEach { $0.isHidden = true }
+        for r in clearingRows.sorted(by: >) { board.remove(at: r) }
+        for _ in clearingRows { board.insert(Array(repeating: -1, count: columns), at: 0) }
+        let previousLevel = level
+        lines += clearingRows.count
+        level = lines / 10 + 1
+        clearingRows = []
+        linesLabel.text = "\(lines)"
+        levelLabel.text = "\(level)"
+        if level > previousLevel { pulse(levelLabel) }
+        renderBoard()
+        phase = .playing
+        spawnNext()
+    }
+
+    private func topOut() {
+        phase = .gameOver
+        piece = nil
+        // Grey out the stack bottom-up for the classic "game over" wipe.
+        for r in 0..<totalRows {
+            for c in 0..<columns where board[r][c] >= 0 { board[r][c] = greyIndex }
+        }
+        renderBoard()
+        renderActive()
+        haptic(.clear)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) { [weak self] in
+            guard let self, self.phase == .gameOver, !self.isShowingMessage else { return }
+            self.showGameOver(score: self.score)
+        }
+    }
+
+    // MARK: - Frame loop
+
+    /// Guideline gravity: seconds per row at the current level.
+    private var gravityInterval: CGFloat {
+        let l = Double(min(level, gravityLevelCap) - 1)
+        return CGFloat(pow(0.8 - l * 0.007, l))
+    }
+
+    override func update(dt: CGFloat) {
+        switch phase {
+        case .clearing:
+            clearTimer += dt
+            // Three quick blinks, then collapse.
+            let on = Int(clearTimer / (clearDuration / 6)) % 2 == 0
+            for (i, l) in flashLayers.enumerated() where i < clearingRows.count { l.opacity = on ? 0.9 : 0.15 }
+            if clearTimer >= clearDuration { finishClear() }
+        case .playing:
+            guard piece != nil else { return }
+            gravityTimer += dt
+            let interval = gravityInterval
+            var steps = 0
+            while gravityTimer >= interval, steps < totalRows {
+                gravityTimer -= interval
+                steps += 1
+                if !shift(dx: 0, dy: 1) { gravityTimer = 0; break }
+            }
+            if isGrounded {
+                lockTimer += dt
+                if lockTimer >= lockDelay { lockPiece() }
+            }
+        default:
+            break
+        }
+    }
+
+    // MARK: - Rendering
+
+    private func renderAll() {
+        renderBoard()
+        renderActive()
+        renderPreviews()
+        levelLabel.text = "\(level)"
+        linesLabel.text = "\(lines)"
+    }
+
+    private func renderBoard() {
+        guard !boardLayers.isEmpty, board.count == totalRows else { return }
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
+        for r in 0..<visibleRows {
+            for c in 0..<columns {
+                let v = board[r + hiddenRows][c]
+                let layer = boardLayers[r * columns + c]
+                layer.isHidden = v < 0
+                if v >= 0 { layer.contents = blockImages[v] }
+            }
+        }
+        CATransaction.commit()
+    }
+
+    private func cellRect(_ x: Int, _ y: Int) -> CGRect {
+        CGRect(x: CGFloat(x) * cell, y: CGFloat(y - hiddenRows) * cell, width: cell, height: cell)
+    }
+
+    private func renderActive() {
+        guard activeLayers.count == 4, !blockImages.isEmpty else { return }
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
+        if let p = piece, phase == .playing {
+            let cs = cells(of: p)
+            let ghostDrop = dropDistance(p)
+            for i in 0..<4 {
+                activeLayers[i].isHidden = false
+                activeLayers[i].frame = cellRect(cs[i].x, cs[i].y)
+                activeLayers[i].contents = blockImages[p.kind.rawValue]
+                ghostLayers[i].isHidden = ghostDrop == 0
+                ghostLayers[i].frame = cellRect(cs[i].x, cs[i].y + ghostDrop)
+                ghostLayers[i].contents = ghostImages[p.kind.rawValue]
+            }
+        } else {
+            activeLayers.forEach { $0.isHidden = true }
+            ghostLayers.forEach { $0.isHidden = true }
+        }
+        CATransaction.commit()
+    }
+
+    private func renderPreviews() {
+        guard !previewImages.isEmpty else { return }
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
+        layoutPreview(phase == .title ? nil : nextKind, layers: nextLayers, in: nextBox)
+        layoutPreview(heldKind, layers: holdLayers, in: holdBox)
+        holdBox.alpha = holdUsed ? 0.6 : 1
+        CATransaction.commit()
+    }
+
+    /// Centres a piece's spawn orientation inside a panel box.
+    private func layoutPreview(_ kind: Kind?, layers: [CALayer], in box: PanelBox) {
+        guard let kind else { layers.forEach { $0.isHidden = true }; return }
+        let cs = Self.shapes[kind.rawValue][0]
+        let minX = cs.map(\.x).min()!, maxX = cs.map(\.x).max()!
+        let minY = cs.map(\.y).min()!, maxY = cs.map(\.y).max()!
+        let w = CGFloat(maxX - minX + 1) * previewCell, h = CGFloat(maxY - minY + 1) * previewCell
+        let body = box.bodyFrame
+        let origin = CGPoint(x: round(body.midX - w / 2), y: round(body.midY - h / 2))
+        for (i, c) in cs.enumerated() {
+            layers[i].isHidden = false
+            layers[i].contents = previewImages[kind.rawValue]
+            layers[i].frame = CGRect(x: origin.x + CGFloat(c.x - minX) * previewCell,
+                                     y: origin.y + CGFloat(c.y - minY) * previewCell,
+                                     width: previewCell, height: previewCell)
+        }
+    }
+
+    private func pulse(_ label: UILabel) {
+        let a = CAKeyframeAnimation(keyPath: "transform.scale")
+        a.values = [1, 1.35, 1]
+        a.keyTimes = [0, 0.35, 1]
+        a.duration = 0.35
+        label.layer.add(a, forKey: "pulse")
+    }
+
+    // MARK: - Game flow
+
+    private func resetState() {
+        board = Array(repeating: Array(repeating: -1, count: columns), count: totalRows)
+        score = 0
+        lines = 0
+        level = 1
+        bag = []
+        heldKind = nil
+        holdUsed = false
+        piece = nil
+        clearingRows = []
+        wheelAccumulator = 0
+        flashLayers.forEach { $0.isHidden = true }
+        nextKind = drawFromBag()
+        refreshHUD()
+    }
+
+    private func startGame() {
+        hideMessage()
+        resetState()
+        phase = .playing
+        renderAll()
+        spawnNext()
+    }
+
+    private enum Haptic { case selection, lock, drop, clear }
+
+    private func haptic(_ kind: Haptic) {
+        guard SettingsStore.shared.clickerEnabled else { return }
+        switch kind {
+        case .selection: selection.selectionChanged()
+        case .lock: impact.impactOccurred(intensity: 0.4)
+        case .drop: impact.impactOccurred(intensity: 0.8)
+        case .clear: UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
+        }
+    }
+
+    // MARK: - Input
+
+    override var prefersContinuousWheelInput: Bool { true }
+
+    override func clickWheelDidRotateContinuously(event: ClickWheelRotationEvent) {
+        guard !isGamePaused, phase == .playing, piece != nil else { wheelAccumulator = 0; return }
+        guard event.state == .changed else {
+            wheelAccumulator = 0   // each new touch starts fresh, so taps feel exact
+            return
+        }
+        wheelAccumulator += event.deltaRadians
+        while abs(wheelAccumulator) >= radiansPerColumn {
+            let dir = wheelAccumulator > 0 ? 1 : -1
+            if shift(dx: dir, dy: 0) {
+                wheelAccumulator -= CGFloat(dir) * radiansPerColumn
+                haptic(.selection)
+            } else {
+                // Against a wall: don't bank rotation that would fire later.
+                wheelAccumulator = 0
+            }
+        }
+    }
+
+    override func selectPressed() {
+        switch phase {
+        case .title: startGame()
+        case .playing: rotateClockwise()
+        case .gameOver: if isShowingMessage { startGame() }
+        case .clearing: break
+        }
+    }
+
+    override func nextPressed() {
+        guard phase == .playing else { return }
+        hardDrop()
+    }
+
+    override func previousPressed() {
+        guard phase == .playing else { return }
+        hold()
+    }
+
+    override func gameWillExit() {
+        flashLayers.forEach { $0.isHidden = true }
+        // Leaving during the 0.7s game-over wipe must still record the score.
+        if phase == .gameOver { HighScores.submit(score, for: scoreKey) }
+    }
+}
+
+// MARK: - Panel box
+
+/// A small rounded card with an iPod-blue title strip, used for the side panel.
+private final class PanelBox: UIView {
+    static let headerHeight: CGFloat = 15
+
+    let content = UIView()
+    private let header = CAGradientLayer()
+    private let body = CAGradientLayer()
+    private let titleLabel = UILabel()
+
+    init(title: String) {
+        super.init(frame: .zero)
+        layer.shadowColor = UIColor.black.cgColor
+        layer.shadowOpacity = 0.3
+        layer.shadowRadius = 1.5
+        layer.shadowOffset = CGSize(width: 0, height: 1)
+
+        content.layer.cornerRadius = 4
+        content.clipsToBounds = true
+        content.layer.borderWidth = 0.5
+        content.layer.borderColor = UIColor(red: 95/255, green: 110/255, blue: 130/255, alpha: 1).cgColor
+        addSubview(content)
+
+        body.colors = [UIColor.white.cgColor, UIColor(red: 222/255, green: 228/255, blue: 236/255, alpha: 1).cgColor]
+        content.layer.addSublayer(body)
+        header.colors = [GameStyle.selectionTop.cgColor, GameStyle.selectionBottom.cgColor]
+        content.layer.addSublayer(header)
+
+        titleLabel.text = title
+        titleLabel.font = GameStyle.font(10)
+        titleLabel.textColor = .white
+        titleLabel.textAlignment = .center
+        titleLabel.shadowColor = UIColor(white: 0, alpha: 0.35)
+        titleLabel.shadowOffset = CGSize(width: 0, height: -0.5)
+        content.addSubview(titleLabel)
+    }
+
+    required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
+
+    var bodyFrame: CGRect {
+        CGRect(x: 0, y: Self.headerHeight, width: bounds.width, height: max(0, bounds.height - Self.headerHeight))
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
+        content.frame = bounds
+        layer.shadowPath = UIBezierPath(roundedRect: bounds, cornerRadius: 4).cgPath
+        header.frame = CGRect(x: 0, y: 0, width: bounds.width, height: Self.headerHeight)
+        body.frame = bounds
+        titleLabel.frame = header.frame
+        CATransaction.commit()
+    }
+}
